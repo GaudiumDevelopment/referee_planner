@@ -1,12 +1,15 @@
 package me.superbiebel.referee_planner.domain;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
+import me.superbiebel.referee_planner.util.SortedArrayList;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
+import org.optaplanner.core.api.domain.variable.InverseRelationShadowVariable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
+@Builder(toBuilder = true)
 @PlanningEntity
 public class Referee {
     @Getter
@@ -14,18 +17,23 @@ public class Referee {
     @Getter
     private int experience;
     @Getter
-    private boolean isNonExist;
+    private boolean isNonExist = false;
     
-    private List<GameAssignement> assignments;
+    @Setter
+    private SortedArrayList<GameAssignment> assignments;
     
-    private List<GameAssignement> getAssignments() {
-        return assignments == null ? new ArrayList<GameAssignement>() {
-            public boolean add(GameAssignement mt) {
-                super.add(mt);
-                this.sort(new GameAssignementComparator());
-                return true;
-            }
-        }
-        : assignments;
+    public Referee() {
+    }
+    
+    public Referee(UUID uuid, int experience, boolean isNonExist, SortedArrayList<GameAssignment> assignments) {
+        this.uuid = uuid;
+        this.experience = experience;
+        this.isNonExist = isNonExist;
+        this.assignments = assignments;
+    }
+    
+    @InverseRelationShadowVariable(sourceVariableName = "referee")
+    public SortedArrayList<GameAssignment> getAssignments() {
+        return assignments == null ? new SortedArrayList<>(new GameAssignmentComparator()):assignments;
     }
 }

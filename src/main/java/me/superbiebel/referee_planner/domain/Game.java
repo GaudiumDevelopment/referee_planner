@@ -1,16 +1,14 @@
 package me.superbiebel.referee_planner.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-
+@Builder(toBuilder = true)
 public class Game {
     @Getter
     private Location gameLocation;
     @Getter
-    private LocalDateTime arrivalTime;
-    @Getter
-    private LocalDateTime departureTime;
+    private TimePeriod gamePeriod;
     @Getter
     private int amountOfRefereesNeeded;
     
@@ -21,4 +19,16 @@ public class Game {
     private int softMinimumExperience;
     @Getter
     private int softMaximumExperience;
+    
+    public Game() {
+    }
+    
+    public Game(Location gameLocation, TimePeriod gamePeriod, int amountOfRefereesNeeded, int hardMinimumExperience, int softMinimumExperience, int softMaximumExperience) {
+        this.gameLocation = gameLocation;
+        this.gamePeriod = gamePeriod;
+        this.amountOfRefereesNeeded = amountOfRefereesNeeded;
+        this.hardMinimumExperience = hardMinimumExperience;
+        this.softMinimumExperience = softMinimumExperience;
+        this.softMaximumExperience = softMaximumExperience;
+    }
 }
