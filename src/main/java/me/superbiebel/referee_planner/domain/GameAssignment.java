@@ -26,13 +26,13 @@ public class GameAssignment {
         this.indexInGame = indexInGame;
     }
     
+    public GameAssignment() {
+    }
+    
     public GameAssignment(UUID gameUUID, Game game, Referee referee, int indexInGame) {
         this.gameUUID = gameUUID;
         this.game = game;
         this.referee = referee;
         this.indexInGame = indexInGame;
-    }
-    
-    public GameAssignment() {
     }
 }

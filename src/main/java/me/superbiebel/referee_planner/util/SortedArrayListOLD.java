@@ -5,11 +5,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class SortedArrayList<T> extends ArrayList<T> {
+public class SortedArrayListOLD<T> extends ArrayList<T> {
     
     public final Comparator<T> comparator;
     
-    public SortedArrayList(Comparator<T> comparator) {
+    public SortedArrayListOLD(Comparator<T> comparator) {
         this.comparator = comparator;
     }
     

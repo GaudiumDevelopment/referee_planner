@@ -1,4 +1,4 @@
-package me.superbiebel.tests;
+package me.superbiebel.referee_planner.domain.datagenerator;
 
 import me.superbiebel.referee_planner.domain.*;
 
@@ -14,34 +14,41 @@ public class RandomDataGenerator {
     public static final Random random = new Random();
     
     public static Game generateGame() {
-        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(0,10));
+        
         return Game.builder()
-                       .gameLocation(giveGameLocationWithinBelgium())
+                       .gameLocation(giveLocationWithinBelgium())
                        .amountOfRefereesNeeded(generateIntInRange(1, 4))
-                       .gamePeriod(TimePeriod.builder().start(time).end(time.plusHours(2)).build())
-                       .hardMinimumExperience(generateIntInRange(0,100))
-                       .softMinimumExperience(generateIntInRange(0,100))
-                       .softMaximumExperience(generateIntInRange(0,100))
+                       .gamePeriod(generateTimePeriod())
+                       .hardMinimumExperience(generateIntInRange(0,50))
+                       .softMinimumExperience(generateIntInRange(51,75))
+                       .softMaximumExperience(generateIntInRange(76,100))
                        .build();
+    }
+    
+    public static TimePeriod generateTimePeriod() {
+        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(0,10));
+        return TimePeriod.builder().start(time).end(time.plusHours(2)).build();
     }
     public static List<GameAssignment> generateGameAssignment(Game game) {
         ArrayList<GameAssignment> assignmentList = new ArrayList<>();
         for (int i = 0; i < game.getAmountOfRefereesNeeded(); i++) {
-            GameAssignment.builder()
-                    .gameUUID(UUID.randomUUID())
-                    .game(game)
-                    .indexInGame(i)
-                    .build();
+            assignmentList.add(GameAssignment.builder()
+                                       .gameUUID(UUID.randomUUID())
+                                       .game(game)
+                                       .indexInGame(i)
+                                       .build());
         }
+        game.setAssignments(assignmentList);
         return assignmentList;
     }
-    public static Referee refereeGenerator() {
+    public static Referee generateReferee() {
         return Referee.builder()
                        .uuid(UUID.randomUUID())
                        .experience(generateIntInRange(0,100))
+                       .homeLocation(giveLocationWithinBelgium())
                        .build();
     }
-    private static Location giveGameLocationWithinBelgium() {
+    private static Location giveLocationWithinBelgium() {
         return generateRandomLocation(51.338577536734896, 3.2130495807239408,49.596303708297754, 5.8097190890112085);
     }
     

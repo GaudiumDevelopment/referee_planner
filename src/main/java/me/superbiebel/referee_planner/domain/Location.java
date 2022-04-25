@@ -28,4 +28,13 @@ public class Location {
         double longitudeDiff = otherLocation.longitude - this.longitude;
         return (long) ceil(sqrt(latitudeDiff * latitudeDiff + longitudeDiff * longitudeDiff) * METERS_PER_DEGREE);
     }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Location{");
+        sb.append("latitude=").append(latitude);
+        sb.append(", longitude=").append(longitude);
+        sb.append('}');
+        return sb.toString();
+    }
 }
