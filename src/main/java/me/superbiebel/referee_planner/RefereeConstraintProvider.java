@@ -16,32 +16,33 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                 sufficientSoftMinimumExperienceLevel(constraintFactory),
                 sufficientSoftMaximumExperienceLevel(constraintFactory),
                 distanceSoftConstraint(constraintFactory),
-                NotEnoughRefereesConstraint(constraintFactory),
-                TooManyRefereesConstraint(constraintFactory)
+                notEnoughRefereesConstraint(constraintFactory),
+                tooManyRefereesConstraint(constraintFactory),
+                firstRefereeIsNotNonExistingConstraint(constraintFactory)
         };
     }
     public Constraint sufficientHardMinimumExperienceLevel(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(GameAssignment.class)
                        .filter(gameAssignment -> !gameAssignment.getReferee().isNonExist())
                        .filter(gameAssignment -> gameAssignment.getGame().getHardMinimumExperience() > gameAssignment.getReferee().getExperience())
-                       .penalize("Not enough exp (hard)", RefereeConstraintConfiguration.hardMinimumExperience, gameAssignment -> gameAssignment.getGame().getHardMinimumExperience() - gameAssignment.getReferee().getExperience());
+                       .penalizeConfigurable(RefereeConstraintConfiguration.SUFFICIENT_HARD_MINIMUM_EXPERIENCE_LEVEL, gameAssignment -> gameAssignment.getGame().getHardMinimumExperience() - gameAssignment.getReferee().getExperience());
     }
     public Constraint sufficientSoftMinimumExperienceLevel(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(GameAssignment.class)
                        .filter(gameAssignment -> !gameAssignment.getReferee().isNonExist())
                        .filter(gameAssignment -> gameAssignment.getGame().getSoftMinimumExperience() > gameAssignment.getReferee().getExperience())
-                       .penalize("Not enough exp (soft)", RefereeConstraintConfiguration.softMinimumExperience, gameAssignment -> gameAssignment.getGame().getSoftMinimumExperience() - gameAssignment.getReferee().getExperience());
+                       .penalizeConfigurable(RefereeConstraintConfiguration.SUFFICIENT_SOFT_MINIMUM_EXPERIENCE_LEVEL, gameAssignment -> gameAssignment.getGame().getSoftMinimumExperience() - gameAssignment.getReferee().getExperience());
     }
     public Constraint sufficientSoftMaximumExperienceLevel(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(GameAssignment.class)
                        .filter(gameAssignment -> !gameAssignment.getReferee().isNonExist())
                        .filter(gameAssignment -> gameAssignment.getGame().getSoftMaximumExperience() < gameAssignment.getReferee().getExperience())
-                       .penalize("Too much exp (soft)", RefereeConstraintConfiguration.softMaximumExperienceLevel, gameAssignment -> gameAssignment.getReferee().getExperience() - gameAssignment.getGame().getSoftMaximumExperience());
+                       .penalizeConfigurable(RefereeConstraintConfiguration.SUFFICIENT_SOFT_MAXIMUM_EXPERIENCE_LEVEL, gameAssignment -> gameAssignment.getReferee().getExperience() - gameAssignment.getGame().getSoftMaximumExperience());
     }
     public Constraint distanceSoftConstraint(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Referee.class)
                        .filter(referee -> !referee.isNonExist())
-                       .penalize("Distance soft", RefereeConstraintConfiguration.distanceSoft, referee -> {
+                       .penalizeConfigurable(RefereeConstraintConfiguration.DISTANCE_SOFT, referee -> {
                            ArrayList<GameAssignment> gameAssignments = new ArrayList<>(referee.getAssignments());
                            gameAssignments.sort(new GameAssignmentComparator());
                            
@@ -82,16 +83,23 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                        });
     }
     
-    public Constraint NotEnoughRefereesConstraint(ConstraintFactory constraintFactory) {
+    public Constraint notEnoughRefereesConstraint(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Game.class)
                 .filter(game -> game.getAssignments().stream().filter(gameAssignment -> gameAssignment.getReferee() != null)
                     .filter(gameAssignment -> !gameAssignment.getReferee().isNonExist()).count() < game.getAmountOfRefereesNeeded())
-                .penalize("refereeCount", RefereeConstraintConfiguration.notEnoughReferees);
+                       .penalizeConfigurable(RefereeConstraintConfiguration.NOT_ENOUGH_REFEREES);
     }
-    public Constraint TooManyRefereesConstraint(ConstraintFactory constraintFactory) {
+    public Constraint tooManyRefereesConstraint(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Game.class)
-                       .filter(game -> game.getAssignments().stream().filter(gameAssignment -> gameAssignment.getReferee() != null)
+                       .filter(game -> game.getAssignments()
+                                               .stream()
+                                               .filter(gameAssignment -> gameAssignment.getReferee() != null)
                            .filter(gameAssignment -> !gameAssignment.getReferee().isNonExist()).count() > game.getAmountOfRefereesNeeded())
-                       .penalize("refereeCount", RefereeConstraintConfiguration.tooMuchReferees);
+                       .penalizeConfigurable(RefereeConstraintConfiguration.TOO_MUCH_REFEREES, game -> 1);
+    }
+    public Constraint firstRefereeIsNotNonExistingConstraint(ConstraintFactory constraintFactory) {
+        return constraintFactory.forEach(GameAssignment.class)
+                       .filter(gameAssignment -> gameAssignment.getIndexInGame() == 0 && gameAssignment.getReferee().isNonExist())
+                       .penalizeConfigurable(RefereeConstraintConfiguration.FIRST_REFEREE_IS_NOT_NON_EXIST, game -> 1);
     }
 }

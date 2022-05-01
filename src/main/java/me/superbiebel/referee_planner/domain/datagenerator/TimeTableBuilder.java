@@ -10,15 +10,15 @@ import java.util.List;
 
 public class TimeTableBuilder {
     
-    private TimeTable.TimeTableBuilder timeTableBuilder = TimeTable.builder();
+    private TimeTable.TimeTableBuilder timeTableGenerator = TimeTable.builder();
     
-    public TimeTableBuilder amountOfReferees(int amount, boolean withNonExistent) {
+    public TimeTableBuilder amountOfReferees(int amount) {
         List<Referee> referees = new ArrayList<>(amount);
         for (int i = 0; i < amount; i++) {
             referees.add(RandomDataGenerator.generateReferee());
         }
         referees.add(Referee.builder().isNonExist(true).build());
-        timeTableBuilder.referees(referees);
+        timeTableGenerator.referees(referees);
         return this;
     }
     public TimeTableBuilder amountOfGames(int amount) {
@@ -26,13 +26,13 @@ public class TimeTableBuilder {
         for (int i = 0; i < amount; i++) {
             games.add(RandomDataGenerator.generateGame());
         }
-        timeTableBuilder.games(games);
+        timeTableGenerator.games(games);
         List<GameAssignment> assignments = new ArrayList<>();
         games.forEach(game-> assignments.addAll(RandomDataGenerator.generateGameAssignment(game)));
-        timeTableBuilder.gameAssignments(assignments);
+        timeTableGenerator.gameAssignments(assignments);
         return this;
     }
     public TimeTable build() {
-        return timeTableBuilder.build();
+        return timeTableGenerator.build();
     }
 }

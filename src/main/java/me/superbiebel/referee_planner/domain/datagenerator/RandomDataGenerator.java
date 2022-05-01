@@ -13,9 +13,13 @@ public class RandomDataGenerator {
     
     public static final Random random = new Random();
     
+    private RandomDataGenerator() {
+    }
+    
     public static Game generateGame() {
         
         return Game.builder()
+                       .gameUUID(UUID.randomUUID())
                        .gameLocation(giveLocationWithinBelgium())
                        .amountOfRefereesNeeded(generateIntInRange(1, 4))
                        .gamePeriod(generateTimePeriod())
@@ -33,7 +37,6 @@ public class RandomDataGenerator {
         ArrayList<GameAssignment> assignmentList = new ArrayList<>();
         for (int i = 0; i < game.getAmountOfRefereesNeeded(); i++) {
             assignmentList.add(GameAssignment.builder()
-                                       .gameUUID(UUID.randomUUID())
                                        .game(game)
                                        .indexInGame(i)
                                        .build());

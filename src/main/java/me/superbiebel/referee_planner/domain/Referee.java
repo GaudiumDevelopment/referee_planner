@@ -7,7 +7,9 @@ import lombok.Setter;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.InverseRelationShadowVariable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.UUID;
 
 @Builder(toBuilder = true)
 @PlanningEntity

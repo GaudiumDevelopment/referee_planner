@@ -16,8 +16,6 @@ import javax.inject.Inject;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @QuarkusTest
@@ -30,43 +28,45 @@ class SolverTests {
     
     
     @Test
-    void solverTest() throws ExecutionException, InterruptedException, IOException {
-        TimeTableBuilder timeTableBuilder = new TimeTableBuilder().amountOfGames(10).amountOfReferees(30, true);
-        
-        AtomicInteger solutionCount = new AtomicInteger();
-        SolverJob<TimeTable, Long> job = solverManager.solveAndListen(0L, t -> timeTableBuilder.build(), timeTable1 -> {
-            try {
-                ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-                //Converting the Object to JSONString
-                String jsonString = mapper.writeValueAsString(timeTable1);
-                String pathName = "/Users/omegabiebel/Desktop/test/optaplanner_test_referee" + solutionCount.get() + ".txt";
-                File f = new File(pathName);
-                f.createNewFile();
-                
-                BufferedWriter writer = new BufferedWriter(new FileWriter(pathName));
-                writer.write(jsonString);
+    void solverTest() {
+        Assertions.assertDoesNotThrow(() -> {
+            TimeTableBuilder timeTableBuilder = new TimeTableBuilder().amountOfGames(10).amountOfReferees(30);
     
-                writer.close();
-                solutionCount.getAndIncrement();
-                
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            AtomicInteger solutionCount = new AtomicInteger();
+            SolverJob<TimeTable, Long> job = solverManager.solveAndListen(0L, t -> timeTableBuilder.build(), timeTable1 -> {
+                try {
+                    ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+                    //Converting the Object to JSONString
+                    String jsonString = mapper.writeValueAsString(timeTable1);
+                    String pathName = "/Users/omegabiebel/Desktop/test/optaplanner_test_referee" + solutionCount.get() + ".txt";
+                    File f = new File(pathName);
+                    f.createNewFile();
+            
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(pathName));
+                    writer.write(jsonString);
+            
+                    writer.close();
+                    solutionCount.getAndIncrement();
+            
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            TimeTable solution = job.getFinalBestSolution();
+    
+            ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+            //Converting the Object to JSONString
+            String jsonString = mapper.writeValueAsString(solution);
+    
+            BufferedWriter writer = new BufferedWriter(new FileWriter("/Users/omegabiebel/Desktop/test/optaplanner_test_referee.txt"));
+            writer.write(jsonString);
+    
+            writer.close();
+    
+    
+            System.out.println(scoreManager.explainScore(solution));
+    
+            Log.info("done solving");
         });
-        TimeTable solution = job.getFinalBestSolution();
-    
-        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        //Converting the Object to JSONString
-        String jsonString = mapper.writeValueAsString(solution);
-    
-        BufferedWriter writer = new BufferedWriter(new FileWriter("/Users/omegabiebel/Desktop/test/optaplanner_test_referee.txt"));
-        writer.write(jsonString);
-    
-        writer.close();
-    
-    
-        System.out.println(scoreManager.explainScore(solution));
-        
-        Log.info("done solving");
     }
 }

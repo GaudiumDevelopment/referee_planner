@@ -11,6 +11,8 @@ import org.optaplanner.test.api.score.stream.ConstraintVerifier;
 
 import javax.inject.Inject;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @QuarkusTest
 class ConstraintProviderTests {
@@ -102,4 +104,90 @@ class ConstraintProviderTests {
         constraintVerifier.verifyThat(RefereeConstraintProvider::distanceSoftConstraint)
                 .given(referee).penalizesBy(homeLocation.getDistanceTo(location1) + location1.getDistanceTo(location2) + location2.getDistanceTo(location3) + location3.getDistanceTo(location4));
     }
+    
+    @Test
+    void notEnoughRefereesConstraintTest() {
+        Game game = Game.builder().amountOfRefereesNeeded(3).build();
+        GameAssignment gameAssignment0 = GameAssignment.builder()
+                                                 .indexInGame(0)
+                                                 .game(game)
+                                                 .referee(Referee.builder().isNonExist(false).build())
+                                                 .build();
+        GameAssignment gameAssignment1 = GameAssignment.builder()
+                                                 .indexInGame(1)
+                                                 .game(game)
+                                                 .referee(Referee.builder().isNonExist(true).build())
+                                                 .build();
+        GameAssignment gameAssignment2 = GameAssignment.builder()
+                                                 .indexInGame(2)
+                                                 .game(game)
+                                                 .referee(Referee.builder().isNonExist(true).build())
+                                                 .build();
+        List<GameAssignment> gameAssignmentList = new ArrayList<>();
+        gameAssignmentList.add(gameAssignment0);
+        gameAssignmentList.add(gameAssignment1);
+        gameAssignmentList.add(gameAssignment2);
+        game.setAssignments(gameAssignmentList);
+        
+        constraintVerifier.verifyThat(RefereeConstraintProvider::notEnoughRefereesConstraint)
+                .given(game)
+                .penalizesBy(1);
+    }
+    @Test
+    void tooManyRefereesConstraintTest() {
+        Game game = Game.builder().amountOfRefereesNeeded(1).build();
+        GameAssignment gameAssignment0 = GameAssignment.builder()
+                                                 .indexInGame(0)
+                                                 .game(game)
+                                                 .referee(Referee.builder().isNonExist(false).build())
+                                                 .build();
+        GameAssignment gameAssignment1 = GameAssignment.builder()
+                                                 .indexInGame(1)
+                                                 .game(game)
+                                                 .referee(Referee.builder().isNonExist(false).build())
+                                                 .build();
+        GameAssignment gameAssignment2 = GameAssignment.builder()
+                                                 .indexInGame(2)
+                                                 .game(game)
+                                                 .referee(Referee.builder().isNonExist(false).build())
+                                                 .build();
+        List<GameAssignment> gameAssignmentList = new ArrayList<>();
+        gameAssignmentList.add(gameAssignment0);
+        gameAssignmentList.add(gameAssignment1);
+        gameAssignmentList.add(gameAssignment2);
+        game.setAssignments(gameAssignmentList);
+        
+        constraintVerifier.verifyThat(RefereeConstraintProvider::tooManyRefereesConstraint)
+                .given(game)
+                .penalizesBy(1);
+    }
+    @Test
+    void firstRefereeIsNotNonExistingConstraintTest() {
+        Game game = Game.builder().amountOfRefereesNeeded(3).build();
+        GameAssignment gameAssignment0 = GameAssignment.builder()
+                                                 .indexInGame(0)
+                                                 .game(game)
+                                                 .referee(Referee.builder().isNonExist(true).build())
+                                                 .build();
+        GameAssignment gameAssignment1 = GameAssignment.builder()
+                                                 .indexInGame(1)
+                                                 .game(game)
+                                                 .referee(Referee.builder().isNonExist(false).build())
+                                                 .build();
+        GameAssignment gameAssignment2 = GameAssignment.builder()
+                                                 .indexInGame(2)
+                                                 .game(game)
+                                                 .referee(Referee.builder().isNonExist(false).build())
+                                                 .build();
+        List<GameAssignment> gameAssignmentList = new ArrayList<>();
+        gameAssignmentList.add(gameAssignment0);
+        gameAssignmentList.add(gameAssignment1);
+        gameAssignmentList.add(gameAssignment2);
+        game.setAssignments(gameAssignmentList);
+        
+        constraintVerifier.verifyThat(RefereeConstraintProvider::firstRefereeIsNotNonExistingConstraint)
+                .given(gameAssignment0, gameAssignment1, gameAssignment2)
+                .penalizesBy(1);
+    }
+    
 }

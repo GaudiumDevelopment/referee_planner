@@ -6,9 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.UUID;
 
 @Builder(toBuilder = true)
 public class Game {
+    
+    @Getter
+    private UUID gameUUID;
     
     @JsonIgnore
     @Setter
@@ -33,16 +37,8 @@ public class Game {
     public Game() {
     }
     
-    public Game(Location gameLocation, TimePeriod gamePeriod, int amountOfRefereesNeeded, int hardMinimumExperience, int softMinimumExperience, int softMaximumExperience) {
-        this.gameLocation = gameLocation;
-        this.gamePeriod = gamePeriod;
-        this.amountOfRefereesNeeded = amountOfRefereesNeeded;
-        this.hardMinimumExperience = hardMinimumExperience;
-        this.softMinimumExperience = softMinimumExperience;
-        this.softMaximumExperience = softMaximumExperience;
-    }
-    
-    public Game(List<GameAssignment> assignments, Location gameLocation, TimePeriod gamePeriod, int amountOfRefereesNeeded, int hardMinimumExperience, int softMinimumExperience, int softMaximumExperience) {
+    public Game(UUID gameUUID, List<GameAssignment> assignments, Location gameLocation, TimePeriod gamePeriod, int amountOfRefereesNeeded, int hardMinimumExperience, int softMinimumExperience, int softMaximumExperience) {
+        this.gameUUID = gameUUID;
         this.assignments = assignments;
         this.gameLocation = gameLocation;
         this.gamePeriod = gamePeriod;

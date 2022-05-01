@@ -22,6 +22,7 @@ public class TimeTable {
     private List<Game> games;
     
     @Getter
+    @Builder.Default
     @PlanningEntityCollectionProperty
     @ValueRangeProvider(id = "refereeList")
     List<Referee> referees = new ArrayList<>();
@@ -34,6 +35,7 @@ public class TimeTable {
     @PlanningScore
     HardSoftScore score;
     
+    @Builder.Default
     @ConstraintConfigurationProvider
     RefereeConstraintConfiguration constraintConfiguration = new RefereeConstraintConfiguration();
     
