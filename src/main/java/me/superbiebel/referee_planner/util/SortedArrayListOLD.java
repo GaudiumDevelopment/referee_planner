@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
+@Deprecated(forRemoval = true)
 public class SortedArrayListOLD<GameAssignment> extends ArrayList<me.superbiebel.referee_planner.domain.GameAssignment> {
     
     public final Comparator<me.superbiebel.referee_planner.domain.GameAssignment> comparator;
