@@ -96,20 +96,6 @@
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- my own SortedArrayList dependency -->
-        <dependency>
-            <groupId>me.superbiebel</groupId>
-            <artifactId>sorted_arraylist</artifactId>
-            <version>INDEV</version>
-        </dependency>
-
     </dependencies>
     <build>
         <plugins>

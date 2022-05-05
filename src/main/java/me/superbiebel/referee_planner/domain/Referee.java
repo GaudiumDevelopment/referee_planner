@@ -8,6 +8,7 @@ import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.InverseRelationShadowVariable;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -25,12 +26,13 @@ public class Referee {
     private Location homeLocation;
     @JsonIgnore
     @Setter
-    private ArrayList<GameAssignment> assignments;
+    private List<GameAssignment> assignments;
     
     public Referee() {
+        //For optaplanner
     }
     
-    public Referee(UUID uuid, int experience, boolean isNonExist, Location homeLocation, ArrayList<GameAssignment> assignments) {
+    public Referee(UUID uuid, int experience, boolean isNonExist, Location homeLocation, List<GameAssignment> assignments) {
         this.uuid = uuid;
         this.experience = experience;
         this.isNonExist = isNonExist;
@@ -39,7 +41,7 @@ public class Referee {
     }
     
     @InverseRelationShadowVariable(sourceVariableName = "referee")
-    public ArrayList<GameAssignment> getAssignments() {
+    public List<GameAssignment> getAssignments() {
         return Objects.requireNonNullElseGet(assignments, () -> (assignments = new ArrayList<>()));
     }
     public void addAssignment(GameAssignment assignment) {
