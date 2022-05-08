@@ -1,16 +1,20 @@
 package me.superbiebel.referee_planner.domain;
 
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Builder;
 import lombok.Getter;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
+@SuppressFBWarnings("EI_EXPOSE_REP2")
 @Builder(toBuilder = true)
 @PlanningEntity
 public class GameAssignment {
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     @Getter
     private Game game;
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     @Getter
     @PlanningVariable(valueRangeProviderRefs = "refereeList")
     private Referee referee;

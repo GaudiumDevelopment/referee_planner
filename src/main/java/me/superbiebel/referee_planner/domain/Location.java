@@ -9,6 +9,7 @@ import static java.lang.Math.sqrt;
 @Builder(toBuilder = true)
 public class Location {
     public static final double METERS_PER_DEGREE = 111_000;
+    public static final double STANDARD_DRIVING_SPEED = 70; //In kilometers per hour
     
     @Getter
     private double latitude;
@@ -23,10 +24,18 @@ public class Location {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+    
     public long getDistanceTo(Location otherLocation) {
         double latitudeDiff = otherLocation.latitude - this.latitude;
         double longitudeDiff = otherLocation.longitude - this.longitude;
         return (long) ceil(sqrt(latitudeDiff * latitudeDiff + longitudeDiff * longitudeDiff) * METERS_PER_DEGREE);
+    }
+    
+    /**
+     * @return time in minutes
+     */
+    public double getTravelTimeInMinutes(Location otherLocation) {
+        return getDistanceTo(otherLocation) / 1000d / STANDARD_DRIVING_SPEED * 60d;
     }
     
     @Override

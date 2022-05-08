@@ -1,7 +1,10 @@
 package me.superbiebel.referee_planner.domain;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.util.Comparator;
 
+@SuppressFBWarnings("SE_COMPARATOR_SHOULD_BE_SERIALIZABLE")
 public class GameAssignmentComparator implements Comparator<GameAssignment> {
     public GameAssignmentComparator() {
         //for optaplanner

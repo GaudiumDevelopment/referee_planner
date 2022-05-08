@@ -1,11 +1,14 @@
 package me.superbiebel.referee_planner.util;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
 @Deprecated(forRemoval = true)
+@SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
 public class SortedArrayListOLD<GameAssignment> extends ArrayList<me.superbiebel.referee_planner.domain.GameAssignment> {
     
     public final Comparator<me.superbiebel.referee_planner.domain.GameAssignment> comparator;

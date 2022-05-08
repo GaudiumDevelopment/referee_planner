@@ -106,6 +106,7 @@ class ConstraintProviderTests {
     }
     
     @Test
+    @Execution(ExecutionMode.CONCURRENT)
     void notEnoughRefereesConstraintTest() {
         Game game = Game.builder().amountOfRefereesNeeded(3).build();
         GameAssignment gameAssignment0 = GameAssignment.builder()
@@ -133,7 +134,9 @@ class ConstraintProviderTests {
                 .given(game)
                 .penalizesBy(1);
     }
+    
     @Test
+    @Execution(ExecutionMode.CONCURRENT)
     void tooManyRefereesConstraintTest() {
         Game game = Game.builder().amountOfRefereesNeeded(1).build();
         GameAssignment gameAssignment0 = GameAssignment.builder()
@@ -161,7 +164,9 @@ class ConstraintProviderTests {
                 .given(game)
                 .penalizesBy(1);
     }
+    
     @Test
+    @Execution(ExecutionMode.CONCURRENT)
     void firstRefereeIsNotNonExistingConstraintTest() {
         Game game = Game.builder().amountOfRefereesNeeded(3).build();
         GameAssignment gameAssignment0 = GameAssignment.builder()
@@ -187,6 +192,37 @@ class ConstraintProviderTests {
         
         constraintVerifier.verifyThat(RefereeConstraintProvider::firstRefereeIsNotNonExistingConstraint)
                 .given(gameAssignment0, gameAssignment1, gameAssignment2)
+                .penalizesBy(1);
+    }
+    
+    @Test
+    @Execution(ExecutionMode.CONCURRENT)
+    void sameRefereeMultipleGameIndexConstraintTest() {
+        Game game = Game.builder().amountOfRefereesNeeded(3).build();
+        Referee referee = Referee.builder().isNonExist(false).build();
+        GameAssignment gameAssignment0 = GameAssignment.builder()
+                                                 .indexInGame(0)
+                                                 .game(game)
+                                                 .referee(referee)
+                                                 .build();
+        GameAssignment gameAssignment1 = GameAssignment.builder()
+                                                 .indexInGame(1)
+                                                 .game(game)
+                                                 .referee(referee)
+                                                 .build();
+        GameAssignment gameAssignment2 = GameAssignment.builder()
+                                                 .indexInGame(2)
+                                                 .game(game)
+                                                 .referee(referee)
+                                                 .build();
+        List<GameAssignment> gameAssignmentList = new ArrayList<>();
+        gameAssignmentList.add(gameAssignment0);
+        gameAssignmentList.add(gameAssignment1);
+        gameAssignmentList.add(gameAssignment2);
+        game.setAssignments(gameAssignmentList);
+        
+        constraintVerifier.verifyThat(RefereeConstraintProvider::sameRefereeMultipleGameIndexConstraint)
+                .given(game)
                 .penalizesBy(1);
     }
     

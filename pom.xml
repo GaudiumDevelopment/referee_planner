@@ -89,6 +89,12 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jdk8</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+            <version>3.1.12</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.jetbrains</groupId>

@@ -18,9 +18,11 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                 distanceSoftConstraint(constraintFactory),
                 notEnoughRefereesConstraint(constraintFactory),
                 tooManyRefereesConstraint(constraintFactory),
-                firstRefereeIsNotNonExistingConstraint(constraintFactory)
+                firstRefereeIsNotNonExistingConstraint(constraintFactory),
+                sameRefereeMultipleGameIndexConstraint(constraintFactory)
         };
     }
+    
     public Constraint sufficientHardMinimumExperienceLevel(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(GameAssignment.class)
                        .filter(gameAssignment -> !gameAssignment.getReferee().isNonExist())
@@ -94,12 +96,51 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                        .filter(game -> game.getAssignments()
                                                .stream()
                                                .filter(gameAssignment -> gameAssignment.getReferee() != null)
-                           .filter(gameAssignment -> !gameAssignment.getReferee().isNonExist()).count() > game.getAmountOfRefereesNeeded())
-                       .penalizeConfigurable(RefereeConstraintConfiguration.TOO_MUCH_REFEREES, game -> 1);
+                                               .filter(gameAssignment -> !gameAssignment.getReferee().isNonExist()).count() > game.getAmountOfRefereesNeeded())
+                       .penalizeConfigurable(RefereeConstraintConfiguration.TOO_MUCH_REFEREES);
     }
+    
     public Constraint firstRefereeIsNotNonExistingConstraint(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(GameAssignment.class)
                        .filter(gameAssignment -> gameAssignment.getIndexInGame() == 0 && gameAssignment.getReferee().isNonExist())
-                       .penalizeConfigurable(RefereeConstraintConfiguration.FIRST_REFEREE_IS_NOT_NON_EXIST, game -> 1);
+                       .penalizeConfigurable(RefereeConstraintConfiguration.FIRST_REFEREE_IS_NOT_NON_EXIST);
+    }
+    
+    public Constraint sameRefereeMultipleGameIndexConstraint(ConstraintFactory constraintFactory) {
+        return constraintFactory.forEach(Game.class)
+                       .filter(game -> {
+                           Referee referee1 = null;
+                           Referee referee2 = null;
+                    
+                           boolean result = false;
+                           if ((referee1 = game.getAssignments().get(0).getReferee()) != null && (referee2 = game.getAssignments().get(1).getReferee()) != null) {
+                               result = referee1.equals(referee2);
+                           }
+                           if ((referee1 = game.getAssignments().get(1).getReferee()) != null && (referee2 = game.getAssignments().get(2).getReferee()) != null) {
+                               result = result || referee1.equals(referee2);
+                           }
+                           if ((referee1 = game.getAssignments().get(2).getReferee()) != null && (referee2 = game.getAssignments().get(0).getReferee()) != null) {
+                               result = result || referee1.equals(referee2);
+                           }
+                           return result;
+                       })
+                       .penalizeConfigurable(RefereeConstraintConfiguration.SAME_REFEREE_MULTIPLE_GAME_INDEX);
+    }
+    
+    public Constraint isInAvailabilityConstraint(ConstraintFactory constraintFactory) {
+        return constraintFactory.forEach(Referee.class)
+                       .filter(referee -> !referee.isNonExist())
+                       .penalizeConfigurable(RefereeConstraintConfiguration.IS_IN_AVAILABILITY_CONSTRAINT, referee -> {
+                           ArrayList<GameAssignment> gameAssignments = new ArrayList<>(referee.getAssignments());
+                           gameAssignments.sort(new GameAssignmentComparator());
+                    
+                    
+                           //if the journey from home to the first assignment is ok
+                           //time in minutes
+                           double fromHomeTravelTime = referee.getHomeLocation().getTravelTimeInMinutes(referee.getAssignments().get(0).getGame().getGameLocation());
+                    
+                    
+                           return 1;
+                       });
     }
 }

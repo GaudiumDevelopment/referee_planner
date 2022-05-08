@@ -1,6 +1,7 @@
 package me.superbiebel.referee_planner.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,12 +9,14 @@ import lombok.Setter;
 import java.util.List;
 import java.util.UUID;
 
+@SuppressFBWarnings("EI_EXPOSE_REP2")
 @Builder(toBuilder = true)
 public class Game {
     
     @Getter
     private UUID gameUUID;
     
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     @JsonIgnore
     @Setter
     @Getter
