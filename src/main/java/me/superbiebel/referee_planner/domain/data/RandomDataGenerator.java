@@ -1,4 +1,4 @@
-package me.superbiebel.referee_planner.domain.datagenerator;
+package me.superbiebel.referee_planner.domain.data;
 
 import me.superbiebel.referee_planner.domain.*;
 
@@ -56,7 +56,7 @@ public class RandomDataGenerator {
         }
         availabilityList = TimePeriod.compactAndSortTimePeriods(availabilityList);
         return Referee.builder()
-                       .uuid(UUID.randomUUID())
+                       .refereeUUID(UUID.randomUUID())
                        .experience(generateIntInRange(0, 100))
                        .homeLocation(giveLocationWithinBelgium())
                        .availabilityList(availabilityList)

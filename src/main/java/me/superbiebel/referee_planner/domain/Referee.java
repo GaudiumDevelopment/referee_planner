@@ -18,7 +18,7 @@ import java.util.UUID;
 @PlanningEntity
 public class Referee {
     @Getter
-    private UUID uuid;
+    private UUID refereeUUID;
     @Getter
     private int experience;
     @Getter
@@ -38,8 +38,8 @@ public class Referee {
         //For optaplanner
     }
     
-    public Referee(UUID uuid, int experience, boolean isNonExist, Location homeLocation, List<GameAssignment> assignments, List<TimePeriod> availabilityList) {
-        this.uuid = uuid;
+    public Referee(UUID refereeUUID, int experience, boolean isNonExist, Location homeLocation, List<GameAssignment> assignments, List<TimePeriod> availabilityList) {
+        this.refereeUUID = refereeUUID;
         this.experience = experience;
         this.isNonExist = isNonExist;
         this.homeLocation = homeLocation;

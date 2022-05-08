@@ -6,7 +6,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.logging.Log;
 import io.quarkus.test.junit.QuarkusTest;
 import me.superbiebel.referee_planner.domain.TimeTable;
-import me.superbiebel.referee_planner.domain.datagenerator.TimeTableBuilder;
+import me.superbiebel.referee_planner.domain.data.TimeTableBuilder;
 import org.junit.jupiter.api.*;
 import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;

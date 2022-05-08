@@ -1,4 +1,4 @@
-package me.superbiebel.referee_planner.domain.datagenerator;
+package me.superbiebel.referee_planner.domain.data;
 
 import me.superbiebel.referee_planner.domain.Game;
 import me.superbiebel.referee_planner.domain.GameAssignment;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class TimeTableBuilder {
     
-    private TimeTable.TimeTableBuilder timeTableGenerator = TimeTable.builder();
+    private final TimeTable.TimeTableBuilder timeTableGenerator = TimeTable.builder();
     
     public TimeTableBuilder amountOfReferees(int amount) {
         List<Referee> referees = new ArrayList<>(amount);

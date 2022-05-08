@@ -4,7 +4,7 @@ import io.quarkus.logging.Log;
 import io.quarkus.test.junit.QuarkusTest;
 import me.superbiebel.referee_planner.RefereeConstraintProvider;
 import me.superbiebel.referee_planner.domain.*;
-import me.superbiebel.referee_planner.domain.datagenerator.RandomDataGenerator;
+import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 import org.optaplanner.test.api.score.stream.ConstraintVerifier;
