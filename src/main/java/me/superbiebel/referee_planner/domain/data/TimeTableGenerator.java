@@ -8,31 +8,32 @@ import me.superbiebel.referee_planner.domain.TimeTable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TimeTableBuilder {
+public class TimeTableGenerator {
     
-    private final TimeTable.TimeTableBuilder timeTableGenerator = TimeTable.builder();
+    private final TimeTable.TimeTableBuilder timeTableBuilder = TimeTable.builder();
     
-    public TimeTableBuilder amountOfReferees(int amount) {
+    public TimeTableGenerator amountOfReferees(int amount) {
         List<Referee> referees = new ArrayList<>(amount);
         for (int i = 0; i < amount; i++) {
             referees.add(RandomDataGenerator.generateReferee());
         }
         referees.add(Referee.builder().isNonExist(true).build());
-        timeTableGenerator.referees(referees);
+        timeTableBuilder.referees(referees);
         return this;
     }
-    public TimeTableBuilder amountOfGames(int amount) {
+    
+    public TimeTableGenerator amountOfGames(int amount) {
         List<Game> games = new ArrayList<>(amount);
         for (int i = 0; i < amount; i++) {
             games.add(RandomDataGenerator.generateGame());
         }
-        timeTableGenerator.games(games);
+        timeTableBuilder.games(games);
         List<GameAssignment> assignments = new ArrayList<>();
-        games.forEach(game-> assignments.addAll(RandomDataGenerator.generateGameAssignment(game)));
-        timeTableGenerator.gameAssignments(assignments);
+        games.forEach(game -> assignments.addAll(RandomDataGenerator.generateGameAssignment(game)));
+        timeTableBuilder.gameAssignments(assignments);
         return this;
     }
     public TimeTable build() {
-        return timeTableGenerator.build();
+        return timeTableBuilder.build();
     }
 }

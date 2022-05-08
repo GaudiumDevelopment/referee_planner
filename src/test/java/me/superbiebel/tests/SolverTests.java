@@ -6,7 +6,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.logging.Log;
 import io.quarkus.test.junit.QuarkusTest;
 import me.superbiebel.referee_planner.domain.TimeTable;
-import me.superbiebel.referee_planner.domain.data.TimeTableBuilder;
+import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
 import org.junit.jupiter.api.*;
 import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
@@ -34,10 +34,10 @@ class SolverTests {
     @Test
     void solverTest() {
         Assertions.assertDoesNotThrow(() -> {
-            TimeTableBuilder timeTableBuilder = new TimeTableBuilder().amountOfGames(550).amountOfReferees(2000);
-            
+            TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(550).amountOfReferees(2000);
+    
             AtomicInteger solutionCount = new AtomicInteger();
-            SolverJob<TimeTable, Long> job = solverManager.solveAndListen(0L, t -> timeTableBuilder.build(), timeTable1 -> {
+            SolverJob<TimeTable, Long> job = solverManager.solveAndListen(0L, t -> timeTableGenerator.build(), timeTable1 -> {
                 try {
                     ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
                     //Converting the Object to JSONString
@@ -45,7 +45,7 @@ class SolverTests {
                     String pathName = "/Users/omegabiebel/Desktop/test/optaplanner_test_referee" + solutionCount.get() + ".json";
                     File f = new File(pathName);
                     f.createNewFile();
-                    
+            
                     BufferedWriter writer = new BufferedWriter(new FileWriter(pathName, StandardCharsets.UTF_8));
                     writer.write(jsonString);
                     
