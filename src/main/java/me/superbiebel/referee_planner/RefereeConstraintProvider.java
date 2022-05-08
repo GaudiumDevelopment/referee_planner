@@ -19,7 +19,8 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                 notEnoughRefereesConstraint(constraintFactory),
                 tooManyRefereesConstraint(constraintFactory),
                 firstRefereeIsNotNonExistingConstraint(constraintFactory),
-                sameRefereeMultipleGameIndexConstraint(constraintFactory)
+                sameRefereeMultipleGameIndexConstraint(constraintFactory),
+                isInAvailabilityConstraint(constraintFactory)
         };
     }
     
@@ -131,16 +132,51 @@ public class RefereeConstraintProvider implements ConstraintProvider {
         return constraintFactory.forEach(Referee.class)
                        .filter(referee -> !referee.isNonExist())
                        .penalizeConfigurable(RefereeConstraintConfiguration.IS_IN_AVAILABILITY_CONSTRAINT, referee -> {
+                           int hardAmount = 0;
+    
                            ArrayList<GameAssignment> gameAssignments = new ArrayList<>(referee.getAssignments());
                            gameAssignments.sort(new GameAssignmentComparator());
-                    
-                    
+    
+                           GameAssignment firstGameAssignment = referee.getAssignments().get(0);
                            //if the journey from home to the first assignment is ok
                            //time in minutes
-                           double fromHomeTravelTime = referee.getHomeLocation().getTravelTimeInMinutes(referee.getAssignments().get(0).getGame().getGameLocation());
-                    
-                    
-                           return 1;
+                           long fromHomeTravelTime = referee.getHomeLocation().getTravelTimeInMinutes(firstGameAssignment.getGame().getGameLocation());
+    
+                           TimePeriod homeToGamePeriod = TimePeriod.builder()
+                                                                 .start(firstGameAssignment.getGame().getGameRefereePeriod().getStart().minusMinutes(fromHomeTravelTime))
+                                                                 .end(firstGameAssignment.getGame().getGameRefereePeriod().getEnd())
+                                                                 .build();
+                           if (!referee.checkIfAvailable(homeToGamePeriod)) {
+                               hardAmount += 1;
+                           }
+                           //Check the current game period plus the travel time to the next period
+                           for (int i = 0; i < gameAssignments.size(); i++) {
+                               GameAssignment currentGameAssignment = gameAssignments.get(i);
+                               GameAssignment nextGameAssignment = gameAssignments.get(i + 1);
+                               TimePeriod fullTimePeriod = TimePeriod.builder()
+                                                                   .start(currentGameAssignment.getGame().getGameRefereePeriod().getStart())
+                                                                   .end(currentGameAssignment.getGame().getGameRefereePeriod().getEnd()
+                                                                                .plusMinutes(currentGameAssignment.getGame().getGameLocation()
+                                                                                                     .getTravelTimeInMinutes(nextGameAssignment.getGame().getGameLocation())))
+                                                                   .build();
+                               if (!referee.checkIfAvailable(fullTimePeriod)) {
+                                   TimePeriod fromGameToHomePeriod = TimePeriod.builder()
+                                                                             .start(currentGameAssignment.getGame().getGameRefereePeriod().getStart())
+                                                                             .end(currentGameAssignment.getGame().getGameRefereePeriod()
+                                                                                          .getEnd().plusMinutes(currentGameAssignment.getGame().getGameLocation().getTravelTimeInMinutes(referee.getHomeLocation()))).build();
+                                   if (referee.checkIfAvailable(fromGameToHomePeriod)) {
+                                       TimePeriod fromHomeToGamePeriod = TimePeriod.builder()
+                                                                                 .start(nextGameAssignment.getGame().getGameRefereePeriod().getStart().minusMinutes(referee.getHomeLocation().getTravelTimeInMinutes(nextGameAssignment.getGame().getGameLocation())))
+                                                                                 .end(currentGameAssignment.getGame().getGameRefereePeriod().getStart()).build();
+                                       if (!referee.checkIfAvailable(fromHomeToGamePeriod)) {
+                                           hardAmount += 1;
+                                       }
+                                   } else {
+                                       hardAmount += 1;
+                                   }
+                               }
+                           }
+                           return hardAmount;
                        });
     }
 }

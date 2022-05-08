@@ -22,17 +22,23 @@ public class RandomDataGenerator {
                        .gameUUID(UUID.randomUUID())
                        .gameLocation(giveLocationWithinBelgium())
                        .amountOfRefereesNeeded(generateIntInRange(1, 4))
-                       .gamePeriod(generateTimePeriod())
-                       .hardMinimumExperience(generateIntInRange(0,50))
-                       .softMinimumExperience(generateIntInRange(51,75))
-                       .softMaximumExperience(generateIntInRange(76,100))
+                       .gameRefereePeriod(generateTimePeriodForGame())
+                       .hardMinimumExperience(generateIntInRange(0, 50))
+                       .softMinimumExperience(generateIntInRange(51, 75))
+                       .softMaximumExperience(generateIntInRange(76, 100))
                        .build();
     }
     
-    public static TimePeriod generateTimePeriod() {
-        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(0,10));
+    public static TimePeriod generateTimePeriodForGame() {
+        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(0, 10));
         return TimePeriod.builder().start(time).end(time.plusHours(2)).build();
     }
+    
+    public static TimePeriod generateTimePeriodForReferee() {
+        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(0, 10));
+        return TimePeriod.builder().start(time).end(time.plusHours(generateIntInRange(3, 5))).build();
+    }
+    
     public static List<GameAssignment> generateGameAssignment(Game game) {
         ArrayList<GameAssignment> assignmentList = new ArrayList<>();
         for (int i = 0; i < game.getAmountOfRefereesNeeded(); i++) {
@@ -45,10 +51,16 @@ public class RandomDataGenerator {
         return assignmentList;
     }
     public static Referee generateReferee() {
+        List<TimePeriod> availabilityList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            availabilityList.add(generateTimePeriodForReferee());
+        }
+        availabilityList = TimePeriod.compactAndSortTimePeriods(availabilityList);
         return Referee.builder()
                        .uuid(UUID.randomUUID())
-                       .experience(generateIntInRange(0,100))
+                       .experience(generateIntInRange(0, 100))
                        .homeLocation(giveLocationWithinBelgium())
+                       .availabilityList(availabilityList)
                        .build();
     }
     private static Location giveLocationWithinBelgium() {

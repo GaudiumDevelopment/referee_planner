@@ -24,7 +24,7 @@ class ConstraintProviderTests {
     void hardMinimumExperienceTest() {
         Referee referee = Referee.builder().experience(0).build();
         GameAssignment gameAssignment = GameAssignment.builder()
-                                                .game(Game.builder().hardMinimumExperience(10).gamePeriod(RandomDataGenerator.generateTimePeriod()).build())
+                                                .game(Game.builder().hardMinimumExperience(10).gameRefereePeriod(RandomDataGenerator.generateTimePeriodForGame()).build())
                                                 .referee(referee).build();
         referee.addAssignment(gameAssignment);
         
@@ -36,7 +36,7 @@ class ConstraintProviderTests {
     void softMinimumExperienceTest() {
         Referee referee = Referee.builder().experience(0).build();
         GameAssignment gameAssignment = GameAssignment.builder()
-                                                .game(Game.builder().softMinimumExperience(10).gamePeriod(RandomDataGenerator.generateTimePeriod()).build())
+                                                .game(Game.builder().softMinimumExperience(10).gameRefereePeriod(RandomDataGenerator.generateTimePeriodForGame()).build())
                                                 .referee(referee).build();
         referee.addAssignment(gameAssignment);
         
@@ -49,7 +49,7 @@ class ConstraintProviderTests {
     void softMaximumExperienceTest() {
         Referee referee = Referee.builder().experience(20).build();
         GameAssignment gameAssignment = GameAssignment.builder()
-                                                .game(Game.builder().softMaximumExperience(10).gamePeriod(RandomDataGenerator.generateTimePeriod()).build())
+                                                .game(Game.builder().softMaximumExperience(10).gameRefereePeriod(RandomDataGenerator.generateTimePeriodForGame()).build())
                                                 .referee(referee).build();
         referee.addAssignment(gameAssignment);
         
@@ -82,14 +82,14 @@ class ConstraintProviderTests {
                                      .latitude(50.95930351484321)
                                      .longitude(4.617974045432108)
                                      .build();
-        
+    
         Referee referee = Referee.builder().homeLocation(homeLocation).build();
-        
-        GameAssignment gameAssignment1 = GameAssignment.builder().game(Game.builder().gameLocation(location1).gamePeriod(TimePeriod.builder().start(LocalDateTime.now().minusDays(4)).build()).build()).build();
-        GameAssignment gameAssignment2 = GameAssignment.builder().game(Game.builder().gameLocation(location2).gamePeriod(TimePeriod.builder().start(LocalDateTime.now().minusDays(3)).build()).build()).build();
-        GameAssignment gameAssignment3 = GameAssignment.builder().game(Game.builder().gameLocation(location3).gamePeriod(TimePeriod.builder().start(LocalDateTime.now().minusDays(2)).build()).build()).build();
-        GameAssignment gameAssignment4 = GameAssignment.builder().game(Game.builder().gameLocation(location4).gamePeriod(TimePeriod.builder().start(LocalDateTime.now().minusDays(1)).build()).build()).build();
-        
+    
+        GameAssignment gameAssignment1 = GameAssignment.builder().game(Game.builder().gameLocation(location1).gameRefereePeriod(TimePeriod.builder().start(LocalDateTime.now().minusDays(4)).build()).build()).build();
+        GameAssignment gameAssignment2 = GameAssignment.builder().game(Game.builder().gameLocation(location2).gameRefereePeriod(TimePeriod.builder().start(LocalDateTime.now().minusDays(3)).build()).build()).build();
+        GameAssignment gameAssignment3 = GameAssignment.builder().game(Game.builder().gameLocation(location3).gameRefereePeriod(TimePeriod.builder().start(LocalDateTime.now().minusDays(2)).build()).build()).build();
+        GameAssignment gameAssignment4 = GameAssignment.builder().game(Game.builder().gameLocation(location4).gameRefereePeriod(TimePeriod.builder().start(LocalDateTime.now().minusDays(1)).build()).build()).build();
+    
         referee.addAssignment(gameAssignment1);
         referee.addAssignment(gameAssignment2);
         referee.addAssignment(gameAssignment3);

@@ -25,7 +25,7 @@ public class Game {
     @Getter
     private Location gameLocation;
     @Getter
-    private TimePeriod gamePeriod;
+    private TimePeriod gameRefereePeriod; //the period that the referee has to be there
     @Getter
     private int amountOfRefereesNeeded;
     
@@ -40,11 +40,11 @@ public class Game {
     public Game() {
     }
     
-    public Game(UUID gameUUID, List<GameAssignment> assignments, Location gameLocation, TimePeriod gamePeriod, int amountOfRefereesNeeded, int hardMinimumExperience, int softMinimumExperience, int softMaximumExperience) {
+    public Game(UUID gameUUID, List<GameAssignment> assignments, Location gameLocation, TimePeriod gameRefereePeriod, int amountOfRefereesNeeded, int hardMinimumExperience, int softMinimumExperience, int softMaximumExperience) {
         this.gameUUID = gameUUID;
         this.assignments = assignments;
         this.gameLocation = gameLocation;
-        this.gamePeriod = gamePeriod;
+        this.gameRefereePeriod = gameRefereePeriod;
         this.amountOfRefereesNeeded = amountOfRefereesNeeded;
         this.hardMinimumExperience = hardMinimumExperience;
         this.softMinimumExperience = softMinimumExperience;

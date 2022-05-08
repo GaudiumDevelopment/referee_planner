@@ -55,4 +55,8 @@ public class Referee {
     public void addAssignment(GameAssignment assignment) {
         getAssignments().add(assignment);
     }
+    
+    public boolean checkIfAvailable(TimePeriod timePeriod) {
+        return availabilityList.stream().anyMatch(availability -> availability.doesEncompass(timePeriod));
+    }
 }

@@ -34,8 +34,8 @@ public class Location {
     /**
      * @return time in minutes
      */
-    public double getTravelTimeInMinutes(Location otherLocation) {
-        return getDistanceTo(otherLocation) / 1000d / STANDARD_DRIVING_SPEED * 60d;
+    public long getTravelTimeInMinutes(Location otherLocation) {
+        return (long) (getDistanceTo(otherLocation) / 1000d / STANDARD_DRIVING_SPEED * 60d);
     }
     
     @Override
