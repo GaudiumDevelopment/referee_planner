@@ -1,6 +1,5 @@
 package me.superbiebel.referee_planner.domain;
 
-import io.quarkus.logging.Log;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -56,7 +55,6 @@ public class TimePeriod {
         
         boolean adapted;
         do {
-            Log.debug("inputTimePeriodList before: " + inputTimePeriods.size());
             adapted = false;
             for (int i = 0; i < inputTimePeriods.size(); i++) {
                 if (inputTimePeriods.size() == i + 1) {
@@ -86,8 +84,6 @@ public class TimePeriod {
                 }
                 
             }
-            Log.debug("resultTimePeriodList: " + resultTimePeriodList);
-            Log.debug("resultTimePeriodListSize after: " + resultTimePeriodList.size());
             inputTimePeriods = new ArrayList<>(resultTimePeriodList);
             resultTimePeriodList.clear();
         } while (adapted);

@@ -17,7 +17,6 @@ public class RandomDataGenerator {
     }
     
     public static Game generateGame() {
-        
         return Game.builder()
                        .gameUUID(UUID.randomUUID())
                        .gameLocation(giveLocationWithinBelgium())
@@ -30,13 +29,13 @@ public class RandomDataGenerator {
     }
     
     public static TimePeriod generateTimePeriodForGame() {
-        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(0, 10));
+        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(1, 10)).plusHours(generateIntInRange(2, 24));
         return TimePeriod.builder().start(time).end(time.plusHours(2)).build();
     }
     
     public static TimePeriod generateTimePeriodForReferee() {
-        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(0, 10));
-        return TimePeriod.builder().start(time).end(time.plusHours(generateIntInRange(3, 5))).build();
+        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(0, 10)).plusHours(generateIntInRange(0, 24));
+        return TimePeriod.builder().start(time).end(time.plusHours(generateIntInRange(3, 6))).build();
     }
     
     public static List<GameAssignment> generateGameAssignment(Game game) {
@@ -52,7 +51,7 @@ public class RandomDataGenerator {
     }
     public static Referee generateReferee() {
         List<TimePeriod> availabilityList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             availabilityList.add(generateTimePeriodForReferee());
         }
         availabilityList = TimePeriod.compactAndSortTimePeriods(availabilityList);

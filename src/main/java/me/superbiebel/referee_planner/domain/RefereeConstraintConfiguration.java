@@ -37,7 +37,7 @@ public class RefereeConstraintConfiguration {
     HardSoftScore tooMuchReferees = HardSoftScore.ofSoft(20_000);
     
     @ConstraintWeight(FIRST_REFEREE_IS_NOT_NON_EXIST)
-    HardSoftScore firstReferenceIsNonExist = HardSoftScore.ofHard(1);
+    HardSoftScore firstReferenceIsNonExist = HardSoftScore.ofHard(100);
     
     @ConstraintWeight(FIRST_REFEREE_MORE_EXP_THEN_OTHER)
     HardSoftScore firstRefereeMoreExpThanOther = HardSoftScore.ofSoft(20_000);

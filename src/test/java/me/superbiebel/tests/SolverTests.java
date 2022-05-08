@@ -34,7 +34,7 @@ class SolverTests {
     @Test
     void solverTest() {
         Assertions.assertDoesNotThrow(() -> {
-            TimeTableBuilder timeTableBuilder = new TimeTableBuilder().amountOfGames(550).amountOfReferees(1000);
+            TimeTableBuilder timeTableBuilder = new TimeTableBuilder().amountOfGames(550).amountOfReferees(2000);
             
             AtomicInteger solutionCount = new AtomicInteger();
             SolverJob<TimeTable, Long> job = solverManager.solveAndListen(0L, t -> timeTableBuilder.build(), timeTable1 -> {
