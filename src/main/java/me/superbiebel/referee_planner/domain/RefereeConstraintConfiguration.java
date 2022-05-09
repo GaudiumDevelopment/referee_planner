@@ -2,7 +2,7 @@ package me.superbiebel.referee_planner.domain;
 
 import org.optaplanner.core.api.domain.constraintweight.ConstraintConfiguration;
 import org.optaplanner.core.api.domain.constraintweight.ConstraintWeight;
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings({"URF_UNREAD_FIELD", "URF_UNREAD_FIELD"})
 @ConstraintConfiguration
@@ -20,33 +20,33 @@ public class RefereeConstraintConfiguration {
     
     
     @ConstraintWeight(SUFFICIENT_HARD_MINIMUM_EXPERIENCE_LEVEL)
-    HardSoftScore hardMinimumExperience = HardSoftScore.ofHard(1);
+    HardMediumSoftLongScore hardMinimumExperience = HardMediumSoftLongScore.ofHard(1);
     
     @ConstraintWeight(SUFFICIENT_SOFT_MINIMUM_EXPERIENCE_LEVEL)
-    HardSoftScore softMinimumExperience = HardSoftScore.ofSoft(20_000);
+    HardMediumSoftLongScore softMinimumExperience = HardMediumSoftLongScore.ofSoft(20_000);
     
     @ConstraintWeight(SUFFICIENT_SOFT_MAXIMUM_EXPERIENCE_LEVEL)
-    HardSoftScore softMaximumExperienceLevel = HardSoftScore.ofSoft(20_000);
+    HardMediumSoftLongScore softMaximumExperienceLevel = HardMediumSoftLongScore.ofSoft(20_000);
     
     @ConstraintWeight(DISTANCE_SOFT)
-    HardSoftScore distanceSoft = HardSoftScore.ofSoft(1);
+    HardMediumSoftLongScore distanceSoft = HardMediumSoftLongScore.ofSoft(1);
     
     @ConstraintWeight(NOT_ENOUGH_REFEREES)
-    HardSoftScore notEnoughReferees = HardSoftScore.ofSoft(2_000_000);
+    HardMediumSoftLongScore notEnoughReferees = HardMediumSoftLongScore.ofMedium(1);
     @ConstraintWeight(TOO_MUCH_REFEREES)
-    HardSoftScore tooMuchReferees = HardSoftScore.ofSoft(20_000);
+    HardMediumSoftLongScore tooMuchReferees = HardMediumSoftLongScore.ofSoft(20_000);
     
     @ConstraintWeight(FIRST_REFEREE_IS_NOT_NON_EXIST)
-    HardSoftScore firstReferenceIsNonExist = HardSoftScore.ofHard(100);
+    HardMediumSoftLongScore firstReferenceIsNonExist = HardMediumSoftLongScore.ofHard(100);
     
     @ConstraintWeight(FIRST_REFEREE_MORE_EXP_THEN_OTHER)
-    HardSoftScore firstRefereeMoreExpThanOther = HardSoftScore.ofSoft(20_000);
+    HardMediumSoftLongScore firstRefereeMoreExpThanOther = HardMediumSoftLongScore.ofSoft(20_000);
     
     @ConstraintWeight(SAME_REFEREE_MULTIPLE_GAME_INDEX)
-    HardSoftScore sameRefereeMultipleGameIndex = HardSoftScore.ofHard(1);
+    HardMediumSoftLongScore sameRefereeMultipleGameIndex = HardMediumSoftLongScore.ofHard(1);
     
     @ConstraintWeight(IS_IN_AVAILABILITY_CONSTRAINT)
-    HardSoftScore isInAvailabilityConstraint = HardSoftScore.ofHard(1);
+    HardMediumSoftLongScore isInAvailabilityConstraint = HardMediumSoftLongScore.ofHard(1);
     
     
 }

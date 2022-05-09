@@ -29,12 +29,12 @@ public class RandomDataGenerator {
     }
     
     public static TimePeriod generateTimePeriodForGame() {
-        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(1, 10)).plusHours(generateIntInRange(2, 24));
+        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(1, 10)).plusHours(generateIntInRange(2, 24)).plusMinutes(generateIntInRange(1, 60));
         return TimePeriod.builder().start(time).end(time.plusHours(2)).build();
     }
     
     public static TimePeriod generateTimePeriodForReferee() {
-        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(0, 10)).plusHours(generateIntInRange(0, 24));
+        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(0, 10)).plusHours(generateIntInRange(0, 24)).plusMinutes(generateIntInRange(1, 60));
         return TimePeriod.builder().start(time).end(time.plusHours(generateIntInRange(3, 6))).build();
     }
     

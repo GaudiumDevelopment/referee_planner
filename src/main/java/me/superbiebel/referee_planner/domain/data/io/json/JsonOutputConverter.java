@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import me.superbiebel.referee_planner.domain.*;
 
+import java.util.UUID;
+
 public class JsonOutputConverter {
     
     public static JsonNode timeTableToJson(TimeTable timeTable) {
@@ -21,7 +23,7 @@ public class JsonOutputConverter {
         
         ArrayNode gameAssignmentNode = mapper.createArrayNode();
         timeTable.getGameAssignments().forEach(gameAssignment -> gameAssignmentNode.add(generateGameAssignmentObjectNode(mapper, gameAssignment)));
-        timeTableNode.set("gameAssignments", refereeNode);
+        timeTableNode.set("gameAssignments", gameAssignmentNode);
         return timeTableNode;
     }
     
@@ -54,19 +56,22 @@ public class JsonOutputConverter {
     public static ObjectNode generateRefereeObjectNode(ObjectMapper mapper, Referee referee) {
         ObjectNode refereeNode = mapper.createObjectNode();
         refereeNode.put("isNonExist", referee.isNonExist());
-        refereeNode.put("refereeUUID", referee.getRefereeUUID().toString());
-        refereeNode.put("experience", referee.getExperience());
-        refereeNode.set("homeLocation", generateLocationObjectNode(mapper, referee.getHomeLocation()));
-        ArrayNode availabilityNode = mapper.createArrayNode();
-        referee.getAvailabilityList().forEach(timePeriod -> availabilityNode.add(generateTimePeriodObjectNode(mapper, timePeriod)));
-        refereeNode.set("availability", availabilityNode);
+        if (!referee.isNonExist()) {
+            refereeNode.put("refereeUUID", referee.getRefereeUUID().toString());
+            refereeNode.put("experience", referee.getExperience());
+            refereeNode.set("homeLocation", generateLocationObjectNode(mapper, referee.getHomeLocation()));
+            ArrayNode availabilityNode = mapper.createArrayNode();
+            referee.getAvailabilityList().forEach(timePeriod -> availabilityNode.add(generateTimePeriodObjectNode(mapper, timePeriod)));
+            refereeNode.set("availability", availabilityNode);
+        }
         return refereeNode;
     }
     
     public static ObjectNode generateGameAssignmentObjectNode(ObjectMapper mapper, GameAssignment gameAssignment) {
         ObjectNode gameAssignmentNode = mapper.createObjectNode();
         gameAssignmentNode.put("gameUUID", gameAssignment.getGame().getGameUUID().toString());
-        gameAssignmentNode.put("refereeUUID", gameAssignment.getReferee().getRefereeUUID().toString());
+        UUID refereeUUID = gameAssignment.getReferee().getRefereeUUID() != null ? gameAssignment.getReferee().getRefereeUUID() : new UUID(0, 0);
+        gameAssignmentNode.put("refereeUUID", refereeUUID.toString());
         gameAssignmentNode.put("indexInGame", gameAssignment.getIndexInGame());
         return gameAssignmentNode;
     }

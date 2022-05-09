@@ -117,7 +117,7 @@ class ConstraintProviderTests {
         GameAssignment gameAssignment1 = GameAssignment.builder()
                                                  .indexInGame(1)
                                                  .game(game)
-                                                 .referee(Referee.builder().isNonExist(true).build())
+                                                 .referee(Referee.builder().isNonExist(false).build())
                                                  .build();
         GameAssignment gameAssignment2 = GameAssignment.builder()
                                                  .indexInGame(2)
@@ -129,10 +129,10 @@ class ConstraintProviderTests {
         gameAssignmentList.add(gameAssignment1);
         gameAssignmentList.add(gameAssignment2);
         game.setAssignments(gameAssignmentList);
-        
+    
         constraintVerifier.verifyThat(RefereeConstraintProvider::notEnoughRefereesConstraint)
                 .given(game)
-                .penalizesBy(1);
+                .penalizesBy(0);
     }
     
     @Test

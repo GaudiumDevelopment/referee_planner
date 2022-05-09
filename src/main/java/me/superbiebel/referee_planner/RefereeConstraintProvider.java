@@ -71,9 +71,15 @@ public class RefereeConstraintProvider implements ConstraintProvider {
     
     public Constraint notEnoughRefereesConstraint(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Game.class)
-                .filter(game -> game.getAssignments().stream().filter(gameAssignment -> gameAssignment.getReferee() != null)
-                    .filter(gameAssignment -> !gameAssignment.getReferee().isNonExist()).count() < game.getAmountOfRefereesNeeded())
-                       .penalizeConfigurable(RefereeConstraintConfiguration.NOT_ENOUGH_REFEREES);
+                       .penalizeConfigurableLong(RefereeConstraintConfiguration.NOT_ENOUGH_REFEREES,
+                               game -> {
+                                   int refereeCount = (int) game.getAssignments().stream().filter(assignment -> assignment.getReferee() != null).filter(assignment -> !assignment.getReferee().isNonExist()).count();
+                                   int amount = 0;
+                                   if (refereeCount > game.getAmountOfRefereesNeeded()) {
+                                       amount = game.getAmountOfRefereesNeeded() - refereeCount;
+                                   }
+                                   return amount;
+                               });
     }
     public Constraint tooManyRefereesConstraint(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Game.class)

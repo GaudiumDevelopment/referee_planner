@@ -17,7 +17,7 @@ public class TimeTableGenerator {
         for (int i = 0; i < amount; i++) {
             referees.add(RandomDataGenerator.generateReferee());
         }
-        referees.add(Referee.builder().isNonExist(true).build());
+        //referees.add(Referee.builder().isNonExist(true).build());
         timeTableBuilder.referees(referees);
         return this;
     }

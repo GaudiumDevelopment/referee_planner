@@ -9,7 +9,7 @@ import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.ProblemFactCollectionProperty;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class TimeTable {
     
     @Getter
     @PlanningScore
-    HardSoftScore score;
+    HardMediumSoftLongScore score;
     
     @Builder.Default
     @ConstraintConfigurationProvider
@@ -47,14 +47,14 @@ public class TimeTable {
     public TimeTable() {
     }
     
-    public TimeTable(List<Game> games, List<Referee> referees, List<GameAssignment> gameAssignments, HardSoftScore score) {
+    public TimeTable(List<Game> games, List<Referee> referees, List<GameAssignment> gameAssignments, HardMediumSoftLongScore score) {
         this.games = games;
         this.referees = referees;
         this.gameAssignments = gameAssignments;
         this.score = score;
     }
     
-    public TimeTable(List<Game> games, List<Referee> referees, List<GameAssignment> gameAssignments, HardSoftScore score, RefereeConstraintConfiguration constraintConfiguration) {
+    public TimeTable(List<Game> games, List<Referee> referees, List<GameAssignment> gameAssignments, HardMediumSoftLongScore score, RefereeConstraintConfiguration constraintConfiguration) {
         this.games = games;
         this.referees = referees;
         this.gameAssignments = gameAssignments;

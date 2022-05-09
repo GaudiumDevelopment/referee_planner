@@ -7,6 +7,7 @@ import io.quarkus.logging.Log;
 import io.quarkus.test.junit.QuarkusTest;
 import me.superbiebel.referee_planner.domain.TimeTable;
 import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
+import me.superbiebel.referee_planner.domain.data.io.json.JsonOutputConverter;
 import org.junit.jupiter.api.*;
 import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
@@ -30,7 +31,7 @@ class SolverTests {
     ScoreManager<TimeTable, HardSoftScore> scoreManager;
     
     
-    @SuppressFBWarnings({"RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"})
+    @SuppressFBWarnings({"RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"})
     @Test
     void solverTest() {
         Assertions.assertDoesNotThrow(() -> {
@@ -39,9 +40,7 @@ class SolverTests {
             AtomicInteger solutionCount = new AtomicInteger();
             SolverJob<TimeTable, Long> job = solverManager.solveAndListen(0L, t -> timeTableGenerator.build(), timeTable1 -> {
                 try {
-                    ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-                    //Converting the Object to JSONString
-                    String jsonString = mapper.writeValueAsString(timeTable1.getGameAssignments());
+                    String jsonString = JsonOutputConverter.timeTableToJson(timeTable1).toPrettyString();
                     String pathName = "/Users/omegabiebel/Desktop/test/optaplanner_test_referee" + solutionCount.get() + ".json";
                     File f = new File(pathName);
                     f.createNewFile();
