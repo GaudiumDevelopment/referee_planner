@@ -16,10 +16,12 @@
                 <minutesSpentLimit>1</minutesSpentLimit>
             </termination>
         </solver>
+        <problemBenchmarks>
+            <problemStatisticType>BEST_SCORE</problemStatisticType>
+            <problemStatisticType>SCORE_CALCULATION_SPEED</problemStatisticType>
+        </problemBenchmarks>
     </inheritedSolverBenchmark>
-
-    <solverBenchmarkBluePrint>
-        <solverBenchmarkBluePrintType>EVERY_CONSTRUCTION_HEURISTIC_TYPE_WITH_EVERY_LOCAL_SEARCH_TYPE
-        </solverBenchmarkBluePrintType>
-    </solverBenchmarkBluePrint>
+    <solverBenchmark>
+        <name>FIRST_FIT - TABU_SEARCH</name>
+    </solverBenchmark>
 </plannerBenchmark>
