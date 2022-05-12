@@ -195,4 +195,11 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                            return hardAmount;
                        });
     }
+    public Constraint GameAssignmentDoesNotOverlap(ConstraintFactory constraintFactory) {
+        return constraintFactory.forEach(Referee.class)
+                .filter(referee -> !referee.isNonExist())
+                .penalizeConfigurable(RefereeConstraintConfiguration.GAMEASSIGNMENT_DOES_NOT_OVERLAP, referee -> {
+                    return 0;
+                )};
+    });
 }
