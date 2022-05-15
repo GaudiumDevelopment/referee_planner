@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
+import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.InverseRelationShadowVariable;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Builder(toBuilder = true)
 @PlanningEntity
 public class Referee {
+    @PlanningId
     @Getter
     private UUID refereeUUID;
     @Getter
@@ -58,5 +60,37 @@ public class Referee {
     
     public boolean checkIfAvailable(TimePeriod timePeriod) {
         return availabilityList.stream().anyMatch(availability -> availability.doesEncompass(timePeriod));
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Referee{");
+        sb.append("refereeUUID=").append(refereeUUID);
+        sb.append('}');
+        return sb.toString();
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
+        Referee referee = (Referee) o;
+        
+        if (getExperience() != referee.getExperience()) return false;
+        if (isNonExist() != referee.isNonExist()) return false;
+        if (!getRefereeUUID().equals(referee.getRefereeUUID())) return false;
+        if (!getHomeLocation().equals(referee.getHomeLocation())) return false;
+        return getAvailabilityList().equals(referee.getAvailabilityList());
+    }
+    
+    @Override
+    public int hashCode() {
+        int result = getRefereeUUID().hashCode();
+        result = 31 * result + getExperience();
+        result = 31 * result + (isNonExist() ? 1 : 0);
+        result = 31 * result + getHomeLocation().hashCode();
+        result = 31 * result + getAvailabilityList().hashCode();
+        return result;
     }
 }

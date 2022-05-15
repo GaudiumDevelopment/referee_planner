@@ -5,7 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.logging.Log;
 import io.quarkus.test.junit.QuarkusTest;
-import me.superbiebel.referee_planner.domain.TimeTable;
+import me.superbiebel.referee_planner.domain.RefereeTimeTable;
 import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
 import me.superbiebel.referee_planner.domain.data.io.json.JsonOutputConverter;
 import org.junit.jupiter.api.*;
@@ -19,6 +19,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressFBWarnings({"DM_DEFAULT_ENCODING", "DMI_HARDCODED_ABSOLUTE_FILENAME"})
@@ -26,58 +27,62 @@ import java.util.concurrent.atomic.AtomicInteger;
 class SolverTests {
     
     @Inject
-    SolverManager<TimeTable, Long> solverManager;
+    SolverManager<RefereeTimeTable, Long> solverManager;
     @Inject
-    ScoreManager<TimeTable, HardSoftScore> scoreManager;
+    ScoreManager<RefereeTimeTable, HardSoftScore> scoreManager;
     
     
     @SuppressFBWarnings({"RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"})
     @Test
     void solverTest() {
         Assertions.assertDoesNotThrow(() -> {
-            TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(550).amountOfReferees(2000);
+            TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(300);
+    
+            String outputPath = "local/solverOutput/" + LocalDateTime.now() + "/";
+            File outputDir = new File(outputPath);
+            outputDir.mkdirs();
     
             AtomicInteger solutionCount = new AtomicInteger();
-            SolverJob<TimeTable, Long> job = solverManager.solveAndListen(0L, t -> timeTableGenerator.build(), timeTable1 -> {
+            SolverJob<RefereeTimeTable, Long> job = solverManager.solveAndListen(0L, t -> timeTableGenerator.build(), timeTable1 -> {
                 try {
-                    String jsonString = JsonOutputConverter.timeTableToJson(timeTable1).toPrettyString();
-                    String pathName = "/Users/omegabiebel/Desktop/test/optaplanner_test_referee" + solutionCount.get() + ".json";
-                    File f = new File(pathName);
-                    f.createNewFile();
+                    String jsonString = JsonOutputConverter.refereeTimeTableToJson(timeTable1).toPrettyString();
+                    String pathName = outputPath + "solution-" + solutionCount.get() + ".json";
+                    File outputFile = new File(pathName);
+                    outputFile.createNewFile();
             
                     BufferedWriter writer = new BufferedWriter(new FileWriter(pathName, StandardCharsets.UTF_8));
                     writer.write(jsonString);
-                    
+            
                     writer.close();
-                    
-                    String scoreExplanationPathName = "/Users/omegabiebel/Desktop/test/optaplanner_test_referee" + solutionCount.get() + ".txt";
-                    File ScoreExplanationFile = new File(scoreExplanationPathName);
-                    ScoreExplanationFile.createNewFile();
-                    
+            
+                    String scoreExplanationPathName = outputPath + "explanation-" + solutionCount.get() + ".txt";
+                    File scoreExplanationFile = new File(scoreExplanationPathName);
+                    scoreExplanationFile.createNewFile();
+            
                     BufferedWriter scoreExplanationWriter = new BufferedWriter(new FileWriter(scoreExplanationPathName));
                     scoreExplanationWriter.write(String.valueOf(scoreManager.explainScore(timeTable1)));
-                    
+            
                     scoreExplanationWriter.close();
                     solutionCount.getAndIncrement();
-                    
+            
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
-            TimeTable solution = job.getFinalBestSolution();
-            
+            RefereeTimeTable solution = job.getFinalBestSolution();
+    
             ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
             //Converting the Object to JSONString
-            String jsonString = mapper.writeValueAsString(solution);
-            
-            BufferedWriter writer = new BufferedWriter(new FileWriter("/Users/omegabiebel/Desktop/test/optaplanner_test_referee.txt"));
+            String jsonString = JsonOutputConverter.refereeTimeTableToJson(solution).toPrettyString();
+    
+            BufferedWriter writer = new BufferedWriter(new FileWriter("/Users/omegabiebel/Desktop/test/optaplanner_test_referee.json"));
             writer.write(jsonString);
-            
+    
             writer.close();
-            
-            
+    
+    
             System.out.println(scoreManager.explainScore(solution));
-            
+    
             Log.info("done solving");
         });
     }

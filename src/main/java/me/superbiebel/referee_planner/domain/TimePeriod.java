@@ -140,4 +140,31 @@ public class TimePeriod {
         } while (adapted);
         return resultingTimePeriodList;*/
     }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("TimePeriod{");
+        sb.append("start=").append(start);
+        sb.append(", end=").append(end);
+        sb.append('}');
+        return sb.toString();
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
+        TimePeriod that = (TimePeriod) o;
+        
+        if (!getStart().equals(that.getStart())) return false;
+        return getEnd().equals(that.getEnd());
+    }
+    
+    @Override
+    public int hashCode() {
+        int result = getStart().hashCode();
+        result = 31 * result + getEnd().hashCode();
+        return result;
+    }
 }

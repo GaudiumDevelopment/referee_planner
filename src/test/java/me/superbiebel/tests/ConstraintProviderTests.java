@@ -18,7 +18,7 @@ import java.util.List;
 class ConstraintProviderTests {
     
     @Inject
-    ConstraintVerifier<RefereeConstraintProvider, TimeTable> constraintVerifier;
+    ConstraintVerifier<RefereeConstraintProvider, RefereeTimeTable> constraintVerifier;
     
     @Test
     void hardMinimumExperienceTest() {
@@ -131,8 +131,8 @@ class ConstraintProviderTests {
         game.setAssignments(gameAssignmentList);
     
         constraintVerifier.verifyThat(RefereeConstraintProvider::notEnoughRefereesConstraint)
-                .given(game)
-                .penalizesBy(0);
+                .given(gameAssignment0, gameAssignment1, gameAssignment2)
+                .penalizesBy(1);
     }
     
     @Test
@@ -189,10 +189,10 @@ class ConstraintProviderTests {
         gameAssignmentList.add(gameAssignment1);
         gameAssignmentList.add(gameAssignment2);
         game.setAssignments(gameAssignmentList);
-        
-        constraintVerifier.verifyThat(RefereeConstraintProvider::firstRefereeIsNotNonExistingConstraint)
-                .given(gameAssignment0, gameAssignment1, gameAssignment2)
-                .penalizesBy(1);
+    
+        constraintVerifier.verifyThat(RefereeConstraintProvider::nonExistingAlwaysLowerIndex)
+                .given(game)
+                .penalizesBy(2);
     }
     
     @Test
@@ -301,19 +301,19 @@ class ConstraintProviderTests {
         gameAssignment2.setReferee(referee);
         referee.addAssignment(gameAssignment2);
         game2.setAssignments(RandomDataGenerator.generateGameAssignment(game2));
-        
+    
         Game game3 = Game.builder().gameLocation(gameLocation3)
                              .gameRefereePeriod(gameTimePeriod3)
                              .amountOfRefereesNeeded(1)
                              .build();
         GameAssignment gameAssignment3 = RandomDataGenerator.generateGameAssignment(game3).get(0);
-        
+    
         gameAssignment3.setReferee(referee);
         referee.addAssignment(gameAssignment3);
         game3.setAssignments(RandomDataGenerator.generateGameAssignment(game3));
-        
-        
-        constraintVerifier.verifyThat(RefereeConstraintProvider::isInAvailabilityConstraint)
+    
+    
+        constraintVerifier.verifyThat(RefereeConstraintProvider::isPhysicallyPossibleConstraint)
                 .given(referee)
                 .penalizesBy(1);
     }

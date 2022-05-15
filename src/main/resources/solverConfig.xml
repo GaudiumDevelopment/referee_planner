@@ -1,0 +1,23 @@
+<solver xmlns="https://www.optaplanner.org/xsd/solver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://www.optaplanner.org/xsd/solver https://www.optaplanner.org/xsd/solver/solver.xsd">
+    <environmentMode>FAST_ASSERT</environmentMode>
+    <solutionClass>me.superbiebel.referee_planner.domain.RefereeTimeTable</solutionClass>
+    <entityClass>me.superbiebel.referee_planner.domain.GameAssignment</entityClass>
+    <entityClass>me.superbiebel.referee_planner.domain.Referee</entityClass>
+    <scoreDirectorFactory>
+        <constraintProviderClass>me.superbiebel.referee_planner.RefereeConstraintProvider
+        </constraintProviderClass>
+    </scoreDirectorFactory>
+    <termination>
+        <minutesSpentLimit>3</minutesSpentLimit>
+    </termination>
+    <constructionHeuristic>
+        <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>
+    </constructionHeuristic>
+    <localSearch>
+        <termination>
+            <minutesSpentLimit>1</minutesSpentLimit>
+        </termination>
+        <localSearchType>HILL_CLIMBING</localSearchType>
+    </localSearch>
+</solver>

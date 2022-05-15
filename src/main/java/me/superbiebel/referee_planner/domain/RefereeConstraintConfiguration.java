@@ -13,11 +13,11 @@ public class RefereeConstraintConfiguration {
     public static final String DISTANCE_SOFT = "DISTANCE_SOFT";
     public static final String NOT_ENOUGH_REFEREES = "NOT_ENOUGH_REFEREES";
     public static final String TOO_MUCH_REFEREES = "TOO MUCH REFEREES";
-    public static final String FIRST_REFEREE_IS_NOT_NON_EXIST = "FIRST REFEREE IS NON EXIST";
+    public static final String NONEXIST_REF_NOT_ON_LOWER_INDEX_EXIST_REFEREE = "FIRST REFEREE IS NON EXIST";
     public static final String FIRST_REFEREE_MORE_EXP_THEN_OTHER = "FIRST REFEREE MORE EXP THEN OTHER";
     public static final String SAME_REFEREE_MULTIPLE_GAME_INDEX = "SAME REFEREE MULTIPLE GAME INDEX";
     public static final String IS_IN_AVAILABILITY_CONSTRAINT = "IS IN AVAILABILITY CONSTRAINT";
-    public static final String GAMEASSIGNMENT_DOES_NOT_OVERLAP = "GAMEASSIGNMENT DOES NOT OVERLAP";
+    public static final String GAMEASSIGNMENT_DOES_NOT_OVERLAP_PER_REFEREE = "GAMEASSIGNMENT DOES NOT OVERLAP";
     
     
     @ConstraintWeight(SUFFICIENT_HARD_MINIMUM_EXPERIENCE_LEVEL)
@@ -37,8 +37,8 @@ public class RefereeConstraintConfiguration {
     @ConstraintWeight(TOO_MUCH_REFEREES)
     HardMediumSoftLongScore tooMuchReferees = HardMediumSoftLongScore.ofSoft(20_000);
     
-    @ConstraintWeight(FIRST_REFEREE_IS_NOT_NON_EXIST)
-    HardMediumSoftLongScore firstReferenceIsNonExist = HardMediumSoftLongScore.ofHard(100);
+    @ConstraintWeight(NONEXIST_REF_NOT_ON_LOWER_INDEX_EXIST_REFEREE)
+    HardMediumSoftLongScore firstReferenceIsNonExist = HardMediumSoftLongScore.ofHard(1);
     
     @ConstraintWeight(FIRST_REFEREE_MORE_EXP_THEN_OTHER)
     HardMediumSoftLongScore firstRefereeMoreExpThanOther = HardMediumSoftLongScore.ofSoft(20_000);
@@ -49,6 +49,6 @@ public class RefereeConstraintConfiguration {
     @ConstraintWeight(IS_IN_AVAILABILITY_CONSTRAINT)
     HardMediumSoftLongScore isInAvailabilityConstraint = HardMediumSoftLongScore.ofHard(1);
     
-    @ConstraintWeight(GAMEASSIGNMENT_DOES_NOT_OVERLAP)
-    HardMediumSoftLongScore gameAssignmentDoesNotOverlap = HardMediumSoftLongScore.ofHard(1);
+    @ConstraintWeight(GAMEASSIGNMENT_DOES_NOT_OVERLAP_PER_REFEREE)
+    HardMediumSoftLongScore gameAssignmentDoesNotOverlapPerReferee = HardMediumSoftLongScore.ofHard(1);
 }

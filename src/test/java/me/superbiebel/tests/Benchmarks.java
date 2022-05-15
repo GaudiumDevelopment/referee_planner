@@ -11,10 +11,21 @@ import org.optaplanner.benchmark.api.PlannerBenchmarkFactory;
 class Benchmarks {
     
     @Test
-    void benchmarkEveryAlgorithm() {
-        PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource("benchmark.xml");
-        PlannerBenchmark benchmark = benchmarkFactory.buildPlannerBenchmark(
-                new TimeTableGenerator().amountOfGames(550).amountOfReferees(2000).build());
-        benchmark.benchmarkAndShowReportInBrowser();
+    void benchmark() {
+        Assertions.assertDoesNotThrow(() -> {
+            PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource("benchmark.xml");
+            PlannerBenchmark benchmark = benchmarkFactory.buildPlannerBenchmark();
+            benchmark.benchmarkAndShowReportInBrowser();
+        });
+    }
+    
+    @Test
+    void benchmarkSolver() {
+        Assertions.assertDoesNotThrow(() -> {
+            PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromSolverConfigXmlResource("bestSolverConfig.xml");
+            PlannerBenchmark benchmark = benchmarkFactory.buildPlannerBenchmark(
+                    new TimeTableGenerator().amountOfGames(300).amountOfReferees(900).build());
+            benchmark.benchmarkAndShowReportInBrowser();
+        });
     }
 }

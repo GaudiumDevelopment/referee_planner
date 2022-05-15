@@ -1,6 +1,7 @@
-package me.superbiebel.referee_planner.domain;
+package me.superbiebel.referee_planner.domain.comparators;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import me.superbiebel.referee_planner.domain.GameAssignment;
 
 import java.util.Comparator;
 

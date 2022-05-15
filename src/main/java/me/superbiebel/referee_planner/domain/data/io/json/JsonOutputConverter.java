@@ -6,23 +6,24 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import me.superbiebel.referee_planner.domain.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class JsonOutputConverter {
     
-    public static JsonNode timeTableToJson(TimeTable timeTable) {
+    public static JsonNode refereeTimeTableToJson(RefereeTimeTable refereeTimeTable) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode timeTableNode = mapper.createObjectNode();
         ArrayNode gameNode = mapper.createArrayNode();
-        timeTable.getGames().forEach(game -> gameNode.add(generateGameObjectNode(mapper, game)));
+        refereeTimeTable.getGames().forEach(game -> gameNode.add(generateGameObjectNode(mapper, game)));
         timeTableNode.set("games", gameNode);
         
         ArrayNode refereeNode = mapper.createArrayNode();
-        timeTable.getReferees().forEach(referee -> refereeNode.add(generateRefereeObjectNode(mapper, referee)));
+        refereeTimeTable.getReferees().forEach(referee -> refereeNode.add(generateRefereeObjectNode(mapper, referee)));
         timeTableNode.set("referees", refereeNode);
         
         ArrayNode gameAssignmentNode = mapper.createArrayNode();
-        timeTable.getGameAssignments().forEach(gameAssignment -> gameAssignmentNode.add(generateGameAssignmentObjectNode(mapper, gameAssignment)));
+        refereeTimeTable.getGameAssignments().forEach(gameAssignment -> gameAssignmentNode.add(generateGameAssignmentObjectNode(mapper, gameAssignment)));
         timeTableNode.set("gameAssignments", gameAssignmentNode);
         return timeTableNode;
     }
@@ -48,9 +49,19 @@ public class JsonOutputConverter {
     
     public static ObjectNode generateTimePeriodObjectNode(ObjectMapper mapper, TimePeriod timePeriod) {
         ObjectNode timePeriodNode = mapper.createObjectNode();
-        timePeriodNode.put("start", timePeriod.getStart().toString());
-        timePeriodNode.put("end", timePeriod.getEnd().toString());
+        timePeriodNode.set("start", generateLocalDateTimeObjectNode(mapper, timePeriod.getStart()));
+        timePeriodNode.set("end", generateLocalDateTimeObjectNode(mapper, timePeriod.getEnd()));
         return timePeriodNode;
+    }
+    
+    public static ObjectNode generateLocalDateTimeObjectNode(ObjectMapper mapper, LocalDateTime localDateTime) {
+        ObjectNode dateTimeNode = mapper.createObjectNode();
+        dateTimeNode.put("year", localDateTime.getYear());
+        dateTimeNode.put("month", localDateTime.getMonthValue());
+        dateTimeNode.put("day", localDateTime.getDayOfMonth());
+        dateTimeNode.put("hour", localDateTime.getHour());
+        dateTimeNode.put("minute", localDateTime.getMinute());
+        return dateTimeNode;
     }
     
     public static ObjectNode generateRefereeObjectNode(ObjectMapper mapper, Referee referee) {
@@ -70,12 +81,14 @@ public class JsonOutputConverter {
     public static ObjectNode generateGameAssignmentObjectNode(ObjectMapper mapper, GameAssignment gameAssignment) {
         ObjectNode gameAssignmentNode = mapper.createObjectNode();
         gameAssignmentNode.put("gameUUID", gameAssignment.getGame().getGameUUID().toString());
-        UUID refereeUUID = gameAssignment.getReferee().getRefereeUUID() != null ? gameAssignment.getReferee().getRefereeUUID() : new UUID(0, 0);
-        gameAssignmentNode.put("refereeUUID", refereeUUID.toString());
+        if (gameAssignment.getReferee() != null) {
+            UUID refereeUUID = gameAssignment.getReferee().getRefereeUUID() != null ? gameAssignment.getReferee().getRefereeUUID() : new UUID(0, 0);
+            gameAssignmentNode.put("refereeUUID", refereeUUID.toString());
+        }
         gameAssignmentNode.put("indexInGame", gameAssignment.getIndexInGame());
+        gameAssignmentNode.put("assignmentUUID", gameAssignment.getAssignmentUUID().toString());
         return gameAssignmentNode;
     }
-    
     private JsonOutputConverter() {
     }
 }

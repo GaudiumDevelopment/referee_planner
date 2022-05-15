@@ -13,6 +13,8 @@ public class RandomDataGenerator {
     
     public static final Random random = new Random();
     
+    public static final LocalDateTime ZERO_DATE_TIME = LocalDateTime.of(2022, 1, 1, 1, 1);
+    
     private RandomDataGenerator() {
     }
     
@@ -20,30 +22,32 @@ public class RandomDataGenerator {
         return Game.builder()
                        .gameUUID(UUID.randomUUID())
                        .gameLocation(giveLocationWithinBelgium())
-                       .amountOfRefereesNeeded(generateIntInRange(1, 4))
+                       .amountOfRefereesNeeded(generateIntInRange(2, 4))
                        .gameRefereePeriod(generateTimePeriodForGame())
                        .hardMinimumExperience(generateIntInRange(0, 50))
                        .softMinimumExperience(generateIntInRange(51, 75))
-                       .softMaximumExperience(generateIntInRange(76, 100))
+                       .softMaximumExperience(generateIntInRange(76, 101))
+                       .priority(generateIntInRange(0, 51))
                        .build();
     }
     
     public static TimePeriod generateTimePeriodForGame() {
-        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(1, 10)).plusHours(generateIntInRange(2, 24)).plusMinutes(generateIntInRange(1, 60));
+        LocalDateTime time = ZERO_DATE_TIME.plusDays(generateIntInRange(1, 10)).plusHours(generateIntInRange(2, 24)).plusMinutes(generateIntInRange(1, 60));
         return TimePeriod.builder().start(time).end(time.plusHours(2)).build();
     }
     
     public static TimePeriod generateTimePeriodForReferee() {
-        LocalDateTime time = LocalDateTime.now().plusDays(generateIntInRange(0, 10)).plusHours(generateIntInRange(0, 24)).plusMinutes(generateIntInRange(1, 60));
+        LocalDateTime time = ZERO_DATE_TIME.plusDays(generateIntInRange(0, 10)).plusHours(generateIntInRange(0, 24)).plusMinutes(generateIntInRange(1, 60));
         return TimePeriod.builder().start(time).end(time.plusHours(generateIntInRange(3, 6))).build();
     }
     
     public static List<GameAssignment> generateGameAssignment(Game game) {
-        ArrayList<GameAssignment> assignmentList = new ArrayList<>();
+        List<GameAssignment> assignmentList = new ArrayList<>();
         for (int i = 0; i < game.getAmountOfRefereesNeeded(); i++) {
             assignmentList.add(GameAssignment.builder()
                                        .game(game)
                                        .indexInGame(i)
+                                       .assignmentUUID(UUID.randomUUID())
                                        .build());
         }
         game.setAssignments(assignmentList);

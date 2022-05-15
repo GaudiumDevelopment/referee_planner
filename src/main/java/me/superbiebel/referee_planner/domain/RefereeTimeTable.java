@@ -17,7 +17,7 @@ import java.util.List;
 @SuppressFBWarnings("EI_EXPOSE_REP2")
 @Builder(toBuilder = true)
 @PlanningSolution
-public class TimeTable {
+public class RefereeTimeTable {
     @SuppressFBWarnings("EI_EXPOSE_REP")
     @Getter
     @ProblemFactCollectionProperty
@@ -44,21 +44,34 @@ public class TimeTable {
     @ConstraintConfigurationProvider
     RefereeConstraintConfiguration constraintConfiguration = new RefereeConstraintConfiguration();
     
-    public TimeTable() {
+    public RefereeTimeTable() {
     }
     
-    public TimeTable(List<Game> games, List<Referee> referees, List<GameAssignment> gameAssignments, HardMediumSoftLongScore score) {
-        this.games = games;
-        this.referees = referees;
-        this.gameAssignments = gameAssignments;
-        this.score = score;
-    }
-    
-    public TimeTable(List<Game> games, List<Referee> referees, List<GameAssignment> gameAssignments, HardMediumSoftLongScore score, RefereeConstraintConfiguration constraintConfiguration) {
+    public RefereeTimeTable(List<Game> games, List<Referee> referees, List<GameAssignment> gameAssignments, HardMediumSoftLongScore score, RefereeConstraintConfiguration constraintConfiguration) {
         this.games = games;
         this.referees = referees;
         this.gameAssignments = gameAssignments;
         this.score = score;
         this.constraintConfiguration = constraintConfiguration;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
+        RefereeTimeTable that = (RefereeTimeTable) o;
+        
+        if (!getGames().equals(that.getGames())) return false;
+        if (!getReferees().equals(that.getReferees())) return false;
+        return getGameAssignments().equals(that.getGameAssignments());
+    }
+    
+    @Override
+    public int hashCode() {
+        int result = getGames().hashCode();
+        result = 31 * result + getReferees().hashCode();
+        result = 31 * result + getGameAssignments().hashCode();
+        return result;
     }
 }
