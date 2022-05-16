@@ -19,14 +19,18 @@ public class RandomDataGenerator {
     }
     
     public static Game generateGame() {
+        int hardMinimum = generateIntInRange(0, 40);
+        int softMinimum = generateIntInRange(hardMinimum, 95);
+        int softMaximum = generateIntInRange(softMinimum, 100);
+    
         return Game.builder()
                        .gameUUID(UUID.randomUUID())
                        .gameLocation(giveLocationWithinBelgium())
                        .amountOfRefereesNeeded(generateIntInRange(2, 4))
                        .gameRefereePeriod(generateTimePeriodForGame())
-                       .hardMinimumExperience(generateIntInRange(0, 50))
-                       .softMinimumExperience(generateIntInRange(51, 75))
-                       .softMaximumExperience(generateIntInRange(76, 101))
+                       .hardMinimumExperience(hardMinimum)
+                       .softMinimumExperience(softMinimum)
+                       .softMaximumExperience(softMaximum)
                        .priority(generateIntInRange(0, 51))
                        .build();
     }
@@ -62,7 +66,6 @@ public class RandomDataGenerator {
         return Referee.builder()
                        .refereeUUID(UUID.randomUUID())
                        .experience(generateIntInRange(0, 100))
-                       .homeLocation(giveLocationWithinBelgium())
                        .availabilityList(availabilityList)
                        .build();
     }

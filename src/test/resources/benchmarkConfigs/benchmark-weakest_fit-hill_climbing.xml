@@ -11,7 +11,7 @@
             <solutionFileIOClass>me.superbiebel.referee_planner.domain.data.io.json.TimeTableJsonIO
             </solutionFileIOClass>
             <writeOutputSolutionEnabled>true</writeOutputSolutionEnabled>
-            <inputSolutionFile>datasets/referee_dataset0.json</inputSolutionFile>
+            <inputSolutionFile>datasets/dataset-1.json</inputSolutionFile>
             <problemStatisticType>BEST_SCORE</problemStatisticType>
             <problemStatisticType>SCORE_CALCULATION_SPEED</problemStatisticType>
         </problemBenchmarks>
@@ -26,19 +26,20 @@
                 <constraintProviderClass>me.superbiebel.referee_planner.RefereeConstraintProvider
                 </constraintProviderClass>
             </scoreDirectorFactory>
-            <termination>
+            <!--<termination>
                 <minutesSpentLimit>3</minutesSpentLimit>
-            </termination>
+            </termination>-->
             <constructionHeuristic>
                 <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>
             </constructionHeuristic>
             <localSearch>
                 <termination>
-                    <minutesSpentLimit>1</minutesSpentLimit>
+                    <minutesSpentLimit>20</minutesSpentLimit>
                 </termination>
                 <localSearchType>HILL_CLIMBING</localSearchType>
             </localSearch>
         </solver>
     </solverBenchmark>
+
 
 </plannerBenchmark>

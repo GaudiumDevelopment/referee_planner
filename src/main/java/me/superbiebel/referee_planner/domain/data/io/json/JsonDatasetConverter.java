@@ -39,6 +39,7 @@ public class JsonDatasetConverter {
                        .hardMinimumExperience(gameNode.get("hardMinimumExperience").asInt())
                        .softMinimumExperience(gameNode.get("softMinimumExperience").asInt())
                        .softMaximumExperience(gameNode.get("softMaximumExperience").asInt())
+                       .priority(gameNode.get("priority").asInt())
                        .build();
     }
     

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @SuppressFBWarnings("EI_EXPOSE_REP2")
 @Builder(toBuilder = true)
@@ -26,25 +27,22 @@ public class Referee {
     @Getter
     @Builder.Default
     private boolean isNonExist = false;
-    @Getter
-    private Location homeLocation;
     @JsonIgnore
     @Setter
     private List<GameAssignment> assignments;
     
     @SuppressFBWarnings("EI_EXPOSE_REP")
     @Getter
-    private List<TimePeriod> availabilityList;
+    private List<Availability> availabilityList;
     
     public Referee() {
         //For optaplanner
     }
     
-    public Referee(UUID refereeUUID, int experience, boolean isNonExist, Location homeLocation, List<GameAssignment> assignments, List<TimePeriod> availabilityList) {
+    public Referee(UUID refereeUUID, int experience, boolean isNonExist, List<GameAssignment> assignments, List<Availability> availabilityList) {
         this.refereeUUID = refereeUUID;
         this.experience = experience;
         this.isNonExist = isNonExist;
-        this.homeLocation = homeLocation;
         this.assignments = assignments;
         this.availabilityList = availabilityList;
     }
@@ -59,7 +57,15 @@ public class Referee {
     }
     
     public boolean checkIfAvailable(TimePeriod timePeriod) {
-        return availabilityList.stream().anyMatch(availability -> availability.doesEncompass(timePeriod));
+        return availabilityList.stream().anyMatch(availability -> availability.getTimePeriod().doesEncompass(timePeriod));
+    }
+    
+    public Availability getCorrespondingAvailability(GameAssignment assignment) {
+        List<Availability> foundAvailabilities = availabilityList.stream().filter(availability -> availability.getTimePeriod().doesEncompass(assignment.getGame().getGameRefereePeriod())).collect(Collectors.toList());
+        if (foundAvailabilities.size() > 1) {
+            throw new IllegalStateException("multiple availabilities found for gameAssigment: " + assignment.toString() + "in referee: " + this);
+        }
+        return foundAvailabilities.size() == 1 ? foundAvailabilities.get(0) : null;
     }
     
     @Override
@@ -80,7 +86,6 @@ public class Referee {
         if (getExperience() != referee.getExperience()) return false;
         if (isNonExist() != referee.isNonExist()) return false;
         if (!getRefereeUUID().equals(referee.getRefereeUUID())) return false;
-        if (!getHomeLocation().equals(referee.getHomeLocation())) return false;
         return getAvailabilityList().equals(referee.getAvailabilityList());
     }
     
@@ -89,7 +94,6 @@ public class Referee {
         int result = getRefereeUUID().hashCode();
         result = 31 * result + getExperience();
         result = 31 * result + (isNonExist() ? 1 : 0);
-        result = 31 * result + getHomeLocation().hashCode();
         result = 31 * result + getAvailabilityList().hashCode();
         return result;
     }

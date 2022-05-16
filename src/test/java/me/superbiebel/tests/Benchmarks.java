@@ -13,7 +13,7 @@ class Benchmarks {
     @Test
     void benchmark() {
         Assertions.assertDoesNotThrow(() -> {
-            PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource("benchmark.xml");
+            PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource("benchmarkConfigs/benchmark-weakest_fit-hill_climbing.xml");
             PlannerBenchmark benchmark = benchmarkFactory.buildPlannerBenchmark();
             benchmark.benchmarkAndShowReportInBrowser();
         });
@@ -25,6 +25,15 @@ class Benchmarks {
             PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromSolverConfigXmlResource("bestSolverConfig.xml");
             PlannerBenchmark benchmark = benchmarkFactory.buildPlannerBenchmark(
                     new TimeTableGenerator().amountOfGames(300).amountOfReferees(900).build());
+            benchmark.benchmarkAndShowReportInBrowser();
+        });
+    }
+    
+    @Test
+    void benchmarkALL() {
+        Assertions.assertDoesNotThrow(() -> {
+            PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource("benchmarkConfigs/benchmark_ALL.xml");
+            PlannerBenchmark benchmark = benchmarkFactory.buildPlannerBenchmark();
             benchmark.benchmarkAndShowReportInBrowser();
         });
     }

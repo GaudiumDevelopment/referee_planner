@@ -7,6 +7,9 @@ import java.util.Comparator;
 
 @SuppressFBWarnings("SE_COMPARATOR_SHOULD_BE_SERIALIZABLE")
 public class GameAssignmentComparator implements Comparator<GameAssignment> {
+    
+    public static final GameAssignmentComparator COMPARATOR = new GameAssignmentComparator();
+    
     public GameAssignmentComparator() {
         //for optaplanner
     }

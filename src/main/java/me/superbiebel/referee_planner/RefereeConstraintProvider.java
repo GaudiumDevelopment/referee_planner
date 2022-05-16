@@ -8,7 +8,9 @@ import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RefereeConstraintProvider implements ConstraintProvider {
     @Override
@@ -48,6 +50,13 @@ public class RefereeConstraintProvider implements ConstraintProvider {
         return constraintFactory.forEach(Referee.class)
                        .filter(referee -> !referee.isNonExist())
                        .penalizeConfigurable(RefereeConstraintConfiguration.DISTANCE_SOFT, referee -> {
+                           
+                           
+                           
+                           
+                           
+                           
+                           /*-------OLD IMPLEMENTATION--------
                            ArrayList<GameAssignment> gameAssignments = new ArrayList<>(referee.getAssignments());
                            gameAssignments.sort(new GameAssignmentComparator());
                            
@@ -67,7 +76,7 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                                }
                                lastAssignment = assignment;
                            }
-                           return (int) amount;
+                           return (int) amount;*/
                        });
     }
     
@@ -156,12 +165,86 @@ public class RefereeConstraintProvider implements ConstraintProvider {
         return constraintFactory.forEach(Referee.class)
                        .filter(referee -> !referee.isNonExist())
                        .penalizeConfigurable(RefereeConstraintConfiguration.IS_IN_AVAILABILITY_CONSTRAINT, referee -> {
+                           /*
+                           What this block of code actually tries to accomplish
+                           1. Assign every gameAssignment to the availability it belongs.
+                              If it can't be linked to an availability then it is already outside them and a hard score should be given.
+                           2. Check in each availability if everything is physically and still fall in between the availability time timePeriod.
+                           
+                           EVERY AVAILABILITY IS A BLOCK OF ITS OWN! THERE WILL BE NO CALCULATING THE DISTANCE IN BETWEEN AVAILABILITIES!!!
+                            */
+                           int amount = 0;
+                           boolean earlyAbort = false;
+                    
+                           // action described in 1.
+                           Map<Availability, List<GameAssignment>> availabilityGameAssignmentMap = new HashMap<>();
+                           for (GameAssignment gameAssignment : referee.getAssignments()) {
+                               Availability availability;
+                               List<GameAssignment> assignmentList;
+                               if ((availability = referee.getCorrespondingAvailability(gameAssignment)) != null) {
+                                   if ((assignmentList = availabilityGameAssignmentMap.get(availability)) == null) {
+                                       assignmentList = new ArrayList<>();
+                                       assignmentList.add(gameAssignment);
+                                       availabilityGameAssignmentMap.put(availability, assignmentList);
+                                   } else {
+                                       assignmentList.add(gameAssignment);
+                                   }
+                               } else {
+                                   amount++;
+                                   earlyAbort = true;
+                               }
+                           }
+                           if (earlyAbort) {
+                               return amount;
+                           }
+                    
+                           //action described in 2.
+                           for (Map.Entry<Availability, List<GameAssignment>> entry : availabilityGameAssignmentMap.entrySet()) {
+                               List<GameAssignment> assignmentList = entry.getValue();
+                               boolean inloopEarlyAbort = false;
+                               if (assignmentList.isEmpty()) {
+                                   continue;
+                               }
+                               Availability availability = entry.getKey();
+                        
+                               assignmentList.sort(GameAssignmentComparator.COMPARATOR);
+                               TimePeriod availabilityPeriod = availability.getTimePeriod();
+                        
+                               long fromBeginTravelTime = availability.getStartLocation().getTravelTimeInMinutes(assignmentList.get(0).getGame().getGameLocation());
+                        
+                               if (availabilityPeriod.getStart().isAfter(assignmentList.get(0).getGame().getGameRefereePeriod().getStart().minusMinutes(fromBeginTravelTime))) {
+                                   amount++;
+                                   earlyAbort = true;
+                                   continue;
+                               }
+                               for (int i = 0, assignmentListSize = assignmentList.size(); i < assignmentListSize; i++) {
+                                   GameAssignment currentGameAssignment = assignmentList.get(i);
+                                   GameAssignment nextGameAssignment = assignmentList.get(i + 1);
+                                   if (currentGameAssignment.getGame().getGameLocation().equals(nextGameAssignment.getGame().getGameLocation())) {
+                                       if (currentGameAssignment.getGame().getGameRefereePeriod().getEnd().equals(nextGameAssignment.getGame().getGamePeriod().getStart())
+                                                   || currentGameAssignment.getGame().getGameRefereePeriod().getEnd().isBefore(nextGameAssignment.getGame().getGamePeriod().getStart())) {
+                                           continue;
+                                       } else if (currentGameAssignment.getGame().getGameRefereePeriod().getEnd().isAfter(nextGameAssignment.getGame().getGamePeriod().getStart())) {
+                                           amount++;
+                                           break;
+                                       }
+                                   } else {
+                                       //TODO: calculate driving time, make sure they physically can get there without teleporting
+                                   }
+                               }
+                           }
+                           if (earlyAbort) {
+                               return amount;
+                           }
+                    
+                           return amount;
+                       });
+    }
+                           /* ------
                            int amount = 0;
                            if (referee.getAssignments().isEmpty()) {
                                return 0;
                            }
-                           //put every timeperiod in here, so we can check if they ever overlap
-                           List<TimePeriod> bigTimePeriodList = new ArrayList<>();
                     
                            ArrayList<GameAssignment> gameAssignments = new ArrayList<>(referee.getAssignments());
                            gameAssignments.sort(new GameAssignmentComparator());
@@ -198,12 +281,11 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                                                                   .start(firstGameAssignment.getGame().getGameRefereePeriod().getStart().minusMinutes(fromHomeTravelTime))
                                                                   .end(firstGameAssignment.getGame().getGameRefereePeriod().getStart())
                                                                   .build();
-                           bigTimePeriodList.add(homeToGamePeriod1);
-                           //Log.tracef("Home to game period begin: %s and end: %s", homeToGamePeriod1.getStart(), homeToGamePeriod1.getEnd());
+                           //Log.tracef("Home to game timePeriod begin: %s and end: %s", homeToGamePeriod1.getStart(), homeToGamePeriod1.getEnd());
                            if (!referee.checkIfAvailable(homeToGamePeriod1)) {
                                amount++;
                            }
-                           //Check the current game period plus the travel time to the next period
+                           //Check the current game timePeriod plus the travel time to the next timePeriod
                            for (int i = 0; i < gameAssignments.size(); i++) {
                                GameAssignment currentGameAssignment = gameAssignments.get(i);
                                //if it is the last gameAssignment
@@ -212,8 +294,7 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                                                                               .start(currentGameAssignment.getGame().getGameRefereePeriod().getStart())
                                                                               .end(currentGameAssignment.getGame().getGameRefereePeriod()
                                                                                            .getEnd().plusMinutes(currentGameAssignment.getGame().getGameLocation().getTravelTimeInMinutes(referee.getHomeLocation()))).build();
-                                   bigTimePeriodList.add(fromGameToHomePeriod1);
-                                   //Log.tracef("game to home period (end) iteration: %s; begin: %s and end: %s", i, fromGameToHomePeriod1.getStart(), fromGameToHomePeriod1.getEnd());
+                                   //Log.tracef("game to home timePeriod (end) iteration: %s; begin: %s and end: %s", i, fromGameToHomePeriod1.getStart(), fromGameToHomePeriod1.getEnd());
                                    if (!referee.checkIfAvailable(fromGameToHomePeriod1)) {
                                        amount++;
                                    }
@@ -227,21 +308,18 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                                                                                     .plusMinutes(currentGameAssignment.getGame().getGameLocation()
                                                                                                          .getTravelTimeInMinutes(nextGameAssignment.getGame().getGameLocation())))
                                                                        .build();
-                               bigTimePeriodList.add(loopFullTimePeriod);
-                               //Log.tracef("full time period iteration: %s; begin: %s and end: %s", i, loopFullTimePeriod.getStart(), loopFullTimePeriod.getEnd());
+                               //Log.tracef("full time timePeriod iteration: %s; begin: %s and end: %s", i, loopFullTimePeriod.getStart(), loopFullTimePeriod.getEnd());
                                if (!referee.checkIfAvailable(loopFullTimePeriod)) {
                                    TimePeriod fromGameToHomePeriod2 = TimePeriod.builder()
                                                                               .start(currentGameAssignment.getGame().getGameRefereePeriod().getStart())
                                                                               .end(currentGameAssignment.getGame().getGameRefereePeriod()
                                                                                            .getEnd().plusMinutes(currentGameAssignment.getGame().getGameLocation().getTravelTimeInMinutes(referee.getHomeLocation()))).build();
-                                   bigTimePeriodList.add(fromGameToHomePeriod2);
-                                   //Log.tracef("game to home period iteration: %s; begin: %s and end: %s", i, fromGameToHomePeriod2.getStart(), fromGameToHomePeriod2.getEnd());
+                                   //Log.tracef("game to home timePeriod iteration: %s; begin: %s and end: %s", i, fromGameToHomePeriod2.getStart(), fromGameToHomePeriod2.getEnd());
                                    if (referee.checkIfAvailable(fromGameToHomePeriod2)) {
                                        TimePeriod fromHomeToGamePeriod2 = TimePeriod.builder()
                                                                                   .start(nextGameAssignment.getGame().getGameRefereePeriod().getStart().minusMinutes(referee.getHomeLocation().getTravelTimeInMinutes(nextGameAssignment.getGame().getGameLocation())))
                                                                                   .end(currentGameAssignment.getGame().getGameRefereePeriod().getStart()).build();
-                                       bigTimePeriodList.add(fromHomeToGamePeriod2);
-                                       //Log.tracef("home to game period iteration: %s; begin: %s and end: %s", i, fromGameToHomePeriod2.getStart(), fromGameToHomePeriod2.getEnd());
+                                       //Log.tracef("home to game timePeriod iteration: %s; begin: %s and end: %s", i, fromGameToHomePeriod2.getStart(), fromGameToHomePeriod2.getEnd());
                                        if (!referee.checkIfAvailable(fromHomeToGamePeriod2)) {
                                            amount++;
                                        }
@@ -251,7 +329,7 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                                }
                            }
                     
-                           return amount;
-                       });
-    }
+                           return amount;*/
+    
+    
 }

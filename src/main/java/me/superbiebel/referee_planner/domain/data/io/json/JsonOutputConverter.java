@@ -37,6 +37,7 @@ public class JsonOutputConverter {
         gameNode.put("hardMinimumExperience", game.getHardMinimumExperience());
         gameNode.put("softMinimumExperience", game.getSoftMinimumExperience());
         gameNode.put("softMaximumExperience", game.getSoftMaximumExperience());
+        gameNode.put("priority", game.getPriority());
         return gameNode;
     }
     
