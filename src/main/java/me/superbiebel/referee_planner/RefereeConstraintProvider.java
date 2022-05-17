@@ -50,12 +50,40 @@ public class RefereeConstraintProvider implements ConstraintProvider {
         return constraintFactory.forEach(Referee.class)
                        .filter(referee -> !referee.isNonExist())
                        .penalizeConfigurable(RefereeConstraintConfiguration.DISTANCE_SOFT, referee -> {
-                           
-                           
-                           
-                           
-                           
-                           
+                           int totalAmount = 0;
+                           Map<Availability, List<GameAssignment>> availabilityGameAssignmentMap = new HashMap<>();
+                           for (GameAssignment gameAssignment : referee.getAssignments()) {
+                               Availability availability;
+                               List<GameAssignment> assignmentList;
+                               if ((availability = referee.getCorrespondingAvailability(gameAssignment)) != null) {
+                                   if ((assignmentList = availabilityGameAssignmentMap.get(availability)) == null) {
+                                       assignmentList = new ArrayList<>();
+                                       assignmentList.add(gameAssignment);
+                                       availabilityGameAssignmentMap.put(availability, assignmentList);
+                                   } else {
+                                       assignmentList.add(gameAssignment);
+                                   }
+                               }
+                           }
+                           for (Map.Entry<Availability, List<GameAssignment>> entry : availabilityGameAssignmentMap.entrySet()) {
+                               Availability availability = entry.getKey();
+                               List<GameAssignment> assignmentList = entry.getValue();
+                               assignmentList.sort(GameAssignmentComparator.COMPARATOR);
+                               int inLoopAmount = 0;
+                               inLoopAmount += availability.getStartLocation().getDistanceTo(assignmentList.get(0).getGame().getGameLocation());
+                               for (int i = 0, assignmentListSize = assignmentList.size(); i < assignmentListSize; i++) {
+                                   GameAssignment currentAssignment = assignmentList.get(i);
+                                   if (i + 1 == assignmentListSize && availability.isEndLocationEnabled()) {
+                                       inLoopAmount += currentAssignment.getGame().getGameLocation().getDistanceTo(availability.getEndLocation());
+                                   }
+                                   GameAssignment nextAssignment = assignmentList.get(i + 1);
+                                   inLoopAmount += currentAssignment.getGame().getGameLocation().getDistanceTo(nextAssignment.getGame().getGameLocation());
+                               }
+                               totalAmount += inLoopAmount;
+                           }
+    
+                           return totalAmount;
+                       });
                            /*-------OLD IMPLEMENTATION--------
                            ArrayList<GameAssignment> gameAssignments = new ArrayList<>(referee.getAssignments());
                            gameAssignments.sort(new GameAssignmentComparator());
@@ -77,7 +105,7 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                                lastAssignment = assignment;
                            }
                            return (int) amount;*/
-                       });
+    
     }
     
     public Constraint notEnoughRefereesConstraint(ConstraintFactory constraintFactory) {
@@ -201,24 +229,35 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                            //action described in 2.
                            for (Map.Entry<Availability, List<GameAssignment>> entry : availabilityGameAssignmentMap.entrySet()) {
                                List<GameAssignment> assignmentList = entry.getValue();
-                               boolean inloopEarlyAbort = false;
                                if (assignmentList.isEmpty()) {
                                    continue;
                                }
                                Availability availability = entry.getKey();
-                        
+    
                                assignmentList.sort(GameAssignmentComparator.COMPARATOR);
                                TimePeriod availabilityPeriod = availability.getTimePeriod();
-                        
+    
+                               //checks if we can actually get from the start location to the first game on time
                                long fromBeginTravelTime = availability.getStartLocation().getTravelTimeInMinutes(assignmentList.get(0).getGame().getGameLocation());
-                        
                                if (availabilityPeriod.getStart().isAfter(assignmentList.get(0).getGame().getGameRefereePeriod().getStart().minusMinutes(fromBeginTravelTime))) {
                                    amount++;
                                    earlyAbort = true;
                                    continue;
                                }
+    
+                               //checks if we assignments don't overlap
                                for (int i = 0, assignmentListSize = assignmentList.size(); i < assignmentListSize; i++) {
                                    GameAssignment currentGameAssignment = assignmentList.get(i);
+                                   if (i + 1 == assignmentListSize) {
+                                       //if we can't actually get to the end location on time
+                                       if (currentGameAssignment.getGame().getGameRefereePeriod().getEnd().isAfter(availabilityPeriod.getEnd().minusMinutes(currentGameAssignment.getGame().getGameLocation().getTravelTimeInMinutes(availability.getEndLocation())))) {
+                                           amount++;
+                                           break;
+                                       } else {
+                                           continue;
+                                       }
+                                   }
+        
                                    GameAssignment nextGameAssignment = assignmentList.get(i + 1);
                                    if (currentGameAssignment.getGame().getGameLocation().equals(nextGameAssignment.getGame().getGameLocation())) {
                                        if (currentGameAssignment.getGame().getGameRefereePeriod().getEnd().equals(nextGameAssignment.getGame().getGamePeriod().getStart())
@@ -229,9 +268,17 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                                            break;
                                        }
                                    } else {
-                                       //TODO: calculate driving time, make sure they physically can get there without teleporting
+                                       if (currentGameAssignment.getGame().getGameRefereePeriod().getEnd()
+                                                   .isAfter(nextGameAssignment.getGame().getGameRefereePeriod().getStart()
+                                                                    .minusMinutes(currentGameAssignment.getGame().getGameLocation().getTravelTimeInMinutes(nextGameAssignment.getGame().getGameLocation())))) {
+                                           amount++;
+                                           break;
+                                       } else {
+                                           continue;
+                                       }
                                    }
                                }
+    
                            }
                            if (earlyAbort) {
                                return amount;

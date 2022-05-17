@@ -45,15 +45,15 @@ public class Game {
     public Game() {
     }
     
-    public Game(UUID gameUUID, List<GameAssignment> assignments, Location gameLocation, TimePeriod gamePeriod, int amountOfRefereesNeeded, int hardMinimumExperience, int softMinimumExperience, int softMaximumExperience, int priority) {
+    public Game(UUID gameUUID, List<GameAssignment> assignments, Location gameLocation, TimePeriod gameRefereePeriod, TimePeriod gamePeriod, int amountOfRefereesNeeded, int hardMinimumExperience, int softMinimumExperience, int softMaximumExperience, int priority) {
         this.gameUUID = gameUUID;
         this.assignments = assignments;
         this.gameLocation = gameLocation;
-        this.gamePeriod = gamePeriod;
         this.gameRefereePeriod = TimePeriod.builder()
                                          .start(gamePeriod.getStart().minusMinutes(20))
                                          .end(gamePeriod.getEnd())
                                          .build();
+        this.gamePeriod = gamePeriod;
         this.amountOfRefereesNeeded = amountOfRefereesNeeded;
         this.hardMinimumExperience = hardMinimumExperience;
         this.softMinimumExperience = softMinimumExperience;

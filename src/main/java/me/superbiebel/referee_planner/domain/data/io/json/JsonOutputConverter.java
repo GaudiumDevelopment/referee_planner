@@ -71,12 +71,22 @@ public class JsonOutputConverter {
         if (!referee.isNonExist()) {
             refereeNode.put("refereeUUID", referee.getRefereeUUID().toString());
             refereeNode.put("experience", referee.getExperience());
-            refereeNode.set("homeLocation", generateLocationObjectNode(mapper, referee.getHomeLocation()));
             ArrayNode availabilityNode = mapper.createArrayNode();
-            referee.getAvailabilityList().forEach(timePeriod -> availabilityNode.add(generateTimePeriodObjectNode(mapper, timePeriod)));
+            referee.getAvailabilityList().forEach(timePeriod -> availabilityNode.add(generateAvailabilityNode(mapper, timePeriod)));
             refereeNode.set("availability", availabilityNode);
         }
         return refereeNode;
+    }
+    
+    public static ObjectNode generateAvailabilityNode(ObjectMapper mapper, Availability availability) {
+        ObjectNode availabilityNode = mapper.createObjectNode();
+        availabilityNode.set("startLocation", generateLocationObjectNode(mapper, availability.getStartLocation()));
+        availabilityNode.put("endLocationEnabled", availability.isEndLocationEnabled());
+        if (availability.isEndLocationEnabled()) {
+            availabilityNode.set("endLocation", generateLocationObjectNode(mapper, availability.getEndLocation()));
+        }
+        
+        return availabilityNode;
     }
     
     public static ObjectNode generateGameAssignmentObjectNode(ObjectMapper mapper, GameAssignment gameAssignment) {
