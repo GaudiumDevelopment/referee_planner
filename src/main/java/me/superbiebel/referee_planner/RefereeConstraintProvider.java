@@ -4,6 +4,7 @@ import io.quarkus.logging.Log;
 import me.superbiebel.referee_planner.domain.*;
 import me.superbiebel.referee_planner.domain.comparators.GameAssignmentComparator;
 import org.optaplanner.core.api.score.stream.Constraint;
+import org.optaplanner.core.api.score.stream.ConstraintCollectors;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
 
@@ -117,8 +118,8 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                        .filter(gameAssignment -> {
                            Log.tracef("notEnoughRefereesCheck isNonExist is %s for game %s with index %s", gameAssignment.getReferee().isNonExist(), gameAssignment.getGame().getGameUUID(), gameAssignment.getIndexInGame());
                            return gameAssignment.getReferee().isNonExist();
-                       })
-                       .penalizeConfigurableLong(RefereeConstraintConfiguration.NOT_ENOUGH_REFEREES, assignment -> assignment.getGame().getPriority());
+                       }).groupBy(GameAssignment::getGame, ConstraintCollectors.count())
+                       .penalizeConfigurableLong(RefereeConstraintConfiguration.NOT_ENOUGH_REFEREES, (assignment, count) -> (long) assignment.getPriority() *count);
     }
     
     public Constraint tooManyRefereesConstraint(ConstraintFactory constraintFactory) {
