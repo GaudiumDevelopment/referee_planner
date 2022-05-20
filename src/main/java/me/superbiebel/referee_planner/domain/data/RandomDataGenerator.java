@@ -2,7 +2,10 @@ package me.superbiebel.referee_planner.domain.data;
 
 import me.superbiebel.referee_planner.domain.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -13,39 +16,85 @@ public class RandomDataGenerator {
     
     public static final Random random = new Random();
     
-    public static final LocalDateTime ZERO_DATE_TIME = LocalDateTime.of(2022, 1, 1, 1, 1);
+    public static final LocalDate BEGIN_DATE = LocalDate.of(2022, 1, 1);
+    public static final LocalDate END_DATE = LocalDate.of(2022, 1, 2);
+    public static final LocalTime BEGIN_REFEREE_TIME = LocalTime.of(6, 0);
+    public static final LocalTime BEGIN_GAME_TIME = LocalTime.of(8, 0);
+    public static final LocalTime END_REFEREE_TIME = LocalTime.of(23, 0);
+    public static final LocalTime END_GAME_TIME = LocalTime.of(20, 0); //when the last match can still begin
+    
+    public static final LocalDateTime BEGIN_REFEREE_DATE_TIME = LocalDateTime.of(BEGIN_DATE, BEGIN_REFEREE_TIME);
+    public static final LocalDateTime END_REFEREE_DATE_TIME = LocalDateTime.of(END_DATE, END_REFEREE_TIME);
+    
+    public static final LocalDateTime BEGIN_GAME_DATE_TIME = LocalDateTime.of(BEGIN_DATE, BEGIN_GAME_TIME);
+    public static final LocalDateTime END_GAME_DATE_TIME = LocalDateTime.of(END_DATE, END_GAME_TIME); //until the last game can go
+    
+    public static final ZoneOffset ZONE = ZoneOffset.UTC;
     
     private RandomDataGenerator() {
     }
     
     public static Game generateGame() {
-        int hardMinimum = generateIntInRange(0, 40);
-        int softMinimum = generateIntInRange(hardMinimum, 95);
-        int softMaximum = generateIntInRange(softMinimum, 100);
-    
-        return Game.builder()
-                       .gameUUID(UUID.randomUUID())
-                       .gameLocation(giveLocationWithinBelgium())
-                       .amountOfRefereesNeeded(generateIntInRange(2, 4))
-                       .gameRefereePeriod(generateTimePeriodForGame())
-                       .hardMinimumExperience(hardMinimum)
-                       .softMinimumExperience(softMinimum)
-                       .softMaximumExperience(softMaximum)
-                       .priority(generateIntInRange(0, 51))
-                       .build();
+        int hardMinimum = generateIntInRange(0, 40, true);
+        int softMinimum = generateIntInRange(hardMinimum, 95, true);
+        int softMaximum = generateIntInRange(softMinimum, 100, true);
+        
+        Game.GameBuilder builder = Game.builder()
+                                           .gameUUID(UUID.randomUUID())
+                                           .gameLocation(giveLocationWithinBelgium())
+                                           .amountOfRefereesNeeded(generateIntInRange(2, 3, true))
+                                           .gamePeriod(generateTimePeriodForGame(
+                                                   LocalDate.of(
+                                                           generateIntInRange(BEGIN_DATE.getYear(), END_DATE.getYear(), true),
+                                                           generateIntInRange(BEGIN_DATE.getMonthValue(), END_DATE.getMonthValue(), true),
+                                                           generateIntInRange(BEGIN_DATE.getDayOfMonth(), END_DATE.getDayOfMonth(), true))))
+                                           .hardMinimumExperience(hardMinimum)
+                                           .softMinimumExperience(softMinimum)
+                                           .softMaximumExperience(softMaximum)
+                                           .priority(generateIntInRange(1, 50, true));
+        return builder.build();
     }
     
-    public static TimePeriod generateTimePeriodForGame() {
-        LocalDateTime time = ZERO_DATE_TIME.plusDays(generateIntInRange(1, 10)).plusHours(generateIntInRange(2, 24)).plusMinutes(generateIntInRange(1, 60));
-        return TimePeriod.builder().start(time).end(time.plusHours(2)).build();
+    public static TimePeriod generateTimePeriodForGame(LocalDate date) {
+        LocalDateTime periodBegin = generateRandomLocalDateTime(LocalDateTime.of(date, BEGIN_GAME_TIME), LocalDateTime.of(date, END_GAME_TIME).minusHours(2));
+        return TimePeriod.builder().start(periodBegin).end(periodBegin.plusHours(2)).build();
     }
     
-    public static TimePeriod generateTimePeriodForReferee() {
-        LocalDateTime time = ZERO_DATE_TIME.plusDays(generateIntInRange(0, 10)).plusHours(generateIntInRange(0, 24)).plusMinutes(generateIntInRange(1, 60));
-        return TimePeriod.builder().start(time).end(time.plusHours(generateIntInRange(3, 6))).build();
+    public static List<Availability> generateAvailabilityListForReferee(int dayCount) {
+        List<Availability> availabilityList = new ArrayList<>();
+        for (int i = 0; i < dayCount + 1; i++) {
+            TimePeriod timePeriod = generateAvailabilityTimePeriod(BEGIN_DATE.plusDays(i));
+            Location startLocation = giveLocationWithinBelgium();
+            Location endLocation;
+            if (generateIntInRange(0, 5, true) == 1) {
+                endLocation = giveLocationWithinBelgium();
+            } else {
+                endLocation = startLocation;
+            }
+            boolean endLocationEnabled = generateIntInRange(0, 5, true) == 1;
+            availabilityList.add(Availability.builder()
+                                         .startLocation(startLocation)
+                                         .endLocation(endLocation)
+                                         .endLocationEnabled(endLocationEnabled)
+                                         .timePeriod(timePeriod)
+                                         .build());
+        }
+        return availabilityList;
     }
     
-    public static List<GameAssignment> generateGameAssignment(Game game) {
+    public static TimePeriod generateAvailabilityTimePeriod(LocalDate date) {
+        LocalDateTime periodBegin = generateRandomLocalDateTime(
+                LocalDateTime.of(date, BEGIN_REFEREE_TIME),
+                LocalDateTime.of(date, END_REFEREE_TIME.minusHours(3)));
+        LocalDateTime periodEnd = generateRandomLocalDateTime(periodBegin, LocalDateTime.of(date, END_REFEREE_TIME));
+        return TimePeriod.builder().start(periodBegin).end(periodEnd).build();
+    }
+    
+    public static LocalDateTime generateRandomLocalDateTime(LocalDateTime begin, LocalDateTime end) {
+        return LocalDateTime.ofEpochSecond(generateLongInRange(begin.toEpochSecond(ZONE), end.toEpochSecond(ZONE), true), 0, ZONE);
+    }
+    
+    public static List<GameAssignment> generateGameAssignments(Game game) {
         List<GameAssignment> assignmentList = new ArrayList<>();
         for (int i = 0; i < game.getAmountOfRefereesNeeded(); i++) {
             assignmentList.add(GameAssignment.builder()
@@ -58,28 +107,32 @@ public class RandomDataGenerator {
         return assignmentList;
     }
     public static Referee generateReferee() {
-        List<TimePeriod> availabilityList = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            availabilityList.add(generateTimePeriodForReferee());
-        }
-        availabilityList = TimePeriod.compactAndSortTimePeriods(availabilityList);
         return Referee.builder()
                        .refereeUUID(UUID.randomUUID())
-                       .experience(generateIntInRange(0, 100))
-                       .availabilityList(availabilityList)
+                       .experience(generateIntInRange(0, 100, true))
+                       .availabilityList(generateAvailabilityListForReferee(2))
                        .build();
     }
+    
     private static Location giveLocationWithinBelgium() {
-        return generateRandomLocation(51.338577536734896, 3.2130495807239408,49.596303708297754, 5.8097190890112085);
+        return generateRandomLocation(51.413828127695915, 2.886469282111513, 50.815988855750156, 5.660311233686485);
     }
     
     public static Location generateRandomLocation(double latitude1, double longitude1, double latitude2, double longitude2) {
-        return Location.builder().latitude(generateRandomDoubleInRange(latitude1,latitude2)).longitude(generateRandomDoubleInRange(longitude1,longitude2)).build();
+        return Location.builder().latitude(generateRandomDoubleInRange(latitude1, latitude2)).longitude(generateRandomDoubleInRange(longitude1, longitude2)).build();
     }
+    
     public static double generateRandomDoubleInRange(double rangeMin, double rangeMax) {
         return rangeMin + (rangeMax - rangeMin) * random.nextDouble();
     }
-    public static int generateIntInRange(int min, int max) {
+    
+    public static int generateIntInRange(int min, int max, boolean shouldIncreaseMax) {
+        if (shouldIncreaseMax) max++;
         return ThreadLocalRandom.current().nextInt(min, max);
+    }
+    
+    public static long generateLongInRange(long min, long max, boolean shouldIncreaseMax) {
+        if (shouldIncreaseMax) max++;
+        return ThreadLocalRandom.current().nextLong(min, max);
     }
 }

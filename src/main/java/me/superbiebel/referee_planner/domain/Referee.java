@@ -63,17 +63,9 @@ public class Referee {
     public Availability getCorrespondingAvailability(GameAssignment assignment) {
         List<Availability> foundAvailabilities = availabilityList.stream().filter(availability -> availability.getTimePeriod().doesEncompass(assignment.getGame().getGameRefereePeriod())).collect(Collectors.toList());
         if (foundAvailabilities.size() > 1) {
-            throw new IllegalStateException("multiple availabilities found for gameAssigment: " + assignment.toString() + "in referee: " + this);
+            throw new IllegalStateException("multiple availabilities found for gameAssigment: " + assignment.toString() + " in referee: " + this);
         }
         return foundAvailabilities.size() == 1 ? foundAvailabilities.get(0) : null;
-    }
-    
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("Referee{");
-        sb.append("refereeUUID=").append(refereeUUID);
-        sb.append('}');
-        return sb.toString();
     }
     
     @Override
@@ -96,5 +88,15 @@ public class Referee {
         result = 31 * result + (isNonExist() ? 1 : 0);
         result = 31 * result + getAvailabilityList().hashCode();
         return result;
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Referee{");
+        sb.append("refereeUUID=").append(refereeUUID);
+        sb.append(", isNonExist=").append(isNonExist);
+        sb.append(", availabilityList=").append(availabilityList);
+        sb.append('}');
+        return sb.toString();
     }
 }

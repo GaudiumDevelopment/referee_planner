@@ -32,7 +32,7 @@ public class JsonOutputConverter {
         ObjectNode gameNode = mapper.createObjectNode();
         gameNode.put("gameUUID", game.getGameUUID().toString());
         gameNode.set("gameLocation", generateLocationObjectNode(mapper, game.getGameLocation()));
-        gameNode.set("gameRefereePeriod", generateTimePeriodObjectNode(mapper, game.getGameRefereePeriod()));
+        gameNode.set("gamePeriod", generateTimePeriodObjectNode(mapper, game.getGamePeriod()));
         gameNode.put("amountOfRefereesNeeded", game.getAmountOfRefereesNeeded());
         gameNode.put("hardMinimumExperience", game.getHardMinimumExperience());
         gameNode.put("softMinimumExperience", game.getSoftMinimumExperience());
@@ -85,7 +85,7 @@ public class JsonOutputConverter {
         if (availability.isEndLocationEnabled()) {
             availabilityNode.set("endLocation", generateLocationObjectNode(mapper, availability.getEndLocation()));
         }
-        
+        availabilityNode.set("timeperiod", generateTimePeriodObjectNode(mapper, availability.getTimePeriod()));
         return availabilityNode;
     }
     

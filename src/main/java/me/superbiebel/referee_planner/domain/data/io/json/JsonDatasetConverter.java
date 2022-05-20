@@ -34,7 +34,7 @@ public class JsonDatasetConverter {
         return Game.builder()
                        .gameUUID(UUID.fromString(gameNode.get("gameUUID").asText()))
                        .gameLocation(generateLocation(gameNode.get("gameLocation")))
-                       .gameRefereePeriod(generateTimePeriod(gameNode.get("gameRefereePeriod")))
+                       .gamePeriod(generateTimePeriod(gameNode.get("gamePeriod")))
                        .amountOfRefereesNeeded(gameNode.get("amountOfRefereesNeeded").asInt())
                        .hardMinimumExperience(gameNode.get("hardMinimumExperience").asInt())
                        .softMinimumExperience(gameNode.get("softMinimumExperience").asInt())
@@ -47,14 +47,24 @@ public class JsonDatasetConverter {
         if (refereeNode.get("isNonExist").booleanValue()) {
             return TimeTableGenerator.VIRTUAL_REFEREE;
         }
-        List<TimePeriod> timePeriods = new ArrayList<>();
-        refereeNode.get("availability").elements().forEachRemaining(periodNode -> timePeriods.add(generateTimePeriod(periodNode)));
+        List<Availability> timePeriods = new ArrayList<>();
+        refereeNode.get("availability").elements().forEachRemaining(periodNode -> timePeriods.add(generateAvailability(periodNode)));
         return Referee.builder()
                        .refereeUUID(UUID.fromString(refereeNode.get("refereeUUID").asText()))
                        .experience(refereeNode.get("experience").asInt())
-                       .homeLocation(generateLocation(refereeNode.get("homeLocation")))
                        .availabilityList(timePeriods)
                        .build();
+    }
+    
+    public static Availability generateAvailability(JsonNode availabilityNode) {
+        Availability.AvailabilityBuilder builder = Availability.builder()
+                                                           .startLocation(generateLocation(availabilityNode.get("startLocation")))
+                                                           .timePeriod(generateTimePeriod(availabilityNode.get("timeperiod")))
+                                                           .endLocationEnabled(availabilityNode.get("endLocationEnabled").asBoolean());
+        if (availabilityNode.get("endLocationEnabled").asBoolean()) {
+            builder.endLocation(generateLocation(availabilityNode.get("endLocation")));
+        }
+        return builder.build();
     }
     
     public static Location generateLocation(JsonNode locationNode) {
@@ -88,7 +98,7 @@ public class JsonDatasetConverter {
     }
     
     public static List<GameAssignment> generateGameAssignmentsFromGame(Game game) {
-        return RandomDataGenerator.generateGameAssignment(game);
+        return RandomDataGenerator.generateGameAssignments(game);
     }
     
     private JsonDatasetConverter() {

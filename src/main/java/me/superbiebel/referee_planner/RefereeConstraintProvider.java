@@ -69,17 +69,26 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                            for (Map.Entry<Availability, List<GameAssignment>> entry : availabilityGameAssignmentMap.entrySet()) {
                                Availability availability = entry.getKey();
                                List<GameAssignment> assignmentList = entry.getValue();
+    
+                               if (assignmentList.isEmpty()) {
+                                   continue;
+                               }
+    
                                assignmentList.sort(GameAssignmentComparator.COMPARATOR);
                                int inLoopAmount = 0;
                                inLoopAmount += availability.getStartLocation().getDistanceTo(assignmentList.get(0).getGame().getGameLocation());
                                for (int i = 0, assignmentListSize = assignmentList.size(); i < assignmentListSize; i++) {
                                    GameAssignment currentAssignment = assignmentList.get(i);
-                                   if (i + 1 == assignmentListSize && availability.isEndLocationEnabled()) {
-                                       inLoopAmount += currentAssignment.getGame().getGameLocation().getDistanceTo(availability.getEndLocation());
-                                   }
+                                   if (i + 1 == assignmentListSize) break;
                                    GameAssignment nextAssignment = assignmentList.get(i + 1);
-                                   inLoopAmount += currentAssignment.getGame().getGameLocation().getDistanceTo(nextAssignment.getGame().getGameLocation());
+                                   long addAmount = currentAssignment.getGame().getGameLocation().getDistanceTo(nextAssignment.getGame().getGameLocation());
+                                   inLoopAmount += addAmount;
                                }
+    
+                               if (availability.isEndLocationEnabled()) {
+                                   inLoopAmount += assignmentList.get(assignmentList.size() - 1).getGame().getGameLocation().getDistanceTo(availability.getEndLocation());
+                               }
+    
                                totalAmount += inLoopAmount;
                            }
     
@@ -119,7 +128,7 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                            Log.tracef("notEnoughRefereesCheck isNonExist is %s for game %s with index %s", gameAssignment.getReferee().isNonExist(), gameAssignment.getGame().getGameUUID(), gameAssignment.getIndexInGame());
                            return gameAssignment.getReferee().isNonExist();
                        }).groupBy(GameAssignment::getGame, ConstraintCollectors.count())
-                       .penalizeConfigurableLong(RefereeConstraintConfiguration.NOT_ENOUGH_REFEREES, (assignment, count) -> (long) assignment.getPriority() *count);
+                       .penalizeConfigurableLong(RefereeConstraintConfiguration.NOT_ENOUGH_REFEREES, (assignment, count) -> (long) assignment.getPriority() * count);
     }
     
     public Constraint tooManyRefereesConstraint(ConstraintFactory constraintFactory) {

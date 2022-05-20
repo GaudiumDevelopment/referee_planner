@@ -9,15 +9,12 @@
         </constraintProviderClass>
     </scoreDirectorFactory>
     <termination>
-        <minutesSpentLimit>3</minutesSpentLimit>
+        <minutesSpentLimit>10</minutesSpentLimit>
     </termination>
     <constructionHeuristic>
         <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>
     </constructionHeuristic>
     <localSearch>
-        <termination>
-            <minutesSpentLimit>1</minutesSpentLimit>
-        </termination>
         <localSearchType>HILL_CLIMBING</localSearchType>
     </localSearch>
 </solver>

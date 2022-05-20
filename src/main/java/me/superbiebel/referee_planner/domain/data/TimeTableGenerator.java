@@ -1,6 +1,9 @@
 package me.superbiebel.referee_planner.domain.data;
 
-import me.superbiebel.referee_planner.domain.*;
+import me.superbiebel.referee_planner.domain.Game;
+import me.superbiebel.referee_planner.domain.GameAssignment;
+import me.superbiebel.referee_planner.domain.Referee;
+import me.superbiebel.referee_planner.domain.RefereeTimeTable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +16,6 @@ public class TimeTableGenerator {
                                                           .isNonExist(true)
                                                           .refereeUUID(new UUID(0, 0))
                                                           .experience(0)
-                                                          .homeLocation(Location.builder().longitude(0).longitude(0).build())
                                                           .availabilityList(Collections.emptyList())
                                                           .build();
     
@@ -36,7 +38,7 @@ public class TimeTableGenerator {
         }
         timeTableBuilder.games(games);
         List<GameAssignment> assignments = new ArrayList<>();
-        games.forEach(game -> assignments.addAll(RandomDataGenerator.generateGameAssignment(game)));
+        games.forEach(game -> assignments.addAll(RandomDataGenerator.generateGameAssignments(game)));
         timeTableBuilder.gameAssignments(assignments);
         return this;
     }
