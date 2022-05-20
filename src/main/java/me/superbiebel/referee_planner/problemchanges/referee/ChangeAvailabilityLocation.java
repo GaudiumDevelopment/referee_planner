@@ -7,6 +7,6 @@ import org.optaplanner.core.api.solver.change.ProblemChangeDirector;
 public class ChangeAvailabilityLocation implements ProblemChange<RefereeTimeTable> {
     @Override
     public void doChange(RefereeTimeTable workingSolution, ProblemChangeDirector problemChangeDirector) {
-    
+        //TODO: implement the change
     }
 }
