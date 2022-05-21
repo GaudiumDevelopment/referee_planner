@@ -2,6 +2,7 @@ package me.superbiebel.referee_planner.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @SuppressFBWarnings("EI_EXPOSE_REP2")
 @Builder(toBuilder = true)
+@AllArgsConstructor
 @PlanningEntity
 public class Referee {
     @PlanningId
@@ -37,14 +39,6 @@ public class Referee {
     
     public Referee() {
         //For optaplanner
-    }
-    
-    public Referee(UUID refereeUUID, int experience, boolean isNonExist, List<GameAssignment> assignments, List<Availability> availabilityList) {
-        this.refereeUUID = refereeUUID;
-        this.experience = experience;
-        this.isNonExist = isNonExist;
-        this.assignments = assignments;
-        this.availabilityList = availabilityList;
     }
     
     @InverseRelationShadowVariable(sourceVariableName = "referee")

@@ -47,12 +47,12 @@ public class JsonDatasetConverter {
         if (refereeNode.get("isNonExist").booleanValue()) {
             return TimeTableGenerator.VIRTUAL_REFEREE;
         }
-        List<Availability> timePeriods = new ArrayList<>();
-        refereeNode.get("availability").elements().forEachRemaining(periodNode -> timePeriods.add(generateAvailability(periodNode)));
+        List<Availability> availabilities = new ArrayList<>();
+        refereeNode.get("availability").elements().forEachRemaining(periodNode -> availabilities.add(generateAvailability(periodNode)));
         return Referee.builder()
                        .refereeUUID(UUID.fromString(refereeNode.get("refereeUUID").asText()))
                        .experience(refereeNode.get("experience").asInt())
-                       .availabilityList(timePeriods)
+                       .availabilityList(availabilities)
                        .build();
     }
     
@@ -60,9 +60,15 @@ public class JsonDatasetConverter {
         Availability.AvailabilityBuilder builder = Availability.builder()
                                                            .startLocation(generateLocation(availabilityNode.get("startLocation")))
                                                            .timePeriod(generateTimePeriod(availabilityNode.get("timeperiod")))
-                                                           .endLocationEnabled(availabilityNode.get("endLocationEnabled").asBoolean());
+                                                           .endLocationEnabled(availabilityNode.get("endLocationEnabled").asBoolean())
+                                                           .maxRangeEnabled(availabilityNode.get("maxRangeEnabled").asBoolean());
         if (availabilityNode.get("endLocationEnabled").asBoolean()) {
             builder.endLocation(generateLocation(availabilityNode.get("endLocation")));
+        }
+        if (availabilityNode.get("maxRangeEnabled").asBoolean()) {
+            builder.maxRange(availabilityNode.get("maxRange").asLong());
+        } else {
+            builder.maxRange(-1);
         }
         return builder.build();
     }

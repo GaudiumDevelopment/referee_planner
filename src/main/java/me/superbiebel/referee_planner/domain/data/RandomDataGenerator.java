@@ -72,11 +72,19 @@ public class RandomDataGenerator {
                 endLocation = startLocation;
             }
             boolean endLocationEnabled = generateIntInRange(0, 5, true) == 1;
+            long maxRange = -1;
+            boolean maxRangeEnabled = false;
+            //noinspection AssignmentUsedAsCondition
+            if (maxRangeEnabled = (generateIntInRange(1, 10, true) == 1)) {
+                maxRange = generateLongInRange(1, 190_000/*in meter*/, true);
+            }
             availabilityList.add(Availability.builder()
                                          .startLocation(startLocation)
                                          .endLocation(endLocation)
                                          .endLocationEnabled(endLocationEnabled)
                                          .timePeriod(timePeriod)
+                                         .maxRangeEnabled(maxRangeEnabled)
+                                         .maxRange(maxRange)
                                          .build());
         }
         return availabilityList;
@@ -91,7 +99,8 @@ public class RandomDataGenerator {
     }
     
     public static LocalDateTime generateRandomLocalDateTime(LocalDateTime begin, LocalDateTime end) {
-        return LocalDateTime.ofEpochSecond(generateLongInRange(begin.toEpochSecond(ZONE), end.toEpochSecond(ZONE), true), 0, ZONE);
+        LocalDateTime generateRandomLocalDateTime = LocalDateTime.ofEpochSecond(generateLongInRange(begin.toEpochSecond(ZONE), end.toEpochSecond(ZONE), true), 0, ZONE);
+        return LocalDateTime.of(generateRandomLocalDateTime.toLocalDate(), LocalTime.of(generateRandomLocalDateTime.getHour(), generateRandomLocalDateTime.getMinute()));
     }
     
     public static List<GameAssignment> generateGameAssignments(Game game) {

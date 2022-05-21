@@ -68,13 +68,14 @@ public class JsonOutputConverter {
     public static ObjectNode generateRefereeObjectNode(ObjectMapper mapper, Referee referee) {
         ObjectNode refereeNode = mapper.createObjectNode();
         refereeNode.put("isNonExist", referee.isNonExist());
-        if (!referee.isNonExist()) {
-            refereeNode.put("refereeUUID", referee.getRefereeUUID().toString());
-            refereeNode.put("experience", referee.getExperience());
-            ArrayNode availabilityNode = mapper.createArrayNode();
-            referee.getAvailabilityList().forEach(timePeriod -> availabilityNode.add(generateAvailabilityNode(mapper, timePeriod)));
-            refereeNode.set("availability", availabilityNode);
+        if (referee.isNonExist()) {
+            return refereeNode;
         }
+        refereeNode.put("refereeUUID", referee.getRefereeUUID().toString());
+        refereeNode.put("experience", referee.getExperience());
+        ArrayNode availabilityNode = mapper.createArrayNode();
+        referee.getAvailabilityList().forEach(timePeriod -> availabilityNode.add(generateAvailabilityNode(mapper, timePeriod)));
+        refereeNode.set("availability", availabilityNode);
         return refereeNode;
     }
     
@@ -84,6 +85,10 @@ public class JsonOutputConverter {
         availabilityNode.put("endLocationEnabled", availability.isEndLocationEnabled());
         if (availability.isEndLocationEnabled()) {
             availabilityNode.set("endLocation", generateLocationObjectNode(mapper, availability.getEndLocation()));
+        }
+        availabilityNode.put("maxRangeEnabled", availability.isMaxRangeEnabled());
+        if (availability.isMaxRangeEnabled()) {
+            availabilityNode.put("maxRange", availability.getMaxRange());
         }
         availabilityNode.set("timeperiod", generateTimePeriodObjectNode(mapper, availability.getTimePeriod()));
         return availabilityNode;

@@ -13,7 +13,7 @@ class JsonConverterTests {
     
     @Test
     void outInTest() {
-        RefereeTimeTable solution = new TimeTableGenerator().amountOfGames(2).amountOfReferees(2).build();
+        RefereeTimeTable solution = new TimeTableGenerator().amountOfGames(1).amountOfReferees(1).build();
         RefereeTimeTable convertedSolution = JsonDatasetConverter.generateTimeTableFromJson(JsonOutputConverter.refereeTimeTableToJson(solution));
         Assertions.assertEquals(solution, convertedSolution);
         Log.info("done");
