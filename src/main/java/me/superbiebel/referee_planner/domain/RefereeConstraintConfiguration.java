@@ -18,6 +18,7 @@ public class RefereeConstraintConfiguration {
     public static final String SAME_REFEREE_MULTIPLE_GAME_INDEX = "SAME REFEREE MULTIPLE GAME INDEX";
     public static final String IS_IN_AVAILABILITY_CONSTRAINT = "IS IN AVAILABILITY CONSTRAINT";
     public static final String GAMEASSIGNMENT_DOES_NOT_OVERLAP_PER_REFEREE = "GAMEASSIGNMENT DOES NOT OVERLAP";
+    public static final String MAX_RANGE = "MAX RANGE NOT VIOLATED";
     
     
     @ConstraintWeight(SUFFICIENT_HARD_MINIMUM_EXPERIENCE_LEVEL)
@@ -51,4 +52,7 @@ public class RefereeConstraintConfiguration {
     
     @ConstraintWeight(GAMEASSIGNMENT_DOES_NOT_OVERLAP_PER_REFEREE)
     HardMediumSoftLongScore gameAssignmentDoesNotOverlapPerReferee = HardMediumSoftLongScore.ofHard(1);
+    
+    @ConstraintWeight(MAX_RANGE)
+    HardMediumSoftLongScore maxRange = HardMediumSoftLongScore.ofHard(1);
 }

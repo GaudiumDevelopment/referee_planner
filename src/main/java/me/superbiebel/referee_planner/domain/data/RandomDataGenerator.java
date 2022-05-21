@@ -75,7 +75,7 @@ public class RandomDataGenerator {
             long maxRange = -1;
             boolean maxRangeEnabled = false;
             //noinspection AssignmentUsedAsCondition
-            if (maxRangeEnabled = (generateIntInRange(1, 10, true) == 1)) {
+            if (maxRangeEnabled = (generateIntInRange(1, 20, true) == 1)) {
                 maxRange = generateLongInRange(1, 190_000/*in meter*/, true);
             }
             availabilityList.add(Availability.builder()
@@ -128,7 +128,9 @@ public class RandomDataGenerator {
     }
     
     public static Location generateRandomLocation(double latitude1, double longitude1, double latitude2, double longitude2) {
-        return Location.builder().latitude(generateRandomDoubleInRange(latitude1, latitude2)).longitude(generateRandomDoubleInRange(longitude1, longitude2)).build();
+        double generatedLatitude = latitude1 < latitude2 ? generateRandomDoubleInRange(latitude1, latitude2) : generateRandomDoubleInRange(latitude2, latitude1);
+        double generatedLongitude = longitude1 < longitude2 ? generateRandomDoubleInRange(longitude1, longitude2) : generateRandomDoubleInRange(longitude2, longitude1);
+        return Location.builder().latitude(generatedLatitude).longitude(generatedLongitude).build();
     }
     
     public static double generateRandomDoubleInRange(double rangeMin, double rangeMax) {
