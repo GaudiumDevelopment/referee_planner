@@ -11,9 +11,18 @@ import org.optaplanner.benchmark.api.PlannerBenchmarkFactory;
 class Benchmarks {
     
     @Test
-    void benchmark() {
+    void benchmark_weakest_fit_hill_climbing() {
         Assertions.assertDoesNotThrow(() -> {
             PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource("benchmarkConfigs/benchmark-weakest_fit-hill_climbing.xml");
+            PlannerBenchmark benchmark = benchmarkFactory.buildPlannerBenchmark();
+            benchmark.benchmarkAndShowReportInBrowser();
+        });
+    }
+    
+    @Test
+    void benchmark_weakest_fit_tabu_search() {
+        Assertions.assertDoesNotThrow(() -> {
+            PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource("benchmarkConfigs/benchmark-WEAKEST_FIT-TABU_SEARCH.xml");
             PlannerBenchmark benchmark = benchmarkFactory.buildPlannerBenchmark();
             benchmark.benchmarkAndShowReportInBrowser();
         });

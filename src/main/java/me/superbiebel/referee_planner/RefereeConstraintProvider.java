@@ -260,7 +260,7 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                                    GameAssignment currentGameAssignment = assignmentList.get(i);
                                    if (i + 1 == assignmentListSize) {
                                        //if we can't actually get to the end location on time
-                                       if (currentGameAssignment.getGame().getGameRefereePeriod().getEnd().isAfter(availabilityPeriod.getEnd().minusMinutes(currentGameAssignment.getGame().getGameLocation().getTravelTimeInMinutes(availability.getEndLocation())))) {
+                                       if (availability.isEndLocationEnabled() && currentGameAssignment.getGame().getGameRefereePeriod().getEnd().isAfter(availabilityPeriod.getEnd().minusMinutes(currentGameAssignment.getGame().getGameLocation().getTravelTimeInMinutes(availability.getEndLocation())))) {
                                            amount++;
                                            break;
                                        } else {

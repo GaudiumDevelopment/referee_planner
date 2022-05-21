@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plannerBenchmark xmlns="https://www.optaplanner.org/xsd/benchmark"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="https://www.optaplanner.org/xsd/benchmark https://www.optaplanner.org/xsd/benchmark/benchmark.xsd">
+    <benchmarkDirectory>local/data/referee_planner</benchmarkDirectory>
+    <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
+    <inheritedSolverBenchmark>
+        <problemBenchmarks>
+            <solutionFileIOClass>me.superbiebel.referee_planner.domain.data.io.json.TimeTableJsonIO
+            </solutionFileIOClass>
+            <writeOutputSolutionEnabled>true</writeOutputSolutionEnabled>
+            <inputSolutionFile>datasets/dataset-1.json</inputSolutionFile>
+            <problemStatisticType>BEST_SCORE</problemStatisticType>
+            <problemStatisticType>SCORE_CALCULATION_SPEED</problemStatisticType>
+        </problemBenchmarks>
+    </inheritedSolverBenchmark>
+    <solverBenchmark>
+        <name>referee_planner hill climbing</name>
+        <solver>
+            <solutionClass>me.superbiebel.referee_planner.domain.RefereeTimeTable</solutionClass>
+            <entityClass>me.superbiebel.referee_planner.domain.GameAssignment</entityClass>
+            <entityClass>me.superbiebel.referee_planner.domain.Referee</entityClass>
+            <scoreDirectorFactory>
+                <constraintProviderClass>me.superbiebel.referee_planner.RefereeConstraintProvider
+                </constraintProviderClass>
+            </scoreDirectorFactory>
+            <termination>
+                <minutesSpentLimit>3</minutesSpentLimit>
+            </termination>
+            <constructionHeuristic>
+                <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>
+            </constructionHeuristic>
+            <localSearch>
+                <termination>
+                    <minutesSpentLimit>1</minutesSpentLimit>
+                </termination>
+                <localSearchType>TABU_SEARCH</localSearchType>
+            </localSearch>
+            <localSearch>
+                <termination>
+                    <minutesSpentLimit>1</minutesSpentLimit>
+                </termination>
+                <localSearchType>HILL_CLIMBING</localSearchType>
+            </localSearch>
+
+        </solver>
+    </solverBenchmark>
+</plannerBenchmark>

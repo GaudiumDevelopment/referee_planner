@@ -4,8 +4,9 @@
                   xsi:schemaLocation="https://www.optaplanner.org/xsd/benchmark https://www.optaplanner.org/xsd/benchmark/benchmark.xsd">
     <benchmarkDirectory>local/data/referee_planner</benchmarkDirectory>
     <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
-
-
+    <benchmarkReport>
+        <solverRankingType>TOTAL_SCORE</solverRankingType>
+    </benchmarkReport>
     <inheritedSolverBenchmark>
         <solver>
             <solutionClass>me.superbiebel.referee_planner.domain.RefereeTimeTable</solutionClass>
@@ -24,8 +25,10 @@
             </solutionFileIOClass>
             <writeOutputSolutionEnabled>true</writeOutputSolutionEnabled>
             <inputSolutionFile>datasets/dataset-1.json</inputSolutionFile>
+
             <problemStatisticType>BEST_SCORE</problemStatisticType>
             <problemStatisticType>SCORE_CALCULATION_SPEED</problemStatisticType>
+
         </problemBenchmarks>
     </inheritedSolverBenchmark>
     <solverBenchmarkBluePrint>
