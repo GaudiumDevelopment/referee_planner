@@ -97,6 +97,9 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                        });
     }
     
+    /*
+    EVERY AVAILABILITY IS A BLOCK OF ITS OWN! THERE WILL BE NO CALCULATING THE DISTANCE IN BETWEEN AVAILABILITIES!!!
+    */
     private Constraint inRangeConstraint(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Referee.class)
                        .filter(referee -> !referee.isNonExist())
