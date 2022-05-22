@@ -1,7 +1,6 @@
 package me.superbiebel.referee_planner.domain;
 
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,18 +11,16 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 import java.util.UUID;
 
-@SuppressFBWarnings("EI_EXPOSE_REP2")
+
 @Builder(toBuilder = true)
 @PlanningEntity
 public class GameAssignment {
-    @SuppressFBWarnings("EI_EXPOSE_REP")
     @Getter
     private Game game;
     
     @PlanningId
     @Getter
     private UUID assignmentUUID;
-    @SuppressFBWarnings("EI_EXPOSE_REP")
     @Setter
     @Getter
     @PlanningVariable(valueRangeProviderRefs = "refereeList", strengthComparatorClass = RefereeStrengthComparator.class)

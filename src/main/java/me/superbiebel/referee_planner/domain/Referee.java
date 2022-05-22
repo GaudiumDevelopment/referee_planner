@@ -1,7 +1,6 @@
 package me.superbiebel.referee_planner.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +15,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@SuppressFBWarnings("EI_EXPOSE_REP2")
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @PlanningEntity
@@ -33,7 +31,6 @@ public class Referee {
     @Setter
     private List<GameAssignment> assignments;
     
-    @SuppressFBWarnings("EI_EXPOSE_REP")
     @Getter
     private List<Availability> availabilityList;
     

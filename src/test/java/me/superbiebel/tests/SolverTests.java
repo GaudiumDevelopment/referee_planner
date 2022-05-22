@@ -2,7 +2,6 @@ package me.superbiebel.tests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.quarkus.logging.Log;
 import io.quarkus.test.junit.QuarkusTest;
 import me.superbiebel.referee_planner.domain.RefereeTimeTable;
@@ -22,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@SuppressFBWarnings({"DM_DEFAULT_ENCODING", "DMI_HARDCODED_ABSOLUTE_FILENAME"})
 @QuarkusTest
 class SolverTests {
     
@@ -31,8 +29,6 @@ class SolverTests {
     @Inject
     ScoreManager<RefereeTimeTable, HardSoftScore> scoreManager;
     
-    
-    @SuppressFBWarnings({"RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"})
     @Test
     void solverTest() {
         Assertions.assertDoesNotThrow(() -> {
