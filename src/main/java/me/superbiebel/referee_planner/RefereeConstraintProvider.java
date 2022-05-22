@@ -8,8 +8,6 @@ import org.optaplanner.core.api.score.stream.ConstraintCollectors;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,31 +47,12 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                        .filter(gameAssignment -> gameAssignment.getGame().getSoftMaximumExperience() < gameAssignment.getReferee().getExperience())
                        .penalizeConfigurable(RefereeConstraintConfiguration.SUFFICIENT_SOFT_MAXIMUM_EXPERIENCE_LEVEL, gameAssignment -> gameAssignment.getReferee().getExperience() - gameAssignment.getGame().getSoftMaximumExperience());
     }
-    
-    public static Map<Availability, List<GameAssignment>> mapAssignmentsToAvailability(Referee referee) {
-        Map<Availability, List<GameAssignment>> availabilityGameAssignmentMap = new HashMap<>();
-        for (GameAssignment gameAssignment : referee.getAssignments()) {
-            Availability availability;
-            List<GameAssignment> assignmentList;
-            if ((availability = referee.getCorrespondingAvailability(gameAssignment)) != null) {
-                if ((assignmentList = availabilityGameAssignmentMap.get(availability)) == null) {
-                    assignmentList = new ArrayList<>();
-                    assignmentList.add(gameAssignment);
-                    availabilityGameAssignmentMap.put(availability, assignmentList);
-                } else {
-                    assignmentList.add(gameAssignment);
-                }
-            }
-        }
-        return availabilityGameAssignmentMap;
-    }
-    
     public Constraint distanceSoftConstraint(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Referee.class)
                        .filter(referee -> !referee.isNonExist())
                        .penalizeConfigurable(RefereeConstraintConfiguration.DISTANCE_SOFT, referee -> {
                            int totalAmount = 0;
-                           Map<Availability, List<GameAssignment>> availabilityGameAssignmentMap = mapAssignmentsToAvailability(referee);
+                           Map<Availability, List<GameAssignment>> availabilityGameAssignmentMap = referee.getAvailabilityToGameAssignmentsMap();
                            for (Map.Entry<Availability, List<GameAssignment>> entry : availabilityGameAssignmentMap.entrySet()) {
                                Availability availability = entry.getKey();
                                List<GameAssignment> assignmentList = entry.getValue();
@@ -112,7 +91,7 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                        .filter(referee -> !referee.isNonExist())
                        .penalizeConfigurable(RefereeConstraintConfiguration.MAX_RANGE, referee -> {
                            int totalAmount = 0;
-                           Map<Availability, List<GameAssignment>> availabilityGameAssignmentMap = mapAssignmentsToAvailability(referee);
+                           Map<Availability, List<GameAssignment>> availabilityGameAssignmentMap = referee.getAvailabilityToGameAssignmentsMap();
                            for (Map.Entry<Availability, List<GameAssignment>> entry : availabilityGameAssignmentMap.entrySet()) {
                                Availability availability = entry.getKey();
                                List<GameAssignment> assignmentList = entry.getValue();
@@ -142,7 +121,6 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                            return totalAmount;
                        });
     }
-    
     public static long checkForRangeViolation(Availability availability, long amount) {
         if (availability.isMaxRangeEnabled() && amount > availability.getMaxRange()) {
             return amount - availability.getMaxRange();
@@ -244,29 +222,13 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                             */
                            int amount = 0;
                            boolean earlyAbort = false;
-                    
+    
                            // action described in 1.
-                           Map<Availability, List<GameAssignment>> availabilityGameAssignmentMap = new HashMap<>();
-                           for (GameAssignment gameAssignment : referee.getAssignments()) {
-                               Availability availability;
-                               List<GameAssignment> assignmentList;
-                               if ((availability = referee.getCorrespondingAvailability(gameAssignment)) != null) {
-                                   if ((assignmentList = availabilityGameAssignmentMap.get(availability)) == null) {
-                                       assignmentList = new ArrayList<>();
-                                       assignmentList.add(gameAssignment);
-                                       availabilityGameAssignmentMap.put(availability, assignmentList);
-                                   } else {
-                                       assignmentList.add(gameAssignment);
-                                   }
-                               } else {
-                                   amount++;
-                                   earlyAbort = true;
-                               }
+                           Map<Availability, List<GameAssignment>> availabilityGameAssignmentMap = referee.getAvailabilityToGameAssignmentsMap();
+                           if (!referee.getUnassignedAssignments().isEmpty()) {
+                               return referee.getUnassignedAssignments().size();
                            }
-                           if (earlyAbort) {
-                               return amount;
-                           }
-                    
+    
                            //action described in 2.
                            for (Map.Entry<Availability, List<GameAssignment>> entry : availabilityGameAssignmentMap.entrySet()) {
                                List<GameAssignment> assignmentList = entry.getValue();
@@ -274,8 +236,7 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                                    continue;
                                }
                                Availability availability = entry.getKey();
-    
-                               assignmentList.sort(GameAssignmentComparator.COMPARATOR);
+        
                                TimePeriod availabilityPeriod = availability.getTimePeriod();
     
                                //checks if we can actually get from the start location to the first game on time

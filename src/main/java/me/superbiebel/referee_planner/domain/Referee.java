@@ -5,14 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import me.superbiebel.referee_planner.variablelisteners.AssignmentSortVariableListener;
+import me.superbiebel.referee_planner.variablelisteners.AvailabilityAssignmentMapVariableListener;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
+import org.optaplanner.core.api.domain.variable.CustomShadowVariable;
 import org.optaplanner.core.api.domain.variable.InverseRelationShadowVariable;
+import org.optaplanner.core.api.domain.variable.PlanningVariableReference;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Builder(toBuilder = true)
@@ -33,6 +34,13 @@ public class Referee {
     
     @Getter
     private List<Availability> availabilityList;
+    @JsonIgnore
+    @Setter
+    private List<GameAssignment> sortedAssignments;
+    @Setter
+    private Map<Availability, List<GameAssignment>> availabilityToGameAssignmentsMap;
+    @Setter
+    private List<GameAssignment> unassignedAssignments;
     
     public Referee() {
         //For optaplanner
@@ -41,6 +49,21 @@ public class Referee {
     @InverseRelationShadowVariable(sourceVariableName = "referee")
     public List<GameAssignment> getAssignments() {
         return Objects.requireNonNullElseGet(assignments, () -> (assignments = new ArrayList<>()));
+    }
+    
+    @CustomShadowVariable(sources = @PlanningVariableReference(variableName = "assignments"), variableListenerClass = AssignmentSortVariableListener.class)
+    public List<GameAssignment> getSortedAssignments() {
+        return Objects.requireNonNullElseGet(sortedAssignments, () -> (sortedAssignments = new ArrayList<>()));
+    }
+    
+    @CustomShadowVariable(sources = @PlanningVariableReference(variableName = "assignments"), variableListenerClass = AvailabilityAssignmentMapVariableListener.class)
+    public Map<Availability, List<GameAssignment>> getAvailabilityToGameAssignmentsMap() {
+        return Objects.requireNonNullElseGet(availabilityToGameAssignmentsMap, () -> (availabilityToGameAssignmentsMap = new HashMap<>()));
+    }
+    
+    @CustomShadowVariable(variableListenerRef = @PlanningVariableReference(variableName = "availabilityToGameAssignmentsMap"))
+    public List<GameAssignment> getUnassignedAssignments() {
+        return Objects.requireNonNullElseGet(sortedAssignments, () -> (sortedAssignments = new ArrayList<>()));
     }
     
     public void addAssignment(GameAssignment assignment) {

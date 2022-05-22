@@ -39,13 +39,11 @@
         <dependency>
             <groupId>org.optaplanner</groupId>
             <artifactId>optaplanner-quarkus</artifactId>
-            <version>8.21.0.Final</version>
         </dependency>
 
         <dependency>
             <groupId>org.optaplanner</groupId>
             <artifactId>optaplanner-quarkus-benchmark</artifactId>
-            <version>8.21.0.Final</version>
         </dependency>
         <dependency>
             <groupId>org.optaplanner</groupId>

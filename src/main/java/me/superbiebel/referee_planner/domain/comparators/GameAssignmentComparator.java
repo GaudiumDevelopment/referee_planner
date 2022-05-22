@@ -6,7 +6,9 @@ import java.util.Comparator;
 
 public class GameAssignmentComparator implements Comparator<GameAssignment> {
     
-    public static final GameAssignmentComparator COMPARATOR = new GameAssignmentComparator();
+    private static final Comparator<GameAssignment> INNER = Comparator.comparing(gameAssignment -> gameAssignment.getGame().getGamePeriod().getStart());
+    
+    public static final Comparator<GameAssignment> COMPARATOR = INNER.thenComparingInt(GameAssignment::getIndexInGame);
     
     public GameAssignmentComparator() {
         //for optaplanner
@@ -17,14 +19,14 @@ public class GameAssignmentComparator implements Comparator<GameAssignment> {
      */
     @Override
     public int compare(GameAssignment o1, GameAssignment o2) {
-        if (o1.getGame().getGameRefereePeriod().getStart().isBefore(o2.getGame().getGameRefereePeriod().getStart())) {
+        if (o1 == null) {
+            if (o2 == null) {
+                return 0;
+            }
             return -1;
-        } else if (o1.getGame().getGameRefereePeriod().getStart().isAfter(o2.getGame().getGameRefereePeriod().getStart())) {
+        } else if (o2 == null) {
             return 1;
-        } else if (o1.getGame().getGameRefereePeriod().getStart().isEqual(o2.getGame().getGameRefereePeriod().getStart())) {
-            return 0;
-        } else {
-            throw new IllegalStateException("could not compare two game periods" + o1.getGame().getGameRefereePeriod().getStart() + o2.getGame().getGameRefereePeriod().getStart());
         }
+        return COMPARATOR.compare(o1, o2);
     }
 }
