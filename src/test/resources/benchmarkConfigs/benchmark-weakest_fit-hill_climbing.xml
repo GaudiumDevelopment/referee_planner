@@ -6,6 +6,7 @@
     <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
 
 
+
     <inheritedSolverBenchmark>
         <problemBenchmarks>
             <solutionFileIOClass>me.superbiebel.referee_planner.domain.data.io.json.TimeTableJsonIO
@@ -26,16 +27,13 @@
                 <constraintProviderClass>me.superbiebel.referee_planner.RefereeConstraintProvider
                 </constraintProviderClass>
             </scoreDirectorFactory>
-            <!--<termination>
-                <minutesSpentLimit>3</minutesSpentLimit>
-            </termination>-->
+            <termination>
+                <minutesSpentLimit>5</minutesSpentLimit>
+            </termination>
             <constructionHeuristic>
                 <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>
             </constructionHeuristic>
             <localSearch>
-                <termination>
-                    <minutesSpentLimit>20</minutesSpentLimit>
-                </termination>
                 <localSearchType>HILL_CLIMBING</localSearchType>
             </localSearch>
         </solver>

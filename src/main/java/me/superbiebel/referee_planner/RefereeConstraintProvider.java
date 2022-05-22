@@ -226,7 +226,12 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                            // action described in 1.
                            Map<Availability, List<GameAssignment>> availabilityGameAssignmentMap = referee.getAvailabilityToGameAssignmentsMap();
                            if (!referee.getUnassignedAssignments().isEmpty()) {
-                               return referee.getUnassignedAssignments().size();
+                               amount += referee.getUnassignedAssignments().size();
+                               earlyAbort = true;
+                           }
+    
+                           if (earlyAbort) {
+                               return amount;
                            }
     
                            //action described in 2.

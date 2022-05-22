@@ -1,9 +1,11 @@
 package me.superbiebel.tests;
 
 import io.quarkus.test.junit.QuarkusTest;
+import me.superbiebel.referee_planner.Pair;
 import me.superbiebel.referee_planner.RefereeConstraintProvider;
 import me.superbiebel.referee_planner.domain.*;
 import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
+import me.superbiebel.referee_planner.variablelisteners.AvailabilityAssignmentMapVariableListener;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 import org.optaplanner.test.api.score.stream.ConstraintVerifier;
@@ -12,6 +14,7 @@ import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @QuarkusTest
 class ConstraintProviderTests {
@@ -306,7 +309,7 @@ class ConstraintProviderTests {
         gameAssignment2.setReferee(referee);
         referee.addAssignment(gameAssignment2);
         game2.setAssignments(RandomDataGenerator.generateGameAssignments(game2));
-        
+    
         Game game3 = Game.builder().gameLocation(gameLocation3)
                              .gamePeriod(gameTimePeriod3)
                              .amountOfRefereesNeeded(1)
@@ -317,7 +320,9 @@ class ConstraintProviderTests {
         referee.addAssignment(gameAssignment3);
         game3.setAssignments(RandomDataGenerator.generateGameAssignments(game3));
     
-    
+        Pair<Map<Availability, List<GameAssignment>>, List<GameAssignment>> pair = AvailabilityAssignmentMapVariableListener.generateAvailabilityGameAssignmentMap(referee);
+        referee.setAvailabilityToGameAssignmentsMap(pair.getLeft());
+        referee.setUnassignedAssignments(pair.getRight());
         constraintVerifier.verifyThat(RefereeConstraintProvider::isPhysicallyPossibleConstraint)
                 .given(referee)
                 .penalizesBy(1);

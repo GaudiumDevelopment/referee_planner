@@ -34,7 +34,7 @@ class SolverTests {
         Assertions.assertDoesNotThrow(() -> {
             TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
     
-            String outputPath = "local/solverOutput/solverTests" + LocalDateTime.now() + "/";
+            String outputPath = "local/solverOutput/solverTests/" + LocalDateTime.now() + "/";
             File outputDir = new File(outputPath);
             outputDir.mkdirs();
     

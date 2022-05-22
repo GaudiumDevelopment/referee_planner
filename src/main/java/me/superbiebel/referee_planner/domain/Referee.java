@@ -56,14 +56,14 @@ public class Referee {
         return Objects.requireNonNullElseGet(sortedAssignments, () -> (sortedAssignments = new ArrayList<>()));
     }
     
-    @CustomShadowVariable(sources = @PlanningVariableReference(variableName = "assignments"), variableListenerClass = AvailabilityAssignmentMapVariableListener.class)
+    @CustomShadowVariable(sources = {@PlanningVariableReference(variableName = "assignments"), @PlanningVariableReference(variableName = "sortedAssignments")}, variableListenerClass = AvailabilityAssignmentMapVariableListener.class)
     public Map<Availability, List<GameAssignment>> getAvailabilityToGameAssignmentsMap() {
         return Objects.requireNonNullElseGet(availabilityToGameAssignmentsMap, () -> (availabilityToGameAssignmentsMap = new HashMap<>()));
     }
     
     @CustomShadowVariable(variableListenerRef = @PlanningVariableReference(variableName = "availabilityToGameAssignmentsMap"))
     public List<GameAssignment> getUnassignedAssignments() {
-        return Objects.requireNonNullElseGet(sortedAssignments, () -> (sortedAssignments = new ArrayList<>()));
+        return Objects.requireNonNullElseGet(unassignedAssignments, () -> (unassignedAssignments = new ArrayList<>()));
     }
     
     public void addAssignment(GameAssignment assignment) {

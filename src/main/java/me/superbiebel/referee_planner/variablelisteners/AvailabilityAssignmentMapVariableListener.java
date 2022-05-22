@@ -1,5 +1,6 @@
 package me.superbiebel.referee_planner.variablelisteners;
 
+import me.superbiebel.referee_planner.Pair;
 import me.superbiebel.referee_planner.domain.Availability;
 import me.superbiebel.referee_planner.domain.GameAssignment;
 import me.superbiebel.referee_planner.domain.Referee;
@@ -15,13 +16,13 @@ import java.util.Map;
 
 public class AvailabilityAssignmentMapVariableListener implements VariableListener<RefereeTimeTable, Referee> {
     
-    public void updateList(ScoreDirector<RefereeTimeTable> scoreDirector, Referee referee) {
+    public static Pair<Map<Availability, List<GameAssignment>>, List<GameAssignment>> generateAvailabilityGameAssignmentMap(Referee referee) {
         Map<Availability, List<GameAssignment>> availabilityGameAssignmentMap = new HashMap<>();
         List<GameAssignment> unassignedAssignments = new ArrayList<>();
-        for (GameAssignment gameAssignment : referee.getAssignments()) {
-            Availability availability;
+        for (GameAssignment gameAssignment : referee.getSortedAssignments()) {
+            Availability availability = referee.getCorrespondingAvailability(gameAssignment);
             List<GameAssignment> assignmentList;
-            if ((availability = referee.getCorrespondingAvailability(gameAssignment)) != null) {
+            if (availability != null) {
                 if ((assignmentList = availabilityGameAssignmentMap.get(availability)) == null) {
                     assignmentList = new ArrayList<>();
                     assignmentList.add(gameAssignment);
@@ -37,11 +38,16 @@ public class AvailabilityAssignmentMapVariableListener implements VariableListen
             List<GameAssignment> assignmentList = entry.getValue();
             assignmentList.sort(GameAssignmentComparator.COMPARATOR);
         }
+        return new Pair<>(availabilityGameAssignmentMap, unassignedAssignments);
+    }
+    
+    public void updateList(ScoreDirector<RefereeTimeTable> scoreDirector, Referee referee) {
+        Pair<Map<Availability, List<GameAssignment>>, List<GameAssignment>> pair = generateAvailabilityGameAssignmentMap(referee);
         scoreDirector.beforeVariableChanged(referee, "availabilityToGameAssignmentsMap");
-        referee.setAvailabilityToGameAssignmentsMap(availabilityGameAssignmentMap);
+        referee.setAvailabilityToGameAssignmentsMap(pair.getLeft());
         scoreDirector.afterVariableChanged(referee, "availabilityToGameAssignmentsMap");
         scoreDirector.beforeVariableChanged(referee, "unassignedAssignments");
-        referee.setUnassignedAssignments(unassignedAssignments);
+        referee.setUnassignedAssignments(pair.getRight());
         scoreDirector.afterVariableChanged(referee, "unassignedAssignments");
     }
     
