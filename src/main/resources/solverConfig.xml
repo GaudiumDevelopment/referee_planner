@@ -8,9 +8,6 @@
         <constraintProviderClass>me.superbiebel.referee_planner.RefereeConstraintProvider
         </constraintProviderClass>
     </scoreDirectorFactory>
-    <termination>
-        <minutesSpentLimit>10</minutesSpentLimit>
-    </termination>
     <constructionHeuristic>
         <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>
     </constructionHeuristic>

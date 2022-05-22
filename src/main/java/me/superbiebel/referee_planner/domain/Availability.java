@@ -2,9 +2,15 @@ package me.superbiebel.referee_planner.domain;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.optaplanner.core.api.domain.lookup.PlanningId;
+
+import java.util.UUID;
 
 @Builder(toBuilder = true)
 public class Availability {
+    @PlanningId
+    @Getter
+    private UUID availabilityUUID;
     @Getter
     private Location startLocation;
     @Getter

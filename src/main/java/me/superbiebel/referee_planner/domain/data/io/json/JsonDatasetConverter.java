@@ -58,6 +58,7 @@ public class JsonDatasetConverter {
     
     public static Availability generateAvailability(JsonNode availabilityNode) {
         Availability.AvailabilityBuilder builder = Availability.builder()
+                                                           .availabilityUUID(UUID.fromString(availabilityNode.get("availabilityUUID").asText()))
                                                            .startLocation(generateLocation(availabilityNode.get("startLocation")))
                                                            .timePeriod(generateTimePeriod(availabilityNode.get("timeperiod")))
                                                            .endLocationEnabled(availabilityNode.get("endLocationEnabled").asBoolean())

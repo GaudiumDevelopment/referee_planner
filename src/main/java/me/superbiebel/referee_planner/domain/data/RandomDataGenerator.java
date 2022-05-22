@@ -79,6 +79,7 @@ public class RandomDataGenerator {
                 maxRange = generateLongInRange(1, 190_000/*in meter*/, true);
             }
             availabilityList.add(Availability.builder()
+                                         .availabilityUUID(UUID.randomUUID())
                                          .startLocation(startLocation)
                                          .endLocation(endLocation)
                                          .endLocationEnabled(endLocationEnabled)
@@ -123,7 +124,7 @@ public class RandomDataGenerator {
                        .build();
     }
     
-    private static Location giveLocationWithinBelgium() {
+    public static Location giveLocationWithinBelgium() {
         return generateRandomLocation(51.413828127695915, 2.886469282111513, 50.815988855750156, 5.660311233686485);
     }
     

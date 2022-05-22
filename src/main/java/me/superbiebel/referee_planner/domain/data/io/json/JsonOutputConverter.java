@@ -81,6 +81,7 @@ public class JsonOutputConverter {
     
     public static ObjectNode generateAvailabilityNode(ObjectMapper mapper, Availability availability) {
         ObjectNode availabilityNode = mapper.createObjectNode();
+        availabilityNode.put("availabilityUUID", availability.getAvailabilityUUID().toString());
         availabilityNode.set("startLocation", generateLocationObjectNode(mapper, availability.getStartLocation()));
         availabilityNode.put("endLocationEnabled", availability.isEndLocationEnabled());
         if (availability.isEndLocationEnabled()) {
