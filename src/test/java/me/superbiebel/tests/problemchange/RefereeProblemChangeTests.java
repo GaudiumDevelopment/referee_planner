@@ -8,6 +8,7 @@ import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
 import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
 import me.superbiebel.referee_planner.problemchanges.referee.RefereeAvailabilityChange;
 import me.superbiebel.referee_planner.problemchanges.referee.RefereeExperienceChange;
+import me.superbiebel.referee_planner.problemchanges.referee.RemoveRefereeChange;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 import org.optaplanner.core.api.score.ScoreManager;
@@ -138,5 +139,17 @@ class RefereeProblemChangeTests {
                         .build(), timeTableGenerator);
         Referee adaptedReferee = refereeTimeTable.getReferees().stream().filter(referee1 -> referee1.getRefereeUUID().equals(refereeUUID)).findFirst().orElseThrow();
         assertEquals(adaptedExperience, adaptedReferee.getExperience());
+    }
+    @Test
+    @Execution(ExecutionMode.CONCURRENT)
+    @Timeout(120)
+    void refereeRemoveTest() throws InterruptedException {
+        TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
+        RefereeTimeTable intermediateTimeTable = timeTableGenerator.build();
+        UUID refereeUUID = intermediateTimeTable.getReferees().get(69).getRefereeUUID();
+        RefereeTimeTable adaptedRefereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/availabilityProblemChangeTests",
+                RemoveRefereeChange.builder().refereeUUID(refereeUUID).build(),
+                intermediateTimeTable, timeTableGenerator);
+        assertFalse(adaptedRefereeTimeTable.getReferees().stream().anyMatch(referee -> referee.getRefereeUUID().equals(refereeUUID)));
     }
 }

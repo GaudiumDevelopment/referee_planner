@@ -27,6 +27,9 @@ public class Referee {
     private UUID refereeUUID;
     @Getter
     @Setter
+    private boolean removed;
+    @Getter
+    @Setter
     private int experience;
     @Getter
     @Builder.Default

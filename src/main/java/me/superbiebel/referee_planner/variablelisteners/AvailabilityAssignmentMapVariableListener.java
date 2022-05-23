@@ -42,6 +42,7 @@ public class AvailabilityAssignmentMapVariableListener implements VariableListen
     }
     
     public void updateList(ScoreDirector<RefereeTimeTable> scoreDirector, Referee referee) {
+        if (referee.isRemoved()) return;
         Pair<Map<Availability, List<GameAssignment>>, List<GameAssignment>> pair = generateAvailabilityGameAssignmentMap(referee);
         scoreDirector.beforeVariableChanged(referee, "availabilityToGameAssignmentsMap");
         referee.setAvailabilityToGameAssignmentsMap(pair.getLeft());

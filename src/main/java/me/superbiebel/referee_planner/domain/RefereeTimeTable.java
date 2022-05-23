@@ -2,6 +2,7 @@ package me.superbiebel.referee_planner.domain;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import me.superbiebel.referee_planner.score.RefereeConstraintConfiguration;
 import org.optaplanner.core.api.domain.constraintweight.ConstraintConfigurationProvider;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
@@ -25,6 +26,7 @@ public class RefereeTimeTable {
     private List<Game> games;
     
     @Getter
+    @Setter
     @Builder.Default
     @PlanningEntityCollectionProperty
     @ValueRangeProvider(id = "refereeList")
