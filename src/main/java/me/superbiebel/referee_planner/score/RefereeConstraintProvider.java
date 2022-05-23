@@ -1,4 +1,4 @@
-package me.superbiebel.referee_planner;
+package me.superbiebel.referee_planner.score;
 
 import io.quarkus.logging.Log;
 import me.superbiebel.referee_planner.domain.*;

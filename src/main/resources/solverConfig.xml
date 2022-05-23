@@ -5,7 +5,7 @@
     <entityClass>me.superbiebel.referee_planner.domain.GameAssignment</entityClass>
     <entityClass>me.superbiebel.referee_planner.domain.Referee</entityClass>
     <scoreDirectorFactory>
-        <constraintProviderClass>me.superbiebel.referee_planner.RefereeConstraintProvider
+        <constraintProviderClass>me.superbiebel.referee_planner.score.RefereeConstraintProvider
         </constraintProviderClass>
     </scoreDirectorFactory>
     <constructionHeuristic>

@@ -1,4 +1,4 @@
-package me.superbiebel.referee_planner.domain;
+package me.superbiebel.referee_planner.score;
 
 import org.optaplanner.core.api.domain.constraintweight.ConstraintConfiguration;
 import org.optaplanner.core.api.domain.constraintweight.ConstraintWeight;

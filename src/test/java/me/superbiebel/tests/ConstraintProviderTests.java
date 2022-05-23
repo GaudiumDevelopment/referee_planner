@@ -1,9 +1,9 @@
 package me.superbiebel.tests;
 
 import io.quarkus.test.junit.QuarkusTest;
-import me.superbiebel.referee_planner.RefereeConstraintProvider;
 import me.superbiebel.referee_planner.domain.*;
 import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
+import me.superbiebel.referee_planner.score.RefereeConstraintProvider;
 import me.superbiebel.referee_planner.variablelisteners.AvailabilityAssignmentMapVariableListener;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;

@@ -2,6 +2,7 @@ package me.superbiebel.referee_planner.domain;
 
 import lombok.Builder;
 import lombok.Getter;
+import me.superbiebel.referee_planner.score.RefereeConstraintConfiguration;
 import org.optaplanner.core.api.domain.constraintweight.ConstraintConfigurationProvider;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
