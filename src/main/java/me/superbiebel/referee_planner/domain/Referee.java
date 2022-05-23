@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import me.superbiebel.referee_planner.exceptions.LookupObjectNotFound;
 import me.superbiebel.referee_planner.variablelisteners.AssignmentSortVariableListener;
 import me.superbiebel.referee_planner.variablelisteners.AvailabilityAssignmentMapVariableListener;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
@@ -54,6 +55,9 @@ public class Referee {
         if (foundAvailability == null) return; //the availability was not found inside the map because it had no gameAssignments coupled to it
         List<GameAssignment> gameAssignmentList = Objects.requireNonNull(availabilityToGameAssignmentsMap.get(foundAvailability));
         gameAssignmentList.forEach(gameAssignment -> problemChangeDirector.changeVariable(gameAssignment, "referee", gameAssignment1 -> gameAssignment1.setReferee(null)));
+    }
+    public static Referee lookupRefereeByUUID(UUID refereeUUID, ProblemChangeDirector problemChangeDirector) {
+        return problemChangeDirector.lookUpWorkingObject(Referee.builder().refereeUUID(refereeUUID).build()).orElseThrow(LookupObjectNotFound::new);
     }
     
     @InverseRelationShadowVariable(sourceVariableName = "referee")

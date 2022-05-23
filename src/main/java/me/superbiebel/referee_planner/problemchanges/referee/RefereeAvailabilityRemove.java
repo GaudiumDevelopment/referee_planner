@@ -19,7 +19,7 @@ public class RefereeAvailabilityRemove implements ProblemChange<RefereeTimeTable
     
     @Override
     public void doChange(RefereeTimeTable workingSolution, ProblemChangeDirector problemChangeDirector) {
-        Referee referee = problemChangeDirector.lookUpWorkingObject(Referee.builder().refereeUUID(refereeUUID).build()).orElseThrow(LookupObjectNotFound::new);
+        Referee referee = Referee.lookupRefereeByUUID(refereeUUID, problemChangeDirector);
         Availability foundAvailability = referee.getAvailabilityToGameAssignmentsMap().keySet().stream().filter(availability -> availability.getAvailabilityUUID().equals(oldAvailabilityUUID)).findFirst().orElseThrow(LookupObjectNotFound::new);
         referee.removeRefereeFromGameAssignmentsByAvailability(oldAvailabilityUUID, problemChangeDirector);
         problemChangeDirector.changeProblemProperty(referee, referee1 -> referee1.getAvailabilityList().remove(foundAvailability));

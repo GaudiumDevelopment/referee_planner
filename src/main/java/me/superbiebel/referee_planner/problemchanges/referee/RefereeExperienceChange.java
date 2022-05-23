@@ -16,7 +16,7 @@ public class RefereeExperienceChange implements ProblemChange<RefereeTimeTable> 
     
     @Override
     public void doChange(RefereeTimeTable workingSolution, ProblemChangeDirector problemChangeDirector) throws LookupObjectNotFound {
-        Referee referee = problemChangeDirector.lookUpWorkingObject(Referee.builder().refereeUUID(refereeUUID).build()).orElseThrow(LookupObjectNotFound::new);
+        Referee referee = Referee.lookupRefereeByUUID(refereeUUID, problemChangeDirector);
         problemChangeDirector.changeProblemProperty(referee, referee1 -> referee1.setExperience(newExperience));
     }
 }
