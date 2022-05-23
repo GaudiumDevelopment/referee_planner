@@ -7,7 +7,7 @@ import me.superbiebel.referee_planner.domain.RefereeTimeTable;
 import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
 import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
 import me.superbiebel.referee_planner.domain.data.io.json.JsonOutputConverter;
-import me.superbiebel.referee_planner.problemchanges.referee.AvailabilityChange;
+import me.superbiebel.referee_planner.problemchanges.referee.RefereeAvailabilityChange;
 import org.junit.jupiter.api.*;
 import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
@@ -123,7 +123,7 @@ class ProblemChangeTests {
         referees.add(referee);
         
         RefereeTimeTable refereeTimeTable = refereeTimeTableProblemChangeSolver("local/solverOutput/availabilityProblemChangeTests",
-                AvailabilityChange.builder()
+                RefereeAvailabilityChange.builder()
                         .newAvailability(newAvailability)
                         .oldAvailabilityUUID(oldAvailabilityUUID)
                         .refereeUUID(refereeUUID).build(),

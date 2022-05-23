@@ -24,6 +24,7 @@ public class Referee {
     @Getter
     private UUID refereeUUID;
     @Getter
+    @Setter
     private int experience;
     @Getter
     @Builder.Default

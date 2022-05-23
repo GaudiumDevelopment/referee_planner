@@ -11,7 +11,7 @@ import org.optaplanner.core.api.solver.change.ProblemChangeDirector;
 import java.util.UUID;
 
 @Builder(toBuilder = true)
-public class AvailabilityChange implements ProblemChange<RefereeTimeTable> {
+public class RefereeAvailabilityChange implements ProblemChange<RefereeTimeTable> {
     private UUID refereeUUID;
     private Availability newAvailability;
     private UUID oldAvailabilityUUID;
