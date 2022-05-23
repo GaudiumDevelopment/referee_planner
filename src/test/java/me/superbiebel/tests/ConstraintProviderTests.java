@@ -1,7 +1,6 @@
 package me.superbiebel.tests;
 
 import io.quarkus.test.junit.QuarkusTest;
-import me.superbiebel.referee_planner.Pair;
 import me.superbiebel.referee_planner.RefereeConstraintProvider;
 import me.superbiebel.referee_planner.domain.*;
 import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
@@ -320,7 +319,7 @@ class ConstraintProviderTests {
         referee.addAssignment(gameAssignment3);
         game3.setAssignments(RandomDataGenerator.generateGameAssignments(game3));
     
-        Pair<Map<Availability, List<GameAssignment>>, List<GameAssignment>> pair = AvailabilityAssignmentMapVariableListener.generateAvailabilityGameAssignmentMap(referee);
+        AvailabilityAssignmentMapVariableListener.Pair<Map<Availability, List<GameAssignment>>, List<GameAssignment>> pair = AvailabilityAssignmentMapVariableListener.generateAvailabilityGameAssignmentMap(referee);
         referee.setAvailabilityToGameAssignmentsMap(pair.getLeft());
         referee.setUnassignedAssignments(pair.getRight());
         constraintVerifier.verifyThat(RefereeConstraintProvider::isPhysicallyPossibleConstraint)

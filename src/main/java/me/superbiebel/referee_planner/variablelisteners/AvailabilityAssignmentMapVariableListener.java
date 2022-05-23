@@ -1,6 +1,6 @@
 package me.superbiebel.referee_planner.variablelisteners;
 
-import me.superbiebel.referee_planner.Pair;
+import lombok.Getter;
 import me.superbiebel.referee_planner.domain.Availability;
 import me.superbiebel.referee_planner.domain.GameAssignment;
 import me.superbiebel.referee_planner.domain.Referee;
@@ -20,9 +20,9 @@ public class AvailabilityAssignmentMapVariableListener implements VariableListen
         Map<Availability, List<GameAssignment>> availabilityGameAssignmentMap = new HashMap<>();
         List<GameAssignment> unassignedAssignments = new ArrayList<>();
         for (GameAssignment gameAssignment : referee.getSortedAssignments()) {
-            Availability availability = referee.getCorrespondingAvailability(gameAssignment);
+            Availability availability;
             List<GameAssignment> assignmentList;
-            if (availability != null) {
+            if ((availability = referee.getCorrespondingAvailability(gameAssignment)) != null) {
                 if ((assignmentList = availabilityGameAssignmentMap.get(availability)) == null) {
                     assignmentList = new ArrayList<>();
                     assignmentList.add(gameAssignment);
@@ -79,5 +79,17 @@ public class AvailabilityAssignmentMapVariableListener implements VariableListen
     @Override
     public void afterEntityRemoved(ScoreDirector<RefereeTimeTable> scoreDirector, Referee referee) {
         updateList(scoreDirector, referee);
+    }
+    
+    public static class Pair<L, R> {
+        @Getter
+        private final L left;
+        @Getter
+        private final R right;
+        
+        public Pair(L left, R right) {
+            this.left = left;
+            this.right = right;
+        }
     }
 }
