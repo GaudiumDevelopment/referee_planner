@@ -1,5 +1,6 @@
 package me.superbiebel.tests.problemchange;
 
+import io.quarkus.test.junit.QuarkusTest;
 import me.superbiebel.referee_planner.domain.RefereeTimeTable;
 import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
 import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
@@ -10,7 +11,6 @@ import org.optaplanner.core.api.solver.SolverJob;
 import org.optaplanner.core.api.solver.SolverManager;
 import org.optaplanner.core.api.solver.change.ProblemChange;
 
-import javax.inject.Inject;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -21,14 +21,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.Thread.sleep;
-
+@QuarkusTest
 public class ProblemChangeSolver {
-    @Inject
-    SolverManager<RefereeTimeTable, Long> solverManager;
-    @Inject
-    ScoreManager<RefereeTimeTable, HardSoftScore> scoreManager;
     
-    public RefereeTimeTable refereeTimeTableProblemChangeSolver(String output, ProblemChange<RefereeTimeTable> change, RefereeTimeTable input, TimeTableGenerator timeTableGenerator) throws InterruptedException {
+    public RefereeTimeTable refereeTimeTableProblemChangeSolver(SolverManager<RefereeTimeTable, Long> solverManager, ScoreManager<RefereeTimeTable, HardSoftScore> scoreManager, String output, ProblemChange<RefereeTimeTable> change, RefereeTimeTable input, TimeTableGenerator timeTableGenerator) throws InterruptedException {
         long PROBLEM_ID = RandomDataGenerator.generateLongInRange(0, 1000, true);
         
         String outputPath = output + "/" + LocalDateTime.now() + "/";

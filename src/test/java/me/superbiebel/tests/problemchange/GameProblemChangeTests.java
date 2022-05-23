@@ -9,7 +9,11 @@ import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
 import me.superbiebel.referee_planner.problemchanges.game.GameExperienceChange;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
+import org.optaplanner.core.api.score.ScoreManager;
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.api.solver.SolverManager;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 class GameProblemChangeTests {
+    @Inject
+    SolverManager<RefereeTimeTable, Long> solverManager;
+    @Inject
+    ScoreManager<RefereeTimeTable, HardSoftScore> scoreManager;
     @Test
     @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
@@ -38,7 +46,7 @@ class GameProblemChangeTests {
         List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
         gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
     
-        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver("local/solverOutput/hardMinimumExperienceChangeTest",
+        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/hardMinimumExperienceChangeTest",
                 GameExperienceChange.builder().gameUUID(gameUUID).newExperience(adaptedExperience).experienceType(GameExperienceChange.EXPERIENCE_TYPE.HARD_MINIMUM).build(),
                 intermediateTimeTable.toBuilder()
                         .games(games)
@@ -67,7 +75,7 @@ class GameProblemChangeTests {
         List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
         gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
         
-        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver("local/solverOutput/softMinimumExperienceChangeTest",
+        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/softMinimumExperienceChangeTest",
                 GameExperienceChange.builder().gameUUID(gameUUID).newExperience(adaptedExperience).experienceType(GameExperienceChange.EXPERIENCE_TYPE.SOFT_MINIMUM).build(),
                 intermediateTimeTable.toBuilder()
                         .games(games)
@@ -96,7 +104,7 @@ class GameProblemChangeTests {
         List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
         gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
         
-        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver("local/solverOutput/SoftMaximumExperienceChangeTest",
+        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/SoftMaximumExperienceChangeTest",
                 GameExperienceChange.builder().gameUUID(gameUUID).newExperience(adaptedExperience).experienceType(GameExperienceChange.EXPERIENCE_TYPE.SOFT_MAXIMUM).build(),
                 intermediateTimeTable.toBuilder()
                         .games(games)

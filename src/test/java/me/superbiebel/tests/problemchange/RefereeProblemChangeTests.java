@@ -10,7 +10,11 @@ import me.superbiebel.referee_planner.problemchanges.referee.RefereeAvailability
 import me.superbiebel.referee_planner.problemchanges.referee.RefereeExperienceChange;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
+import org.optaplanner.core.api.score.ScoreManager;
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.api.solver.SolverManager;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 class RefereeProblemChangeTests {
+    @Inject
+    SolverManager<RefereeTimeTable, Long> solverManager;
+    @Inject
+    ScoreManager<RefereeTimeTable, HardSoftScore> scoreManager;
     @Test
     @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
@@ -53,7 +61,7 @@ class RefereeProblemChangeTests {
                                   .build();
         referees.add(referee);
         
-        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver("local/solverOutput/availabilityProblemChangeTests",
+        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager,"local/solverOutput/availabilityProblemChangeTests",
                 RefereeAvailabilityChange.builder()
                         .newAvailability(newAvailability)
                         .oldAvailabilityUUID(oldAvailabilityUUID)
@@ -98,7 +106,7 @@ class RefereeProblemChangeTests {
                                   .build();
         referees.add(referee);
         
-        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver("local/solverOutput/availabilityProblemChangeTests",
+        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/availabilityProblemChangeTests",
                 RefereeAvailabilityChange.builder()
                         .newAvailability(newAvailability)
                         .oldAvailabilityUUID(oldAvailabilityUUID)
@@ -123,7 +131,7 @@ class RefereeProblemChangeTests {
                                   .refereeUUID(refereeUUID)
                                   .build();
         referees.add(referee);
-        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver("local/solverOutput/availabilityProblemChangeTests",
+        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/availabilityProblemChangeTests",
                 RefereeExperienceChange.builder().refereeUUID(refereeUUID).newExperience(adaptedExperience).build(),
                 intermediateTimeTable.toBuilder()
                         .referees(referees)

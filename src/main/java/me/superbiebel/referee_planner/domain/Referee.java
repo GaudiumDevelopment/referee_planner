@@ -12,6 +12,7 @@ import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.CustomShadowVariable;
 import org.optaplanner.core.api.domain.variable.InverseRelationShadowVariable;
 import org.optaplanner.core.api.domain.variable.PlanningVariableReference;
+import org.optaplanner.core.api.solver.change.ProblemChangeDirector;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,6 +48,12 @@ public class Referee {
     
     public Referee() {
         //For optaplanner
+    }
+    public void removeRefereeFromGameAssignmentsByAvailability(UUID availabilityUUID, ProblemChangeDirector problemChangeDirector) {
+        Availability foundAvailability = availabilityToGameAssignmentsMap.keySet().stream().filter(availability -> availability.getAvailabilityUUID().equals(availabilityUUID)).findFirst().orElse(null);
+        if (foundAvailability == null) return; //the availability was not found inside the map because it had no gameAssignments coupled to it
+        List<GameAssignment> gameAssignmentList = Objects.requireNonNull(availabilityToGameAssignmentsMap.get(foundAvailability));
+        gameAssignmentList.forEach(gameAssignment -> problemChangeDirector.changeVariable(gameAssignment, "referee", gameAssignment1 -> gameAssignment1.setReferee(null)));
     }
     
     @InverseRelationShadowVariable(sourceVariableName = "referee")
