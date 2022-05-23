@@ -8,7 +8,9 @@ import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
 import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
 import me.superbiebel.referee_planner.domain.data.io.json.JsonOutputConverter;
 import me.superbiebel.referee_planner.problemchanges.referee.RefereeAvailabilityChange;
+import me.superbiebel.referee_planner.problemchanges.referee.RefereeExperienceChange;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.solver.SolverJob;
@@ -39,6 +41,8 @@ class ProblemChangeTests {
     ScoreManager<RefereeTimeTable, HardSoftScore> scoreManager;
     
     public RefereeTimeTable refereeTimeTableProblemChangeSolver(String output, ProblemChange<RefereeTimeTable> change, RefereeTimeTable input, TimeTableGenerator timeTableGenerator) throws InterruptedException {
+        long PROBLEM_ID = RandomDataGenerator.generateLongInRange(0, 1000, true);
+        
         String outputPath = output + "/" + LocalDateTime.now() + "/";
         File outputDir = new File(outputPath);
         outputDir.mkdirs();
@@ -48,7 +52,7 @@ class ProblemChangeTests {
         
         AtomicInteger solutionCount = new AtomicInteger();
         AtomicReference<RefereeTimeTable> currentBestSolution = new AtomicReference<>();
-        SolverJob<RefereeTimeTable, Long> job = solverManager.solveAndListen(1L, t -> timeTableGenerator.build()//please don't mind the workaround
+        SolverJob<RefereeTimeTable, Long> job = solverManager.solveAndListen(PROBLEM_ID, t -> timeTableGenerator.build()//please don't mind the workaround
                                                                                               .toBuilder()
                                                                                               .referees(input.getReferees())
                                                                                               .games(input.getGames())
@@ -83,13 +87,14 @@ class ProblemChangeTests {
         });
         latch.await();
         sleep(1000);
-        solverManager.addProblemChange(1L, change);
+        solverManager.addProblemChange(PROBLEM_ID, change);
         sleep(20000);
         job.terminateEarly();
         return currentBestSolution.get();
     }
     
     @Test
+    @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
     void availabilityTest() throws InterruptedException {
         TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
@@ -133,5 +138,26 @@ class ProblemChangeTests {
         Referee adaptedReferee = refereeTimeTable.getReferees().stream().filter(referee1 -> referee1.getRefereeUUID().equals(refereeUUID)).findFirst().get();
         assertEquals(newAvailabilityUUID, adaptedReferee.getAvailabilityList().get(0).getAvailabilityUUID());
     }
-    
+    @Test
+    @Execution(ExecutionMode.CONCURRENT)
+    @Timeout(120)
+    void experienceChangeTest() throws InterruptedException {
+        TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
+        RefereeTimeTable intermediateTimeTable = timeTableGenerator.build();
+        List<Referee> referees = new ArrayList<>(intermediateTimeTable.getReferees());
+        int adaptedExperience = 90;
+        UUID refereeUUID = UUID.randomUUID();
+        Referee referee = RandomDataGenerator.generateReferee()
+                                  .toBuilder()
+                                  .refereeUUID(refereeUUID)
+                                  .build();
+        referees.add(referee);
+        RefereeTimeTable refereeTimeTable = refereeTimeTableProblemChangeSolver("local/solverOutput/availabilityProblemChangeTests",
+                RefereeExperienceChange.builder().refereeUUID(refereeUUID).newExperience(adaptedExperience).build(),
+                intermediateTimeTable.toBuilder()
+                        .referees(referees)
+                        .build(), timeTableGenerator);
+        Referee adaptedReferee = refereeTimeTable.getReferees().stream().filter(referee1 -> referee1.getRefereeUUID().equals(refereeUUID)).findFirst().get();
+        assertEquals(adaptedExperience, adaptedReferee.getExperience());
+    }
 }
