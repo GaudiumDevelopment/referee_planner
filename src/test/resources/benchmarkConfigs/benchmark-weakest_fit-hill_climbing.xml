@@ -12,7 +12,7 @@
             <solutionFileIOClass>me.superbiebel.referee_planner.domain.data.io.json.TimeTableJsonIO
             </solutionFileIOClass>
             <writeOutputSolutionEnabled>true</writeOutputSolutionEnabled>
-            <inputSolutionFile>datasets/dataset-1.json</inputSolutionFile>
+            <inputSolutionFile>datasets/dataset-2.json</inputSolutionFile>
             <problemStatisticType>BEST_SCORE</problemStatisticType>
             <problemStatisticType>SCORE_CALCULATION_SPEED</problemStatisticType>
         </problemBenchmarks>
@@ -20,6 +20,7 @@
     <solverBenchmark>
         <name>referee_planner hill climbing</name>
         <solver>
+            <moveThreadCount>4</moveThreadCount>
             <solutionClass>me.superbiebel.referee_planner.domain.RefereeTimeTable</solutionClass>
             <entityClass>me.superbiebel.referee_planner.domain.GameAssignment</entityClass>
             <entityClass>me.superbiebel.referee_planner.domain.Referee</entityClass>

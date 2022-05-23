@@ -17,6 +17,7 @@
     <solverBenchmark>
         <name>referee_planner hill climbing</name>
         <solver>
+            <moveThreadCount>4</moveThreadCount>
             <solutionClass>me.superbiebel.referee_planner.domain.RefereeTimeTable</solutionClass>
             <entityClass>me.superbiebel.referee_planner.domain.GameAssignment</entityClass>
             <entityClass>me.superbiebel.referee_planner.domain.Referee</entityClass>

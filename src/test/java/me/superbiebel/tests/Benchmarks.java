@@ -22,7 +22,7 @@ class Benchmarks {
     @Test
     void benchmark_weakest_fit_tabu_search() {
         Assertions.assertDoesNotThrow(() -> {
-            PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource("benchmarkConfigs/benchmark-WEAKEST_FIT-TABU_SEARCH.xml");
+            PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource("benchmarkConfigs/benchmark-WEAKEST_FIT-TABU_SEARCH-HILL_CLIMBING.xml");
             PlannerBenchmark benchmark = benchmarkFactory.buildPlannerBenchmark();
             benchmark.benchmarkAndShowReportInBrowser();
         });
@@ -31,7 +31,7 @@ class Benchmarks {
     @Test
     void benchmarkSolver() {
         Assertions.assertDoesNotThrow(() -> {
-            PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromSolverConfigXmlResource("bestSolverConfig.xml");
+            PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromSolverConfigXmlResource("solverConfig.xml");
             PlannerBenchmark benchmark = benchmarkFactory.buildPlannerBenchmark(
                     new TimeTableGenerator().amountOfGames(300).amountOfReferees(900).build());
             benchmark.benchmarkAndShowReportInBrowser();
