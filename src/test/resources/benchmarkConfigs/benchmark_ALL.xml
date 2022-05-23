@@ -32,7 +32,6 @@
         </problemBenchmarks>
     </inheritedSolverBenchmark>
     <solverBenchmarkBluePrint>
-        <solverBenchmarkBluePrintType>EVERY_CONSTRUCTION_HEURISTIC_TYPE_WITH_EVERY_LOCAL_SEARCH_TYPE
-        </solverBenchmarkBluePrintType>
+        <solverBenchmarkBluePrintType>EVERY_CONSTRUCTION_HEURISTIC_TYPE_WITH_EVERY_LOCAL_SEARCH_TYPE</solverBenchmarkBluePrintType>
     </solverBenchmarkBluePrint>
 </plannerBenchmark>
