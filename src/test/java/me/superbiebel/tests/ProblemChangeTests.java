@@ -134,7 +134,7 @@ class ProblemChangeTests {
                 intermediateTimeTable.toBuilder()
                         .referees(referees)
                         .build(), timeTableGenerator);
-        Referee adaptedReferee = refereeTimeTable.getReferees().stream().filter(referee1 -> referee1.getRefereeUUID().equals(refereeUUID)).findFirst().get();
+        Referee adaptedReferee = refereeTimeTable.getReferees().stream().filter(referee1 -> referee1.getRefereeUUID().equals(refereeUUID)).findFirst().orElseThrow();
         assertEquals(newAvailabilityUUID, adaptedReferee.getAvailabilityList().get(0).getAvailabilityUUID());
     }
     @Test
@@ -179,7 +179,7 @@ class ProblemChangeTests {
                 intermediateTimeTable.toBuilder()
                         .referees(referees)
                         .build(), timeTableGenerator);
-        Referee adaptedReferee = refereeTimeTable.getReferees().stream().filter(referee1 -> referee1.getRefereeUUID().equals(refereeUUID)).findFirst().get();
+        Referee adaptedReferee = refereeTimeTable.getReferees().stream().filter(referee1 -> referee1.getRefereeUUID().equals(refereeUUID)).findFirst().orElseThrow();
         assertEquals(newAvailabilityUUID, adaptedReferee.getAvailabilityList().get(0).getAvailabilityUUID());
     }
     @Test
@@ -201,7 +201,7 @@ class ProblemChangeTests {
                 intermediateTimeTable.toBuilder()
                         .referees(referees)
                         .build(), timeTableGenerator);
-        Referee adaptedReferee = refereeTimeTable.getReferees().stream().filter(referee1 -> referee1.getRefereeUUID().equals(refereeUUID)).findFirst().get();
+        Referee adaptedReferee = refereeTimeTable.getReferees().stream().filter(referee1 -> referee1.getRefereeUUID().equals(refereeUUID)).findFirst().orElseThrow();
         assertEquals(adaptedExperience, adaptedReferee.getExperience());
     }
     @Test
@@ -230,7 +230,7 @@ class ProblemChangeTests {
                         .games(games)
                         .gameAssignments(gameAssignments)
                         .build(), timeTableGenerator);
-        Game adaptedGame = refereeTimeTable.getGames().stream().filter(game1 -> game1.getGameUUID().equals(gameUUID)).findFirst().get();
+        Game adaptedGame = refereeTimeTable.getGames().stream().filter(game1 -> game1.getGameUUID().equals(gameUUID)).findFirst().orElseThrow();
         assertEquals(adaptedExperience, adaptedGame.getHardMinimumExperience());
     }
     @Test
@@ -259,7 +259,7 @@ class ProblemChangeTests {
                         .games(games)
                         .gameAssignments(gameAssignments)
                         .build(), timeTableGenerator);
-        Game adaptedGame = refereeTimeTable.getGames().stream().filter(game1 -> game1.getGameUUID().equals(gameUUID)).findFirst().get();
+        Game adaptedGame = refereeTimeTable.getGames().stream().filter(game1 -> game1.getGameUUID().equals(gameUUID)).findFirst().orElseThrow();
         assertEquals(adaptedExperience, adaptedGame.getSoftMinimumExperience());
     }
     @Test
@@ -288,7 +288,7 @@ class ProblemChangeTests {
                         .games(games)
                         .gameAssignments(gameAssignments)
                         .build(), timeTableGenerator);
-        Game adaptedGame = refereeTimeTable.getGames().stream().filter(game1 -> game1.getGameUUID().equals(gameUUID)).findFirst().get();
+        Game adaptedGame = refereeTimeTable.getGames().stream().filter(game1 -> game1.getGameUUID().equals(gameUUID)).findFirst().orElseThrow();
         assertEquals(adaptedExperience, adaptedGame.getSoftMaximumExperience());
     }
 }
