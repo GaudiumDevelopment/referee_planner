@@ -1,12 +1,11 @@
 package me.superbiebel.tests;
 
 import io.quarkus.test.junit.QuarkusTest;
-import me.superbiebel.referee_planner.domain.Availability;
-import me.superbiebel.referee_planner.domain.Referee;
-import me.superbiebel.referee_planner.domain.RefereeTimeTable;
+import me.superbiebel.referee_planner.domain.*;
 import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
 import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
 import me.superbiebel.referee_planner.domain.data.io.json.JsonOutputConverter;
+import me.superbiebel.referee_planner.problemchanges.game.GameExperienceChange;
 import me.superbiebel.referee_planner.problemchanges.referee.RefereeAvailabilityChange;
 import me.superbiebel.referee_planner.problemchanges.referee.RefereeExperienceChange;
 import org.junit.jupiter.api.*;
@@ -110,7 +109,13 @@ class ProblemChangeTests {
                                                .startLocation(RandomDataGenerator.giveLocationWithinBelgium())
                                                .build();
         UUID newAvailabilityUUID = UUID.randomUUID();
-        Availability newAvailability = null;
+        Availability newAvailability = RandomDataGenerator
+                                               .generateAvailabilityListForReferee(1)
+                                               .get(0)
+                                               .toBuilder()
+                                               .availabilityUUID(newAvailabilityUUID)
+                                               .startLocation(RandomDataGenerator.giveLocationWithinBelgium())
+                                               .build();
         List<Availability> availabilityList = new ArrayList<>();
         availabilityList.add(oldAvailability);
         UUID refereeUUID = UUID.randomUUID();
@@ -130,7 +135,7 @@ class ProblemChangeTests {
                         .referees(referees)
                         .build(), timeTableGenerator);
         Referee adaptedReferee = refereeTimeTable.getReferees().stream().filter(referee1 -> referee1.getRefereeUUID().equals(refereeUUID)).findFirst().get();
-        assertTrue(adaptedReferee.getAvailabilityList().isEmpty());
+        assertEquals(newAvailabilityUUID, adaptedReferee.getAvailabilityList().get(0).getAvailabilityUUID());
     }
     @Test
     @Execution(ExecutionMode.CONCURRENT)
@@ -198,5 +203,92 @@ class ProblemChangeTests {
                         .build(), timeTableGenerator);
         Referee adaptedReferee = refereeTimeTable.getReferees().stream().filter(referee1 -> referee1.getRefereeUUID().equals(refereeUUID)).findFirst().get();
         assertEquals(adaptedExperience, adaptedReferee.getExperience());
+    }
+    @Test
+    @Execution(ExecutionMode.CONCURRENT)
+    @Timeout(120)
+    void hardMinimumExperienceChangeTest() throws InterruptedException {
+        TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
+        RefereeTimeTable intermediateTimeTable = timeTableGenerator.build();
+        int adaptedExperience = 30;
+        
+        UUID gameUUID = UUID.randomUUID();
+        Game game = RandomDataGenerator.generateGame().toBuilder()
+                            .gameUUID(gameUUID)
+                            .hardMinimumExperience(10)
+                            .softMinimumExperience(50)
+                            .softMaximumExperience(90)
+                            .build();
+        List<Game> games = new ArrayList<>(intermediateTimeTable.getGames());
+        games.add(game);
+        List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
+        gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
+    
+        RefereeTimeTable refereeTimeTable = refereeTimeTableProblemChangeSolver("local/solverOutput/hardMinimumExperienceChangeTest",
+                GameExperienceChange.builder().gameUUID(gameUUID).newExperience(adaptedExperience).experienceType(GameExperienceChange.EXPERIENCE_TYPE.HARD_MINIMUM).build(),
+                intermediateTimeTable.toBuilder()
+                        .games(games)
+                        .gameAssignments(gameAssignments)
+                        .build(), timeTableGenerator);
+        Game adaptedGame = refereeTimeTable.getGames().stream().filter(game1 -> game1.getGameUUID().equals(gameUUID)).findFirst().get();
+        assertEquals(adaptedExperience, adaptedGame.getHardMinimumExperience());
+    }
+    @Test
+    @Execution(ExecutionMode.CONCURRENT)
+    @Timeout(120)
+    void softMinimumExperienceChangeTest() throws InterruptedException {
+        TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
+        RefereeTimeTable intermediateTimeTable = timeTableGenerator.build();
+        int adaptedExperience = 60;
+        
+        UUID gameUUID = UUID.randomUUID();
+        Game game = RandomDataGenerator.generateGame().toBuilder()
+                            .gameUUID(gameUUID)
+                            .hardMinimumExperience(10)
+                            .softMinimumExperience(50)
+                            .softMaximumExperience(90)
+                            .build();
+        List<Game> games = new ArrayList<>(intermediateTimeTable.getGames());
+        games.add(game);
+        List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
+        gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
+        
+        RefereeTimeTable refereeTimeTable = refereeTimeTableProblemChangeSolver("local/solverOutput/softMinimumExperienceChangeTest",
+                GameExperienceChange.builder().gameUUID(gameUUID).newExperience(adaptedExperience).experienceType(GameExperienceChange.EXPERIENCE_TYPE.SOFT_MINIMUM).build(),
+                intermediateTimeTable.toBuilder()
+                        .games(games)
+                        .gameAssignments(gameAssignments)
+                        .build(), timeTableGenerator);
+        Game adaptedGame = refereeTimeTable.getGames().stream().filter(game1 -> game1.getGameUUID().equals(gameUUID)).findFirst().get();
+        assertEquals(adaptedExperience, adaptedGame.getSoftMinimumExperience());
+    }
+    @Test
+    @Execution(ExecutionMode.CONCURRENT)
+    @Timeout(120)
+    void softMaximumExperienceChangeTest() throws InterruptedException {
+        TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
+        RefereeTimeTable intermediateTimeTable = timeTableGenerator.build();
+        int adaptedExperience = 95;
+        
+        UUID gameUUID = UUID.randomUUID();
+        Game game = RandomDataGenerator.generateGame().toBuilder()
+                            .gameUUID(gameUUID)
+                            .hardMinimumExperience(10)
+                            .softMinimumExperience(50)
+                            .softMaximumExperience(90)
+                            .build();
+        List<Game> games = new ArrayList<>(intermediateTimeTable.getGames());
+        games.add(game);
+        List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
+        gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
+        
+        RefereeTimeTable refereeTimeTable = refereeTimeTableProblemChangeSolver("local/solverOutput/SoftMaximumExperienceChangeTest",
+                GameExperienceChange.builder().gameUUID(gameUUID).newExperience(adaptedExperience).experienceType(GameExperienceChange.EXPERIENCE_TYPE.SOFT_MAXIMUM).build(),
+                intermediateTimeTable.toBuilder()
+                        .games(games)
+                        .gameAssignments(gameAssignments)
+                        .build(), timeTableGenerator);
+        Game adaptedGame = refereeTimeTable.getGames().stream().filter(game1 -> game1.getGameUUID().equals(gameUUID)).findFirst().get();
+        assertEquals(adaptedExperience, adaptedGame.getSoftMaximumExperience());
     }
 }

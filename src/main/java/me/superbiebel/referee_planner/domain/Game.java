@@ -1,7 +1,6 @@
 package me.superbiebel.referee_planner.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Builder(toBuilder = true)
-@AllArgsConstructor
 public class Game {
     @PlanningId
     @Getter
@@ -54,9 +52,27 @@ public class Game {
     public Game() {
         //for optaplanner
     }
+    public Game(UUID gameUUID, List<GameAssignment> assignments, Location gameLocation, TimePeriod gamePeriod, @SuppressWarnings("unused") TimePeriod gameRefereePeriod, int amountOfRefereesNeeded, int hardMinimumExperience, int softMinimumExperience, int softMaximumExperience, int priority) {
+        this.gameUUID = gameUUID;
+        this.assignments = assignments;
+        this.gameLocation = gameLocation;
+        this.gamePeriod = gamePeriod;
+        this.gameRefereePeriod = TimePeriod.builder()
+                                         .start(gamePeriod.getStart().minusMinutes(20))
+                                         .end(gamePeriod.getEnd())
+                                         .build();//the timePeriod that the referee has to be there
+        this.amountOfRefereesNeeded = amountOfRefereesNeeded;
+        this.hardMinimumExperience = hardMinimumExperience;
+        this.softMinimumExperience = softMinimumExperience;
+        this.softMaximumExperience = softMaximumExperience;
+        this.priority = priority;
+    }
+    public Game(UUID gameUUID) { //ONLY FOR LOOKUP PURPOSES
+        this.gameUUID = gameUUID;
+    }
 
     public static Game lookupGameByUUID(UUID gameUUID, ProblemChangeDirector problemChangeDirector) {
-        return problemChangeDirector.lookUpWorkingObject(Game.builder().gameUUID(gameUUID).build()).orElseThrow(LookupObjectNotFound::new);
+        return problemChangeDirector.lookUpWorkingObject(new Game(gameUUID)).orElseThrow(LookupObjectNotFound::new);
     }
 
     public void removeRefereesFromGameAssignments(ProblemChangeDirector problemChangeDirector) {

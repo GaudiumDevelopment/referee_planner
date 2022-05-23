@@ -35,7 +35,7 @@ public class GameExperienceChange implements ProblemChange<RefereeTimeTable> {
         });
         game.removeRefereesFromGameAssignments(problemChangeDirector);
     }
-    enum EXPERIENCE_TYPE {
+    public enum EXPERIENCE_TYPE {
         HARD_MINIMUM, SOFT_MINIMUM, SOFT_MAXIMUM
     }
 }
