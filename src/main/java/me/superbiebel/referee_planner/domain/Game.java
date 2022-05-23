@@ -1,15 +1,19 @@
 package me.superbiebel.referee_planner.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import me.superbiebel.referee_planner.exceptions.LookupObjectNotFound;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
+import org.optaplanner.core.api.solver.change.ProblemChangeDirector;
 
 import java.util.List;
 import java.util.UUID;
 
 @Builder(toBuilder = true)
+@AllArgsConstructor
 public class Game {
     @PlanningId
     @Getter
@@ -21,41 +25,42 @@ public class Game {
     private List<GameAssignment> assignments;
     
     @Getter
+    @Setter
     private Location gameLocation;
     @Getter
+    @Setter
     private TimePeriod gamePeriod;
     @Getter
+    @Setter
     private TimePeriod gameRefereePeriod;
     @Getter
+    @Setter
     private int amountOfRefereesNeeded;
     
     //experience
     @Getter
+    @Setter
     private int hardMinimumExperience;
     @Getter
+    @Setter
     private int softMinimumExperience;
     @Getter
+    @Setter
     private int softMaximumExperience;
     @Getter
+    @Setter
     private int priority;
     
     public Game() {
+        //for optaplanner
     }
-    
-    public Game(UUID gameUUID, List<GameAssignment> assignments, Location gameLocation, TimePeriod gamePeriod, @SuppressWarnings("unused") TimePeriod gameRefereePeriod, int amountOfRefereesNeeded, int hardMinimumExperience, int softMinimumExperience, int softMaximumExperience, int priority) {
-        this.gameUUID = gameUUID;
-        this.assignments = assignments;
-        this.gameLocation = gameLocation;
-        this.gamePeriod = gamePeriod;
-        this.gameRefereePeriod = TimePeriod.builder()
-                                         .start(gamePeriod.getStart().minusMinutes(20))
-                                         .end(gamePeriod.getEnd())
-                                         .build();//the timePeriod that the referee has to be there
-        this.amountOfRefereesNeeded = amountOfRefereesNeeded;
-        this.hardMinimumExperience = hardMinimumExperience;
-        this.softMinimumExperience = softMinimumExperience;
-        this.softMaximumExperience = softMaximumExperience;
-        this.priority = priority;
+
+    public static Game lookupGameByUUID(UUID gameUUID, ProblemChangeDirector problemChangeDirector) {
+        return problemChangeDirector.lookUpWorkingObject(Game.builder().gameUUID(gameUUID).build()).orElseThrow(LookupObjectNotFound::new);
+    }
+
+    public void removeRefereesFromGameAssignments(ProblemChangeDirector problemChangeDirector) {
+        assignments.forEach(gameAssignment -> problemChangeDirector.changeVariable(gameAssignment, "referee", gameAssignment1 -> gameAssignment1.setReferee(null)));
     }
     
     @Override
