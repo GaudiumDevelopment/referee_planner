@@ -35,6 +35,8 @@ public class Referee {
     
     @Getter
     private List<Availability> availabilityList;
+    
+    //calculated
     @JsonIgnore
     @Setter
     private List<GameAssignment> sortedAssignments;
