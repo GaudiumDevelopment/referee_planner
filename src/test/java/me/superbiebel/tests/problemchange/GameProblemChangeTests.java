@@ -1,12 +1,13 @@
 package me.superbiebel.tests.problemchange;
 
 import io.quarkus.test.junit.QuarkusTest;
-import me.superbiebel.referee_planner.domain.Game;
-import me.superbiebel.referee_planner.domain.GameAssignment;
-import me.superbiebel.referee_planner.domain.RefereeTimeTable;
+import me.superbiebel.referee_planner.domain.*;
 import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
 import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
 import me.superbiebel.referee_planner.problemchanges.game.GameExperienceChange;
+import me.superbiebel.referee_planner.problemchanges.game.GameLocationChange;
+import me.superbiebel.referee_planner.problemchanges.game.GamePeriodChange;
+import me.superbiebel.referee_planner.problemchanges.game.GamePriorityChange;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 import org.optaplanner.core.api.score.ScoreManager;
@@ -112,5 +113,83 @@ class GameProblemChangeTests {
                         .build(), timeTableGenerator);
         Game adaptedGame = refereeTimeTable.getGames().stream().filter(game1 -> game1.getGameUUID().equals(gameUUID)).findFirst().orElseThrow();
         assertEquals(adaptedExperience, adaptedGame.getSoftMaximumExperience());
+    }
+    @Test
+    @Execution(ExecutionMode.CONCURRENT)
+    @Timeout(120)
+    void gameLocationChangeTest() throws InterruptedException {
+        TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
+        RefereeTimeTable intermediateTimeTable = timeTableGenerator.build();
+        Location adaptedLocation = RandomDataGenerator.giveLocationWithinBelgium();
+        
+        UUID gameUUID = UUID.randomUUID();
+        Game game = RandomDataGenerator.generateGame().toBuilder()
+                            .gameUUID(gameUUID)
+                            .build();
+        List<Game> games = new ArrayList<>(intermediateTimeTable.getGames());
+        games.add(game);
+        List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
+        gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
+        
+        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/SoftMaximumExperienceChangeTest",
+                GameLocationChange.builder().newLocation(adaptedLocation).gameUUID(gameUUID).build(),
+                intermediateTimeTable.toBuilder()
+                        .games(games)
+                        .gameAssignments(gameAssignments)
+                        .build(), timeTableGenerator);
+        Game adaptedGame = refereeTimeTable.getGames().stream().filter(game1 -> game1.getGameUUID().equals(gameUUID)).findFirst().orElseThrow();
+        assertEquals(adaptedLocation, adaptedGame.getGameLocation());
+    }
+    @Test
+    @Execution(ExecutionMode.CONCURRENT)
+    @Timeout(120)
+    void gamePeriodChangeTest() throws InterruptedException {
+        TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
+        RefereeTimeTable intermediateTimeTable = timeTableGenerator.build();
+        TimePeriod adaptedTimePeriod = RandomDataGenerator.generateTimePeriodForGame(RandomDataGenerator.BEGIN_DATE);
+        
+        UUID gameUUID = UUID.randomUUID();
+        Game game = RandomDataGenerator.generateGame().toBuilder()
+                            .gameUUID(gameUUID)
+                            .build();
+        List<Game> games = new ArrayList<>(intermediateTimeTable.getGames());
+        games.add(game);
+        List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
+        gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
+        
+        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/SoftMaximumExperienceChangeTest",
+                GamePeriodChange.builder().newPeriod(adaptedTimePeriod).gameUUID(gameUUID).build(),
+                intermediateTimeTable.toBuilder()
+                        .games(games)
+                        .gameAssignments(gameAssignments)
+                        .build(), timeTableGenerator);
+        Game adaptedGame = refereeTimeTable.getGames().stream().filter(game1 -> game1.getGameUUID().equals(gameUUID)).findFirst().orElseThrow();
+        assertEquals(adaptedTimePeriod, adaptedGame.getGamePeriod());
+    }
+    @Test
+    @Execution(ExecutionMode.CONCURRENT)
+    @Timeout(120)
+    void priorityChangeTest() throws InterruptedException {
+        TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
+        RefereeTimeTable intermediateTimeTable = timeTableGenerator.build();
+        int adaptedPriority = 95;
+        
+        UUID gameUUID = UUID.randomUUID();
+        Game game = RandomDataGenerator.generateGame().toBuilder()
+                            .gameUUID(gameUUID)
+                            .build();
+        List<Game> games = new ArrayList<>(intermediateTimeTable.getGames());
+        games.add(game);
+        List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
+        gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
+        
+        RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/SoftMaximumExperienceChangeTest",
+                GamePriorityChange.builder().gameUUID(gameUUID).newPriority(adaptedPriority).build(),
+                intermediateTimeTable.toBuilder()
+                        .games(games)
+                        .gameAssignments(gameAssignments)
+                        .build(), timeTableGenerator);
+        Game adaptedGame = refereeTimeTable.getGames().stream().filter(game1 -> game1.getGameUUID().equals(gameUUID)).findFirst().orElseThrow();
+        assertEquals(adaptedPriority, adaptedGame.getPriority());
     }
 }
