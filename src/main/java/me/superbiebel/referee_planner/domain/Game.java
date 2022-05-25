@@ -76,7 +76,17 @@ public class Game {
     }
 
     public void removeRefereesFromGameAssignments(ProblemChangeDirector problemChangeDirector) {
-        assignments.forEach(gameAssignment -> problemChangeDirector.changeVariable(gameAssignment, "referee", gameAssignment1 -> gameAssignment1.setReferee(null)));
+        assignments.forEach(gameAssignment -> removeRefereeFromGameAssignment(gameAssignment, problemChangeDirector));
+    }
+    public void removeRefereeFromGameAssignment(GameAssignment gameAssignment, ProblemChangeDirector problemChangeDirector) {
+        if (gameAssignment.getReferee()!=null) {
+            problemChangeDirector.changeProblemProperty(gameAssignment.getReferee(), referee -> referee.removeRefereeFromGameAssignments(gameAssignment, problemChangeDirector));
+            problemChangeDirector.changeVariable(gameAssignment, "referee", gameAssignment1 -> gameAssignment1.setReferee(null));
+        }
+    }
+    public void addAssignment(GameAssignment assignment) {
+        assignment.setGame(this);
+        assignments.add(assignment);
     }
     
     @Override

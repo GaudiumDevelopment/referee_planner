@@ -8,6 +8,7 @@ import me.superbiebel.referee_planner.domain.RefereeTimeTable;
 import org.optaplanner.core.api.solver.change.ProblemChange;
 import org.optaplanner.core.api.solver.change.ProblemChangeDirector;
 
+import java.util.List;
 import java.util.UUID;
 
 @Builder(toBuilder = true)
@@ -21,23 +22,35 @@ public class GameAmountOfRefereesNeededChange implements ProblemChange<RefereeTi
         Game game = Game.lookupGameByUUID(gameUUID, problemChangeDirector);
         int oldAmount = game.getAmountOfRefereesNeeded();
         problemChangeDirector.changeProblemProperty(game, game1 -> game1.setAmountOfRefereesNeeded(newAmount));
+        
+        int newAmountMaxIndex = newAmount-1;
+        
         if (oldAmount > newAmount) {
-            game.getAssignments().forEach(gameAssignment -> {
-                if (gameAssignment.getIndexInGame() < newAmount) {
+            List<GameAssignment> assignments = game.getAssignments();
+            for (int i = 0, assignmentsSize = assignments.size(); i < assignmentsSize; i++) { // it has GOT to be this kind of loop otherwise you get a ConcurrentModificationException
+                GameAssignment gameAssignment = assignments.get(i);
+                if (gameAssignment.getIndexInGame() > newAmountMaxIndex) {
+                    problemChangeDirector.changeProblemProperty(gameAssignment, gameAssignment1 -> {
+                        if (gameAssignment1.getReferee() != null) {
+                            gameAssignment1.getReferee().getSortedAssignments().remove(gameAssignment1);
+                        }
+                    });
+                    problemChangeDirector.changeProblemProperty(gameAssignment, gameAssignment1 -> gameAssignment1.getReferee().removeRefereeFromGameAssignments(gameAssignment, problemChangeDirector));
                     problemChangeDirector.removeEntity(gameAssignment, gameAssignment1 -> workingSolution.getGameAssignments().remove(gameAssignment1));
                     problemChangeDirector.changeProblemProperty(game, game1 -> game1.getAssignments().remove(gameAssignment));
                 }
-            });
+            }
         } else if (oldAmount < newAmount){
-            for (int i = oldAmount; i < newAmount; i++) {
+            for (int i = oldAmount; i <= newAmountMaxIndex; i++) {
                 GameAssignment newGameAssignment = GameAssignment.builder()
                                                            .assignmentUUID(UUID.randomUUID())
                                                            .referee(null)
-                                                           .indexInGame(i-1)
+                                                           .game(game)
+                                                           .indexInGame(i)
                                                            .build();
                 problemChangeDirector.addEntity(newGameAssignment, workingSolution1->workingSolution.getGameAssignments().add(newGameAssignment));
+                game.addAssignment(newGameAssignment);
             }
         }
-        game.removeRefereesFromGameAssignments(problemChangeDirector);
     }
 }

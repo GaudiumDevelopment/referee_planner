@@ -16,6 +16,7 @@ import java.util.UUID;
 @PlanningEntity
 public class GameAssignment {
     @Getter
+    @Setter
     private Game game;
     
     @PlanningId

@@ -62,6 +62,13 @@ public class Referee {
         List<GameAssignment> gameAssignmentList = Objects.requireNonNull(availabilityToGameAssignmentsMap.get(availability));
         gameAssignmentList.forEach(gameAssignment -> problemChangeDirector.changeVariable(gameAssignment, "referee", gameAssignment1 -> gameAssignment1.setReferee(null)));
     }
+    public void removeRefereeFromGameAssignments(GameAssignment gameAssignment, ProblemChangeDirector problemChangeDirector) {
+        availabilityToGameAssignmentsMap.forEach((availability, assignmentList) -> assignmentList.forEach(assignment -> {
+            if (gameAssignment.equals(assignment)) {
+                removeRefereeFromGameAssignmentsByAvailability(availability, problemChangeDirector);
+            }
+        }));
+    }
     public static Referee lookupRefereeByUUID(UUID refereeUUID, ProblemChangeDirector problemChangeDirector) {
         return problemChangeDirector.lookUpWorkingObject(Referee.builder().refereeUUID(refereeUUID).build()).orElseThrow(LookupObjectNotFound::new);
     }
