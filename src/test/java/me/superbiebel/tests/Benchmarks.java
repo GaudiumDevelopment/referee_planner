@@ -18,6 +18,14 @@ class Benchmarks {
             benchmark.benchmarkAndShowReportInBrowser();
         });
     }
+    @Test
+    void benchmark_weakest_fit_hill_climbing_SINGLE_VS_MULTI() {
+        Assertions.assertDoesNotThrow(() -> {
+            PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource("benchmarkConfigs/benchmark-weakest_fit-hill_climbing-single_vs_multi.xml");
+            PlannerBenchmark benchmark = benchmarkFactory.buildPlannerBenchmark();
+            benchmark.benchmarkAndShowReportInBrowser();
+        });
+    }
     
     @Test
     void benchmark_weakest_fit_tabu_search() {
