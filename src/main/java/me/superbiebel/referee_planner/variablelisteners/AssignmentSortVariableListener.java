@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class AssignmentSortVariableListener implements VariableListener<RefereeTimeTable, Referee> {
     
     public void updateList(ScoreDirector<RefereeTimeTable> scoreDirector, Referee referee) {
+        if (referee.isNonExist()) return;
         if (referee.isRemoved()) return;
         scoreDirector.beforeVariableChanged(referee, "sortedAssignments");
         referee.setSortedAssignments(new ArrayList<>(referee.getAssignments()));

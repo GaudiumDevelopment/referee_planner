@@ -80,13 +80,20 @@ public class Game {
     }
     public void removeRefereeFromGameAssignment(GameAssignment gameAssignment, ProblemChangeDirector problemChangeDirector) {
         if (gameAssignment.getReferee()!=null) {
-            problemChangeDirector.changeProblemProperty(gameAssignment.getReferee(), referee -> referee.removeRefereeFromGameAssignments(gameAssignment, problemChangeDirector));
+            problemChangeDirector.changeProblemProperty(gameAssignment.getReferee(), referee -> referee.removeRefereeFromGameAssignment(gameAssignment, problemChangeDirector));
             problemChangeDirector.changeVariable(gameAssignment, "referee", gameAssignment1 -> gameAssignment1.setReferee(null));
         }
     }
     public void addAssignment(GameAssignment assignment) {
         assignment.setGame(this);
         assignments.add(assignment);
+    }
+    public void addAssignment(GameAssignment gameAssignment, ProblemChangeDirector problemChangeDirector) {
+        problemChangeDirector.changeProblemProperty(this, game -> game.getAssignments().add(gameAssignment));
+    }
+    public void removeGameAssignment(GameAssignment gameAssignment, ProblemChangeDirector problemChangeDirector) {
+        removeRefereeFromGameAssignment(gameAssignment, problemChangeDirector);
+        problemChangeDirector.changeProblemProperty(this, game -> game.getAssignments().remove(gameAssignment));
     }
     
     @Override

@@ -69,9 +69,10 @@ public class ProblemChangeSolver {
                 e.printStackTrace();
             }
         });
-        latch.await();
+        
         sleep(1000);
-        solverManager.addProblemChange(PROBLEM_ID, change);
+        latch.await();
+        job.addProblemChange(change);
         sleep(20000);
         job.terminateEarly();
         return currentBestSolution.get();

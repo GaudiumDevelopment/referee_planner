@@ -20,10 +20,10 @@ public class GamePeriodChange implements ProblemChange<RefereeTimeTable> {
     @Override
     public void doChange(RefereeTimeTable workingSolution, ProblemChangeDirector problemChangeDirector) {
         Game game = Game.lookupGameByUUID(gameUUID, problemChangeDirector);
+        game.removeRefereesFromGameAssignments(problemChangeDirector);
         problemChangeDirector.changeProblemProperty(game, game1 -> {
             game1.setGamePeriod(newPeriod);
             game1.setGameRefereePeriod(newPeriod.toBuilder().start(newPeriod.getStart().minusMinutes(20)).build());
         });
-        game.removeRefereesFromGameAssignments(problemChangeDirector);
     }
 }

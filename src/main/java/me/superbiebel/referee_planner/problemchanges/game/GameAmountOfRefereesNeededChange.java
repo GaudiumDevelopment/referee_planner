@@ -30,14 +30,9 @@ public class GameAmountOfRefereesNeededChange implements ProblemChange<RefereeTi
             for (int i = 0, assignmentsSize = assignments.size(); i < assignmentsSize; i++) { // it has GOT to be this kind of loop otherwise you get a ConcurrentModificationException
                 GameAssignment gameAssignment = assignments.get(i);
                 if (gameAssignment.getIndexInGame() > newAmountMaxIndex) {
-                    problemChangeDirector.changeProblemProperty(gameAssignment, gameAssignment1 -> {
-                        if (gameAssignment1.getReferee() != null) {
-                            gameAssignment1.getReferee().getSortedAssignments().remove(gameAssignment1);
-                        }
-                    });
-                    problemChangeDirector.changeProblemProperty(gameAssignment, gameAssignment1 -> gameAssignment1.getReferee().removeRefereeFromGameAssignments(gameAssignment, problemChangeDirector));
+                    problemChangeDirector.changeProblemProperty(gameAssignment, gameAssignment1 -> gameAssignment1.getReferee().removeRefereeFromGameAssignment(gameAssignment, problemChangeDirector));
                     problemChangeDirector.removeEntity(gameAssignment, gameAssignment1 -> workingSolution.getGameAssignments().remove(gameAssignment1));
-                    problemChangeDirector.changeProblemProperty(game, game1 -> game1.getAssignments().remove(gameAssignment));
+                    problemChangeDirector.changeProblemProperty(game, game1 -> game1.removeGameAssignment(gameAssignment, problemChangeDirector));
                 }
             }
         } else if (oldAmount < newAmount){
@@ -49,7 +44,7 @@ public class GameAmountOfRefereesNeededChange implements ProblemChange<RefereeTi
                                                            .indexInGame(i)
                                                            .build();
                 problemChangeDirector.addEntity(newGameAssignment, workingSolution1->workingSolution.getGameAssignments().add(newGameAssignment));
-                game.addAssignment(newGameAssignment);
+                game.addAssignment(newGameAssignment, problemChangeDirector);
             }
         }
     }

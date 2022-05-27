@@ -6,7 +6,6 @@ import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
 import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
 import me.superbiebel.referee_planner.problemchanges.game.*;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
 import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.solver.SolverManager;
@@ -25,7 +24,6 @@ class GameProblemChangeTests {
     @Inject
     ScoreManager<RefereeTimeTable, HardSoftScore> scoreManager;
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
     void hardMinimumExperienceChangeTest() throws InterruptedException {
         TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
@@ -54,7 +52,6 @@ class GameProblemChangeTests {
         assertEquals(adaptedExperience, adaptedGame.getHardMinimumExperience());
     }
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
     void softMinimumExperienceChangeTest() throws InterruptedException {
         TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
@@ -83,7 +80,6 @@ class GameProblemChangeTests {
         assertEquals(adaptedExperience, adaptedGame.getSoftMinimumExperience());
     }
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
     void softMaximumExperienceChangeTest() throws InterruptedException {
         TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
@@ -112,7 +108,6 @@ class GameProblemChangeTests {
         assertEquals(adaptedExperience, adaptedGame.getSoftMaximumExperience());
     }
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
     void gameLocationChangeTest() throws InterruptedException {
         TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
@@ -138,7 +133,6 @@ class GameProblemChangeTests {
         assertEquals(adaptedLocation, adaptedGame.getGameLocation());
     }
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
     void gamePeriodChangeTest() throws InterruptedException {
         TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
@@ -164,7 +158,6 @@ class GameProblemChangeTests {
         assertEquals(adaptedTimePeriod, adaptedGame.getGamePeriod());
     }
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
     void priorityChangeTest() throws InterruptedException {
         TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
@@ -190,7 +183,6 @@ class GameProblemChangeTests {
         assertEquals(adaptedPriority, adaptedGame.getPriority());
     }
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
     void refereesNeededMoreChangeTest() throws InterruptedException {
         TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
@@ -218,7 +210,6 @@ class GameProblemChangeTests {
         assertEquals(adaptedRefereesNeeded, adaptedGame.getAmountOfRefereesNeeded());
     }
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
     void refereesNeededLessChangeTest() throws InterruptedException {
         TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);

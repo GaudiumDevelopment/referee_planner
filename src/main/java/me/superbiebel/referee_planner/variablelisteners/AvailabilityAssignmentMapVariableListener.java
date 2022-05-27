@@ -38,10 +38,12 @@ public class AvailabilityAssignmentMapVariableListener implements VariableListen
             List<GameAssignment> assignmentList = entry.getValue();
             assignmentList.sort(GameAssignmentComparator.COMPARATOR);
         }
+        unassignedAssignments.sort(GameAssignmentComparator.COMPARATOR);
         return new Pair<>(availabilityGameAssignmentMap, unassignedAssignments);
     }
     
     public void updateList(ScoreDirector<RefereeTimeTable> scoreDirector, Referee referee) {
+        if (referee.isNonExist()) return;
         if (referee.isRemoved()) return;
         Pair<Map<Availability, List<GameAssignment>>, List<GameAssignment>> pair = generateAvailabilityGameAssignmentMap(referee);
         scoreDirector.beforeVariableChanged(referee, "availabilityToGameAssignmentsMap");

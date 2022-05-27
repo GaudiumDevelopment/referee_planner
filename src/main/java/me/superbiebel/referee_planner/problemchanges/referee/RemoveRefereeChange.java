@@ -19,8 +19,7 @@ public class RemoveRefereeChange implements ProblemChange<RefereeTimeTable> {
     public void doChange(RefereeTimeTable workingSolution, ProblemChangeDirector problemChangeDirector) {
         Referee referee = Referee.lookupRefereeByUUID(refereeUUID, problemChangeDirector);
         problemChangeDirector.changeProblemProperty(referee, referee1 -> referee1.setRemoved(true));
-        referee.getAvailabilityToGameAssignmentsMap().forEach(((availability, gameAssignments) ->
-                                                                       referee.removeRefereeFromGameAssignmentsByAvailability(availability, problemChangeDirector)));
+        referee.removeAllAvailability(problemChangeDirector);
     
         List<Referee> refereeList = new ArrayList<>(workingSolution.getReferees());
         workingSolution.setReferees(refereeList);

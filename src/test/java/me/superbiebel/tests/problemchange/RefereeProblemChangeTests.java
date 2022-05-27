@@ -7,10 +7,10 @@ import me.superbiebel.referee_planner.domain.RefereeTimeTable;
 import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
 import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
 import me.superbiebel.referee_planner.problemchanges.referee.RefereeAvailabilityChange;
+import me.superbiebel.referee_planner.problemchanges.referee.RefereeAvailabilityRemove;
 import me.superbiebel.referee_planner.problemchanges.referee.RefereeExperienceChange;
 import me.superbiebel.referee_planner.problemchanges.referee.RemoveRefereeChange;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
 import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.solver.SolverManager;
@@ -29,7 +29,6 @@ class RefereeProblemChangeTests {
     @Inject
     ScoreManager<RefereeTimeTable, HardSoftScore> scoreManager;
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
     void availabilityChangeTest() throws InterruptedException {
         TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
@@ -71,10 +70,9 @@ class RefereeProblemChangeTests {
                         .referees(referees)
                         .build(), timeTableGenerator);
         Referee adaptedReferee = refereeTimeTable.getReferees().stream().filter(referee1 -> referee1.getRefereeUUID().equals(refereeUUID)).findFirst().orElseThrow();
-        assertEquals(newAvailabilityUUID, adaptedReferee.getAvailabilityList().get(0).getAvailabilityUUID());
+        assertEquals(newAvailabilityUUID, adaptedReferee.getAvailabilityList().stream().filter(availability -> availability.getAvailabilityUUID().equals(newAvailabilityUUID)).findFirst().orElseThrow().getAvailabilityUUID());
     }
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
     void availabilityRemoveTest() throws InterruptedException {
         TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
@@ -89,14 +87,6 @@ class RefereeProblemChangeTests {
                                                .availabilityUUID(oldAvailabilityUUID)
                                                .startLocation(RandomDataGenerator.giveLocationWithinBelgium())
                                                .build();
-        UUID newAvailabilityUUID = UUID.randomUUID();
-        Availability newAvailability = RandomDataGenerator
-                                               .generateAvailabilityListForReferee(1)
-                                               .get(0)
-                                               .toBuilder()
-                                               .availabilityUUID(newAvailabilityUUID)
-                                               .startLocation(RandomDataGenerator.giveLocationWithinBelgium())
-                                               .build();
         List<Availability> availabilityList = new ArrayList<>();
         availabilityList.add(oldAvailability);
         UUID refereeUUID = UUID.randomUUID();
@@ -108,18 +98,16 @@ class RefereeProblemChangeTests {
         referees.add(referee);
         
         RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/availabilityProblemChangeTests",
-                RefereeAvailabilityChange.builder()
-                        .newAvailability(newAvailability)
+                RefereeAvailabilityRemove.builder()
                         .oldAvailabilityUUID(oldAvailabilityUUID)
                         .refereeUUID(refereeUUID).build(),
                 intermediateTimeTable.toBuilder()
                         .referees(referees)
                         .build(), timeTableGenerator);
         Referee adaptedReferee = refereeTimeTable.getReferees().stream().filter(referee1 -> referee1.getRefereeUUID().equals(refereeUUID)).findFirst().orElseThrow();
-        assertEquals(newAvailabilityUUID, adaptedReferee.getAvailabilityList().get(0).getAvailabilityUUID());
+        assertEquals(0, adaptedReferee.getAvailabilityList().size());
     }
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
     void experienceChangeTest() throws InterruptedException {
         TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
@@ -141,7 +129,6 @@ class RefereeProblemChangeTests {
         assertEquals(adaptedExperience, adaptedReferee.getExperience());
     }
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
     @Timeout(120)
     void refereeRemoveTest() throws InterruptedException {
         TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
