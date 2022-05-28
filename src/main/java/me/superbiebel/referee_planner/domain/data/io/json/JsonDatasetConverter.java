@@ -6,23 +6,32 @@ import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
 import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class JsonDatasetConverter {
     
-    public static RefereeTimeTable generateTimeTableFromJson(JsonNode timeTableNode) {
+    public static RefereeTimeTable generateTimeTableFromJson(JsonNode timeTableNode, boolean randomGameAssignments) {
         List<Game> gameList = new ArrayList<>();
         List<GameAssignment> gameAssignmentList = new ArrayList<>();
         timeTableNode.get("games").elements().forEachRemaining(gameNode -> {
             Game game = generateGame(gameNode);
             gameList.add(game);
-            gameAssignmentList.addAll(generateGameAssignmentsFromGame(game));
+            if (randomGameAssignments) {
+                gameAssignmentList.addAll(generateRandomGameAssignmentsFromGame(game));
+            }
         });
         List<Referee> refereeList = new ArrayList<>();
         timeTableNode.get("referees").elements().forEachRemaining(refereeNode -> refereeList.add(generateReferee(refereeNode)));
+        
+        Map<UUID, Game> gameMap = new HashMap<>();
+        gameList.forEach(game -> gameMap.put(game.getGameUUID(), game));
+    
+        Map<UUID, Referee> refereeMap = new HashMap<>();
+        refereeList.forEach(referee -> refereeMap.put(referee.getRefereeUUID(), referee));
+        
+        if (!randomGameAssignments) {
+            timeTableNode.get("assignments").elements().forEachRemaining(jsonNode -> gameAssignmentList.add(generateGameAssignment(jsonNode, gameMap, refereeMap)));
+        }
         return RefereeTimeTable.builder()
                        .referees(refereeList)
                        .gameAssignments(gameAssignmentList)
@@ -97,15 +106,19 @@ public class JsonDatasetConverter {
                 dateTimeNode.get("minute").asInt());
     }
     
-    public static GameAssignment generateGameAssignment(JsonNode gameAssignmentNode, Map<UUID, Game> gameMap) {
-        return GameAssignment.builder()
-                       .assignmentUUID(UUID.fromString(gameAssignmentNode.get("assignmentUUID").asText()))
-                       .indexInGame(gameAssignmentNode.get("indexInGame").asInt())
-                       .game(gameMap.get(UUID.fromString(gameAssignmentNode.get("gameUUID").asText())))
-                       .build();
+    public static GameAssignment generateGameAssignment(JsonNode gameAssignmentNode, Map<UUID, Game> gameMap, Map<UUID, Referee> refereeMap) {
+        Game game = gameMap.get(UUID.fromString(gameAssignmentNode.get("gameUUID").asText()));
+        GameAssignment assignment = GameAssignment.builder()
+                                            .assignmentUUID(UUID.fromString(gameAssignmentNode.get("assignmentUUID").asText()))
+                                            .indexInGame(gameAssignmentNode.get("indexInGame").asInt())
+                                            .game(game)
+                                            .referee(refereeMap.get(UUID.fromString(gameAssignmentNode.get("refereeUUID").asText())))
+                                            .build();
+        game.getAssignments().add(assignment);
+        return assignment;
     }
     
-    public static List<GameAssignment> generateGameAssignmentsFromGame(Game game) {
+    public static List<GameAssignment> generateRandomGameAssignmentsFromGame(Game game) {
         return RandomDataGenerator.generateGameAssignments(game);
     }
     

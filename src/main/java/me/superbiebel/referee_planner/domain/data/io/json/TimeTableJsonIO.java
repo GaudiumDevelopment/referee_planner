@@ -13,9 +13,10 @@ public class TimeTableJsonIO implements SolutionFileIO<RefereeTimeTable> {
     @Override
     public RefereeTimeTable read(File inputSolutionFile) {
         ObjectMapper mapper = new ObjectMapper();
+        JsonNode masterJSON;
         try {
-            JsonNode masterJSON = mapper.readTree(inputSolutionFile);
-            return JsonDatasetConverter.generateTimeTableFromJson(masterJSON);
+            masterJSON = mapper.readTree(inputSolutionFile);
+            return JsonDatasetConverter.generateTimeTableFromJson(masterJSON, true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
