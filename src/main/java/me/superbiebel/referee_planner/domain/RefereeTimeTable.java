@@ -1,5 +1,6 @@
 package me.superbiebel.referee_planner.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 
 @Builder(toBuilder = true)
+@AllArgsConstructor
 @PlanningSolution
 public class RefereeTimeTable {
     @Getter
@@ -50,14 +52,7 @@ public class RefereeTimeTable {
     RefereeConstraintConfiguration constraintConfiguration = new RefereeConstraintConfiguration();
     
     public RefereeTimeTable() {
-    }
-    
-    public RefereeTimeTable(List<Game> games, List<Referee> referees, List<GameAssignment> gameAssignments, HardMediumSoftLongScore score, RefereeConstraintConfiguration constraintConfiguration) {
-        this.games = games;
-        this.referees = referees;
-        this.gameAssignments = gameAssignments;
-        this.score = score;
-        this.constraintConfiguration = constraintConfiguration;
+        //for optaplanner
     }
     
     @Override
