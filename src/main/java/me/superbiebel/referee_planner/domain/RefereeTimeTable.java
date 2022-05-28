@@ -1,9 +1,6 @@
 package me.superbiebel.referee_planner.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import me.superbiebel.referee_planner.score.RefereeConstraintConfiguration;
 import org.optaplanner.core.api.domain.constraintweight.ConstraintConfigurationProvider;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
@@ -20,6 +17,7 @@ import java.util.UUID;
 
 
 @Builder(toBuilder = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @PlanningSolution
 public class RefereeTimeTable {
@@ -50,10 +48,6 @@ public class RefereeTimeTable {
     @Builder.Default
     @ConstraintConfigurationProvider
     RefereeConstraintConfiguration constraintConfiguration = new RefereeConstraintConfiguration();
-    
-    public RefereeTimeTable() {
-        //for optaplanner
-    }
     
     @Override
     public boolean equals(Object o) {
