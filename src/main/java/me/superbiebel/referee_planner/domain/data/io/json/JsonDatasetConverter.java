@@ -27,6 +27,7 @@ public class JsonDatasetConverter {
                        .referees(refereeList)
                        .gameAssignments(gameAssignmentList)
                        .games(gameList)
+                       .refereeTimeTableUUID(UUID.fromString(timeTableNode.get("timeTableUUID").asText()))
                        .build();
     }
     

@@ -25,6 +25,8 @@ public class JsonOutputConverter {
         ArrayNode gameAssignmentNode = mapper.createArrayNode();
         refereeTimeTable.getGameAssignments().forEach(gameAssignment -> gameAssignmentNode.add(generateGameAssignmentObjectNode(mapper, gameAssignment)));
         timeTableNode.set("gameAssignments", gameAssignmentNode);
+        
+        timeTableNode.put("timeTableUUID", refereeTimeTable.getRefereeTimeTableUUID().toString());
         return timeTableNode;
     }
     

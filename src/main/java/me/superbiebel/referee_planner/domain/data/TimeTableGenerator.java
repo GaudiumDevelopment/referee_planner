@@ -44,6 +44,8 @@ public class TimeTableGenerator {
     }
     
     public RefereeTimeTable build() {
-        return timeTableBuilder.build();
+        return timeTableBuilder
+                       .refereeTimeTableUUID(UUID.randomUUID())
+                       .build();
     }
 }

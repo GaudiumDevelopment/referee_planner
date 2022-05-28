@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.superbiebel.referee_planner.score.RefereeConstraintConfiguration;
 import org.optaplanner.core.api.domain.constraintweight.ConstraintConfigurationProvider;
+import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
@@ -14,11 +15,15 @@ import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftL
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 @Builder(toBuilder = true)
 @PlanningSolution
 public class RefereeTimeTable {
+    @Getter
+    @PlanningId
+    private UUID refereeTimeTableUUID;
     
     @Getter
     @ProblemFactCollectionProperty
