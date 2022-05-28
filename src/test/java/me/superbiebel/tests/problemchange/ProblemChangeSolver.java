@@ -1,6 +1,5 @@
 package me.superbiebel.tests.problemchange;
 
-import io.quarkus.test.junit.QuarkusTest;
 import me.superbiebel.referee_planner.domain.RefereeTimeTable;
 import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
 import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
@@ -21,7 +20,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.Thread.sleep;
-@QuarkusTest
 public class ProblemChangeSolver {
     
     public RefereeTimeTable refereeTimeTableProblemChangeSolver(SolverManager<RefereeTimeTable, Long> solverManager, ScoreManager<RefereeTimeTable, HardSoftScore> scoreManager, String output, ProblemChange<RefereeTimeTable> change, RefereeTimeTable input, TimeTableGenerator timeTableGenerator) throws InterruptedException {
@@ -31,11 +29,11 @@ public class ProblemChangeSolver {
         File outputDir = new File(outputPath);
         outputDir.mkdirs();
         
-        
         CountDownLatch latch = new CountDownLatch(1);
         
         AtomicInteger solutionCount = new AtomicInteger();
-        AtomicReference<RefereeTimeTable> currentBestSolution = new AtomicReference<>();
+        AtomicReference<RefereeTimeTable> bestSolution = new AtomicReference<>();
+        
         SolverJob<RefereeTimeTable, Long> job = solverManager.solveAndListen(PROBLEM_ID, t -> timeTableGenerator.build()//please don't mind the workaround
                                                                                                       .toBuilder()
                                                                                                       .referees(input.getReferees())
@@ -43,7 +41,7 @@ public class ProblemChangeSolver {
                                                                                                       .gameAssignments(input.getGameAssignments())
                                                                                                       .build(), timeTable1 -> {
             try {
-                currentBestSolution.set(timeTable1);
+                bestSolution.set(timeTable1);
                 String jsonString = JsonOutputConverter.refereeTimeTableToJson(timeTable1).toPrettyString();
                 String pathName = outputPath + "solution-" + solutionCount.get() + ".json";
                 File outputFile = new File(pathName);
@@ -69,12 +67,11 @@ public class ProblemChangeSolver {
                 e.printStackTrace();
             }
         });
-        
         sleep(1000);
         latch.await();
         job.addProblemChange(change);
         sleep(20000);
         job.terminateEarly();
-        return currentBestSolution.get();
+        return bestSolution.get();
     }
 }

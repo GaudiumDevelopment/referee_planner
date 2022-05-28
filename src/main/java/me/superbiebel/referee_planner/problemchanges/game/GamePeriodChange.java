@@ -5,25 +5,22 @@ import lombok.Getter;
 import me.superbiebel.referee_planner.domain.Game;
 import me.superbiebel.referee_planner.domain.RefereeTimeTable;
 import me.superbiebel.referee_planner.domain.TimePeriod;
-import org.optaplanner.core.api.solver.change.ProblemChange;
 import org.optaplanner.core.api.solver.change.ProblemChangeDirector;
 
 import java.util.UUID;
 
-@Builder(toBuilder = true)
-public class GamePeriodChange implements ProblemChange<RefereeTimeTable> {
+
+public class GamePeriodChange extends GameProblemChange {
     @Getter
-    private UUID gameUUID;
-    @Getter
-    private TimePeriod newPeriod;
+    private final TimePeriod newPeriod;
+    @Builder(toBuilder = true)
+    public GamePeriodChange(UUID gameUUID, TimePeriod newPeriod) {
+        super(gameUUID);
+        this.newPeriod = newPeriod;
+    }
     
     @Override
-    public void doChange(RefereeTimeTable workingSolution, ProblemChangeDirector problemChangeDirector) {
-        Game game = Game.lookupGameByUUID(gameUUID, problemChangeDirector);
-        game.removeRefereesFromGameAssignments(problemChangeDirector);
-        problemChangeDirector.changeProblemProperty(game, game1 -> {
-            game1.setGamePeriod(newPeriod);
-            game1.setGameRefereePeriod(newPeriod.toBuilder().start(newPeriod.getStart().minusMinutes(20)).build());
-        });
+    public Game doActualChange(Game game, RefereeTimeTable workingSolution, ProblemChangeDirector problemChangeDirector) {
+        return game.withGamePeriod(newPeriod).withGameRefereePeriod(newPeriod.toBuilder().start(newPeriod.getStart().minusMinutes(20)).build());
     }
 }

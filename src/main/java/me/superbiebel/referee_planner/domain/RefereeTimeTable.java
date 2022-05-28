@@ -26,9 +26,9 @@ public class RefereeTimeTable {
     private UUID refereeTimeTableUUID;
     
     @Getter
-    @ProblemFactCollectionProperty
-    @ValueRangeProvider(id = "gameList")
-    private List<Game> games;
+    @Setter
+    @PlanningEntityCollectionProperty
+    List<GameAssignment> gameAssignments;
     
     @Getter
     @Setter
@@ -36,10 +36,11 @@ public class RefereeTimeTable {
     @PlanningEntityCollectionProperty
     @ValueRangeProvider(id = "refereeList")
     List<Referee> referees = new ArrayList<>();
-    
     @Getter
-    @PlanningEntityCollectionProperty
-    List<GameAssignment> gameAssignments;
+    @Setter
+    @ProblemFactCollectionProperty
+    @ValueRangeProvider(id = "gameList")
+    private List<Game> games;
     
     @Getter
     @PlanningScore

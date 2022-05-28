@@ -4,36 +4,37 @@ import lombok.Builder;
 import lombok.Getter;
 import me.superbiebel.referee_planner.domain.Game;
 import me.superbiebel.referee_planner.domain.RefereeTimeTable;
-import org.optaplanner.core.api.solver.change.ProblemChange;
 import org.optaplanner.core.api.solver.change.ProblemChangeDirector;
 
 import java.util.UUID;
 
-@Builder(toBuilder = true)
-public class GameExperienceChange implements ProblemChange<RefereeTimeTable> {
+public class GameExperienceChange extends GameProblemChange {
     @Getter
-    private UUID gameUUID;
+    private final int newExperience;
     @Getter
-    private int newExperience;
-    @Getter
-    private EXPERIENCE_TYPE experienceType;
+    private final EXPERIENCE_TYPE experienceType;
+    @Builder(toBuilder = true)
+    public GameExperienceChange(UUID gameUUID, int newExperience, EXPERIENCE_TYPE experienceType) {
+        super(gameUUID);
+        this.newExperience = newExperience;
+        this.experienceType = experienceType;
+    }
+    
     @Override
-    public void doChange(RefereeTimeTable workingSolution, ProblemChangeDirector problemChangeDirector) {
-        Game game = Game.lookupGameByUUID(gameUUID, problemChangeDirector);
-        problemChangeDirector.changeProblemProperty(game, game1 -> {
-            switch (experienceType) {
-                case HARD_MINIMUM:
-                    game1.setHardMinimumExperience(newExperience);
-                    break;
-                case SOFT_MINIMUM:
-                    game1.setSoftMinimumExperience(newExperience);
-                    break;
-                case SOFT_MAXIMUM:
-                    game1.setSoftMaximumExperience(newExperience);
-                    break;
-            }
-        });
-        game.removeRefereesFromGameAssignments(problemChangeDirector);
+    public Game doActualChange(Game game, RefereeTimeTable workingSolution, ProblemChangeDirector problemChangeDirector) {
+        Game adaptedGame = null;
+        switch (experienceType) {
+            case HARD_MINIMUM:
+                adaptedGame = game.withHardMinimumExperience(newExperience);
+                break;
+            case SOFT_MINIMUM:
+                adaptedGame = game.withSoftMinimumExperience(newExperience);
+                break;
+            case SOFT_MAXIMUM:
+                adaptedGame = game.withSoftMaximumExperience(newExperience);
+                break;
+        }
+        return adaptedGame;
     }
     public enum EXPERIENCE_TYPE {
         HARD_MINIMUM, SOFT_MINIMUM, SOFT_MAXIMUM

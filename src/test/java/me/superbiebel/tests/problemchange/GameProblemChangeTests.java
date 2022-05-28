@@ -236,4 +236,5 @@ class GameProblemChangeTests {
         assertEquals(adaptedRefereesNeeded, adaptedGame.getAssignments().size());
         assertEquals(adaptedRefereesNeeded, adaptedGame.getAmountOfRefereesNeeded());
     }
+    
 }

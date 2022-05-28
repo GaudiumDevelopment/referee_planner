@@ -1,9 +1,7 @@
 package me.superbiebel.referee_planner.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import me.superbiebel.referee_planner.exceptions.LookupObjectNotFound;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.solver.change.ProblemChangeDirector;
@@ -11,7 +9,9 @@ import org.optaplanner.core.api.solver.change.ProblemChangeDirector;
 import java.util.List;
 import java.util.UUID;
 
-@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@With
 public class Game {
     @PlanningId
     @Getter
@@ -48,11 +48,8 @@ public class Game {
     @Getter
     @Setter
     private int priority;
-    
-    public Game() {
-        //for optaplanner
-    }
-    public Game(UUID gameUUID, List<GameAssignment> assignments, Location gameLocation, TimePeriod gamePeriod, @SuppressWarnings("unused") TimePeriod gameRefereePeriod, int amountOfRefereesNeeded, int hardMinimumExperience, int softMinimumExperience, int softMaximumExperience, int priority) {
+    @Builder(toBuilder = true)
+    public Game(UUID gameUUID, List<GameAssignment> assignments, Location gameLocation, TimePeriod gamePeriod, int amountOfRefereesNeeded, int hardMinimumExperience, int softMinimumExperience, int softMaximumExperience, int priority) {
         this.gameUUID = gameUUID;
         this.assignments = assignments;
         this.gameLocation = gameLocation;

@@ -5,21 +5,22 @@ import lombok.Getter;
 import me.superbiebel.referee_planner.domain.Game;
 import me.superbiebel.referee_planner.domain.Location;
 import me.superbiebel.referee_planner.domain.RefereeTimeTable;
-import org.optaplanner.core.api.solver.change.ProblemChange;
 import org.optaplanner.core.api.solver.change.ProblemChangeDirector;
 
 import java.util.UUID;
 
-@Builder(toBuilder = true)
-public class GameLocationChange implements ProblemChange<RefereeTimeTable> {
+
+public class GameLocationChange extends GameProblemChange {
     @Getter
-    private UUID gameUUID;
-    @Getter
-    private Location newLocation;
+    private final Location newLocation;
+    @Builder(toBuilder = true)
+    public GameLocationChange(UUID gameUUID, Location newLocation) {
+        super(gameUUID);
+        this.newLocation = newLocation;
+    }
+    
     @Override
-    public void doChange(RefereeTimeTable workingSolution, ProblemChangeDirector problemChangeDirector) {
-        Game game = Game.lookupGameByUUID(gameUUID, problemChangeDirector);
-        problemChangeDirector.changeProblemProperty(game, game1 -> game1.setGameLocation(newLocation));
-        game.removeRefereesFromGameAssignments(problemChangeDirector);
+    public Game doActualChange(Game game, RefereeTimeTable workingSolution, ProblemChangeDirector problemChangeDirector) {
+        return game.withGameLocation(newLocation);
     }
 }

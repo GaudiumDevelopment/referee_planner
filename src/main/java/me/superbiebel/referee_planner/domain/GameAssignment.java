@@ -1,10 +1,9 @@
 package me.superbiebel.referee_planner.domain;
 
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import me.superbiebel.referee_planner.domain.comparators.RefereeStrengthComparator;
+import me.superbiebel.referee_planner.pinningfilter.GameAssignmentPinningFilter;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
@@ -13,7 +12,10 @@ import java.util.UUID;
 
 
 @Builder(toBuilder = true)
-@PlanningEntity
+@PlanningEntity(pinningFilter = GameAssignmentPinningFilter.class)
+@AllArgsConstructor
+@NoArgsConstructor
+@With
 public class GameAssignment {
     @Getter
     @Setter
@@ -26,18 +28,13 @@ public class GameAssignment {
     @Getter
     @PlanningVariable(valueRangeProviderRefs = "refereeList", strengthComparatorClass = RefereeStrengthComparator.class)
     private Referee referee;
+    
+    @Setter
+    @Getter
+    @Builder.Default
+    private boolean pinnedReferee= false;
     @Getter
     private int indexInGame;
-    
-    public GameAssignment() {
-    }
-    
-    public GameAssignment(Game game, UUID assignmentUUID, Referee referee, int indexInGame) {
-        this.game = game;
-        this.assignmentUUID = assignmentUUID;
-        this.referee = referee;
-        this.indexInGame = indexInGame;
-    }
     
     @Override
     public String toString() {

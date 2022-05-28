@@ -5,34 +5,36 @@ import lombok.Getter;
 import me.superbiebel.referee_planner.domain.Game;
 import me.superbiebel.referee_planner.domain.GameAssignment;
 import me.superbiebel.referee_planner.domain.RefereeTimeTable;
-import org.optaplanner.core.api.solver.change.ProblemChange;
 import org.optaplanner.core.api.solver.change.ProblemChangeDirector;
 
 import java.util.List;
 import java.util.UUID;
 
-@Builder(toBuilder = true)
-public class GameAmountOfRefereesNeededChange implements ProblemChange<RefereeTimeTable> {
+public class GameAmountOfRefereesNeededChange extends GameProblemChange {
     @Getter
-    private UUID gameUUID;
-    @Getter
-    private int newAmount;
+    private final int newAmount;
+    @Builder(toBuilder = true)
+    public GameAmountOfRefereesNeededChange(UUID gameUUID, int newAmount) {
+        super(gameUUID);
+        this.newAmount = newAmount;
+    }
+    
     @Override
-    public void doChange(RefereeTimeTable workingSolution, ProblemChangeDirector problemChangeDirector) {
-        Game game = Game.lookupGameByUUID(gameUUID, problemChangeDirector);
+    public Game doActualChange(Game game, RefereeTimeTable workingSolution, ProblemChangeDirector problemChangeDirector) {
         int oldAmount = game.getAmountOfRefereesNeeded();
-        problemChangeDirector.changeProblemProperty(game, game1 -> game1.setAmountOfRefereesNeeded(newAmount));
-        
+        Game adaptedGame = game.withAmountOfRefereesNeeded(newAmount);
+    
         int newAmountMaxIndex = newAmount-1;
-        
+    
         if (oldAmount > newAmount) {
             List<GameAssignment> assignments = game.getAssignments();
+            //noinspection ForLoopReplaceableByForEach
             for (int i = 0, assignmentsSize = assignments.size(); i < assignmentsSize; i++) { // it has GOT to be this kind of loop otherwise you get a ConcurrentModificationException
-                GameAssignment gameAssignment = assignments.get(i);
+                GameAssignment gameAssignment = problemChangeDirector.lookUpWorkingObject(GameAssignment.builder().assignmentUUID(assignments.get(i).getAssignmentUUID()).build()).orElseThrow();
                 if (gameAssignment.getIndexInGame() > newAmountMaxIndex) {
                     problemChangeDirector.changeProblemProperty(gameAssignment, gameAssignment1 -> gameAssignment1.getReferee().removeRefereeFromGameAssignment(gameAssignment, problemChangeDirector));
                     problemChangeDirector.removeEntity(gameAssignment, gameAssignment1 -> workingSolution.getGameAssignments().remove(gameAssignment1));
-                    problemChangeDirector.changeProblemProperty(game, game1 -> game1.removeGameAssignment(gameAssignment, problemChangeDirector));
+                    adaptedGame.getAssignments().remove(gameAssignment);
                 }
             }
         } else if (oldAmount < newAmount){
@@ -44,8 +46,9 @@ public class GameAmountOfRefereesNeededChange implements ProblemChange<RefereeTi
                                                            .indexInGame(i)
                                                            .build();
                 problemChangeDirector.addEntity(newGameAssignment, workingSolution1->workingSolution.getGameAssignments().add(newGameAssignment));
-                game.addAssignment(newGameAssignment, problemChangeDirector);
+                adaptedGame.addAssignment(newGameAssignment);
             }
         }
+        return adaptedGame;
     }
 }
