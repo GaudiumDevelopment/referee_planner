@@ -137,7 +137,7 @@ public class RefereeConstraintProvider implements ConstraintProvider {
                            Log.tracef("notEnoughRefereesCheck isNonExist is %s for game %s with index %s", gameAssignment.getReferee().isNonExist(), gameAssignment.getGame().getGameUUID(), gameAssignment.getIndexInGame());
                            return gameAssignment.getReferee().isNonExist();
                        }).groupBy(GameAssignment::getGame, ConstraintCollectors.count())
-                       .penalizeConfigurableLong(RefereeConstraintConfiguration.NOT_ENOUGH_REFEREES, (assignment, count) -> (long) assignment.getPriority() * count);
+                       .penalizeConfigurableLong(RefereeConstraintConfiguration.NOT_ENOUGH_REFEREES, (game, count) -> (long) game.getPriority() * count);
     }
     
     public Constraint tooManyRefereesConstraint(ConstraintFactory constraintFactory) {
