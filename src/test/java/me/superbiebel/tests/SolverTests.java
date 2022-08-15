@@ -30,6 +30,7 @@ class SolverTests {
     ScoreManager<RefereeTimeTable, HardSoftScore> scoreManager;
     
     @Test
+    @Disabled
     void solverTest() {
         Assertions.assertDoesNotThrow(() -> {
             TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
