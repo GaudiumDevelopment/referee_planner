@@ -58,20 +58,20 @@ public class RefereeTimeTable {
         RefereeTimeTable that = (RefereeTimeTable) o;
         
         if (!getRefereeTimeTableUUID().equals(that.getRefereeTimeTableUUID())) return false;
-        if (!getGames().equals(that.getGames())) return false;
-        if (!getReferees().equals(that.getReferees())) return false;
         if (!getGameAssignments().equals(that.getGameAssignments())) return false;
-        if (!getScore().equals(that.getScore())) return false;
+        if (!getReferees().equals(that.getReferees())) return false;
+        if (!getGames().equals(that.getGames())) return false;
+        if (getScore() != null ? !getScore().equals(that.getScore()) : that.getScore() != null) return false;
         return constraintConfiguration.equals(that.constraintConfiguration);
     }
     
     @Override
     public int hashCode() {
         int result = getRefereeTimeTableUUID().hashCode();
-        result = 31 * result + getGames().hashCode();
-        result = 31 * result + getReferees().hashCode();
         result = 31 * result + getGameAssignments().hashCode();
-        result = 31 * result + getScore().hashCode();
+        result = 31 * result + getReferees().hashCode();
+        result = 31 * result + getGames().hashCode();
+        result = 31 * result + (getScore() != null ? getScore().hashCode() : 0);
         result = 31 * result + constraintConfiguration.hashCode();
         return result;
     }

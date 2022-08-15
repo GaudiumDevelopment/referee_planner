@@ -54,4 +54,42 @@ public class RefereeConstraintConfiguration {
     
     @ConstraintWeight(MAX_RANGE)
     HardMediumSoftLongScore maxRange = HardMediumSoftLongScore.ofHard(1);
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
+        RefereeConstraintConfiguration that = (RefereeConstraintConfiguration) o;
+        
+        if (!hardMinimumExperience.equals(that.hardMinimumExperience)) return false;
+        if (!softMinimumExperience.equals(that.softMinimumExperience)) return false;
+        if (!softMaximumExperienceLevel.equals(that.softMaximumExperienceLevel)) return false;
+        if (!distanceSoft.equals(that.distanceSoft)) return false;
+        if (!notEnoughReferees.equals(that.notEnoughReferees)) return false;
+        if (!tooMuchReferees.equals(that.tooMuchReferees)) return false;
+        if (!firstReferenceIsNonExist.equals(that.firstReferenceIsNonExist)) return false;
+        if (!firstRefereeMoreExpThanOther.equals(that.firstRefereeMoreExpThanOther)) return false;
+        if (!sameRefereeMultipleGameIndex.equals(that.sameRefereeMultipleGameIndex)) return false;
+        if (!isInAvailabilityConstraint.equals(that.isInAvailabilityConstraint)) return false;
+        if (!gameAssignmentDoesNotOverlapPerReferee.equals(that.gameAssignmentDoesNotOverlapPerReferee)) return false;
+        return maxRange.equals(that.maxRange);
+    }
+    
+    @Override
+    public int hashCode() {
+        int result = hardMinimumExperience.hashCode();
+        result = 31 * result + softMinimumExperience.hashCode();
+        result = 31 * result + softMaximumExperienceLevel.hashCode();
+        result = 31 * result + distanceSoft.hashCode();
+        result = 31 * result + notEnoughReferees.hashCode();
+        result = 31 * result + tooMuchReferees.hashCode();
+        result = 31 * result + firstReferenceIsNonExist.hashCode();
+        result = 31 * result + firstRefereeMoreExpThanOther.hashCode();
+        result = 31 * result + sameRefereeMultipleGameIndex.hashCode();
+        result = 31 * result + isInAvailabilityConstraint.hashCode();
+        result = 31 * result + gameAssignmentDoesNotOverlapPerReferee.hashCode();
+        result = 31 * result + maxRange.hashCode();
+        return result;
+    }
 }
