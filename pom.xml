@@ -23,7 +23,7 @@
                 <groupId>org.optaplanner</groupId>
                 <artifactId>optaplanner-bom</artifactId>
                 <type>pom</type>
-                <version>8.22.1.Final</version>
+                <version>8.25.0.Final</version>
                 <scope>import</scope>
             </dependency>
             <dependency>
@@ -46,7 +46,6 @@
         <dependency>
             <groupId>org.optaplanner</groupId>
             <artifactId>optaplanner-quarkus</artifactId>
-            <version>8.25.0.Final</version>
         </dependency>
         <dependency>
             <groupId>org.optaplanner</groupId>
