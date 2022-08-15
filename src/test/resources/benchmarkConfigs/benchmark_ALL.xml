@@ -25,10 +25,8 @@
             </solutionFileIOClass>
             <writeOutputSolutionEnabled>true</writeOutputSolutionEnabled>
             <inputSolutionFile>datasets/dataset-1.json</inputSolutionFile>
-
             <problemStatisticType>BEST_SCORE</problemStatisticType>
             <problemStatisticType>SCORE_CALCULATION_SPEED</problemStatisticType>
-
         </problemBenchmarks>
     </inheritedSolverBenchmark>
     <solverBenchmarkBluePrint>

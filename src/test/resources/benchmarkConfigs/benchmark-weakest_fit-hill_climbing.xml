@@ -4,9 +4,6 @@
                   xsi:schemaLocation="https://www.optaplanner.org/xsd/benchmark https://www.optaplanner.org/xsd/benchmark/benchmark.xsd">
     <benchmarkDirectory>local/data/referee_planner</benchmarkDirectory>
     <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
-
-
-
     <inheritedSolverBenchmark>
         <problemBenchmarks>
             <solutionFileIOClass>me.superbiebel.referee_planner.domain.data.io.json.TimeTableJsonIO
@@ -39,6 +36,4 @@
             </localSearch>
         </solver>
     </solverBenchmark>
-
-
 </plannerBenchmark>

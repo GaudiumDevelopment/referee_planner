@@ -43,7 +43,6 @@
                 </termination>
                 <localSearchType>HILL_CLIMBING</localSearchType>
             </localSearch>
-
         </solver>
     </solverBenchmark>
 </plannerBenchmark>
