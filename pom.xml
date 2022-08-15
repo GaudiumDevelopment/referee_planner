@@ -46,7 +46,7 @@
         <dependency>
             <groupId>org.optaplanner</groupId>
             <artifactId>optaplanner-quarkus</artifactId>
-            <version>8.22.1.Final</version>
+            <version>8.25.0.Final</version>
         </dependency>
         <dependency>
             <groupId>org.optaplanner</groupId>
