@@ -61,11 +61,13 @@ class ConstraintProviderTests {
     @Execution(ExecutionMode.CONCURRENT)
     @Test
     void distanceSoftConstraintTest() {
+        //ConstraintVerifier<RefereeConstraintProvider, RefereeTimeTable> newVerifier
+          //      = ConstraintVerifier.build(new RefereeConstraintProvider(), RefereeTimeTable.class, Referee.class, GameAssignment.class);
+        
         Location startLocation = Location.builder()
                                          .latitude(50.900103554473006)
                                          .longitude(4.740255725222106)
                                          .build();
-    
         Location location1 = Location.builder()
                                      .latitude(50.95861155236005)
                                      .longitude(4.827628078154828)
