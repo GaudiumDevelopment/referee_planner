@@ -14,6 +14,9 @@ public class JsonOutputConverter {
     public static JsonNode refereeTimeTableToJson(RefereeTimeTable refereeTimeTable) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode timeTableNode = mapper.createObjectNode();
+        
+        timeTableNode.put("timeTableUUID", refereeTimeTable.getRefereeTimeTableUUID().toString());
+        
         ArrayNode gameNode = mapper.createArrayNode();
         refereeTimeTable.getGames().forEach(game -> gameNode.add(generateGameObjectNode(mapper, game)));
         timeTableNode.set("games", gameNode);
@@ -25,8 +28,6 @@ public class JsonOutputConverter {
         ArrayNode gameAssignmentNode = mapper.createArrayNode();
         refereeTimeTable.getGameAssignments().forEach(gameAssignment -> gameAssignmentNode.add(generateGameAssignmentObjectNode(mapper, gameAssignment)));
         timeTableNode.set("gameAssignments", gameAssignmentNode);
-        
-        timeTableNode.put("timeTableUUID", refereeTimeTable.getRefereeTimeTableUUID().toString());
         return timeTableNode;
     }
     

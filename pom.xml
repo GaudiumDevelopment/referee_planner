@@ -7,29 +7,30 @@
     <artifactId>referee_planner</artifactId>
     <version>INDEV</version>
     <properties>
-        <compiler-plugin.version>3.8.1</compiler-plugin.version>
-        <failsafe.useModulePath>false</failsafe.useModulePath>
-        <maven.compiler.release>18</maven.compiler.release>
+        <maven.compiler.release>11</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-        <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
+
         <version.io.quarkus>2.11.0.Final</version.io.quarkus>
-        <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
+        <version.org.optaplanner>8.25.0.Final</version.org.optaplanner>
+
+        <version.compiler.plugin>3.8.1</version.compiler.plugin>
+        <version.surefire.plugin>3.0.0-M5</version.surefire.plugin>
     </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>io.quarkus.platform</groupId>
-                <artifactId>quarkus-optaplanner-bom</artifactId>
-                <version>2.11.1.Final</version>
+                <groupId>io.quarkus</groupId>
+                <!-- Alternatively, use <artifactId>quarkus-universe-bom</artifactId>
+                 which includes both quarkus-bom and optaplanner-bom. -->
+                <artifactId>quarkus-bom</artifactId>
+                <version>${version.io.quarkus}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>${quarkus.platform.group-id}</groupId>
-                <artifactId>${quarkus.platform.artifact-id}</artifactId>
-                <version>${quarkus.platform.version}</version>
+                <groupId>org.optaplanner</groupId>
+                <artifactId>optaplanner-bom</artifactId>
+                <version>${version.org.optaplanner}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -105,54 +106,29 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>${quarkus.platform.group-id}</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${version.compiler.plugin}</version>
+            </plugin>
+            <plugin>
+                <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
-                <version>${quarkus.platform.version}</version>
-                <extensions>true</extensions>
+                <version>${version.io.quarkus}</version>
                 <executions>
                     <execution>
                         <goals>
                             <goal>build</goal>
-                            <goal>generate-code</goal>
-                            <goal>generate-code-tests</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${compiler-plugin.version}</version>
-                <configuration>
-                    <compilerArgs>
-                        <arg>-parameters</arg>
-                    </compilerArgs>
-                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire-plugin.version}</version>
+                <version>${version.surefire.plugin}</version>
                 <configuration>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                        <maven.home>${maven.home}</maven.home>
                     </systemPropertyVariables>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <configuration>
-                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
