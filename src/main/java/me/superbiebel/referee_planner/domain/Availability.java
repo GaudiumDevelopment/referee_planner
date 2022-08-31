@@ -6,23 +6,55 @@ import org.optaplanner.core.api.domain.lookup.PlanningId;
 
 import java.util.UUID;
 
-@Builder(toBuilder = true)
+
 public class Availability {
     @PlanningId
     @Getter
-    private UUID availabilityUUID;
+    private final UUID availabilityUUID;
     @Getter
-    private Location startLocation;
+    private final Location startLocation;
     @Getter
-    private boolean endLocationEnabled;
+    private final boolean endLocationEnabled;
     @Getter
-    private Location endLocation;
+    private final Location endLocation;
     @Getter
-    private TimePeriod timePeriod;
+    private final TimePeriod timePeriod;
     @Getter
-    private boolean maxRangeEnabled;
+    private final boolean maxRangeEnabled;
     @Getter
-    private long maxRange;
+    private final long maxRange;
+    
+    @Builder(toBuilder = true)
+    public Availability(UUID availabilityUUID, Location startLocation, boolean endLocationEnabled, Location endLocation, TimePeriod timePeriod, boolean maxRangeEnabled, long maxRange) {
+        this.availabilityUUID = availabilityUUID;
+        this.startLocation = startLocation;
+        this.endLocationEnabled = endLocationEnabled;
+        this.endLocation = endLocation;
+        this.timePeriod = timePeriod;
+        this.maxRangeEnabled = maxRangeEnabled;
+        this.maxRange = maxRange;
+    }
+    @Builder(toBuilder = true)
+    public Availability(UUID availabilityUUID, Location startLocation, Location endLocation, TimePeriod timePeriod, boolean maxRangeEnabled, long maxRange) {
+        this.availabilityUUID = availabilityUUID;
+        this.startLocation = startLocation;
+        this.endLocationEnabled = true;
+        this.endLocation = endLocation;
+        this.timePeriod = timePeriod;
+        this.maxRangeEnabled = maxRangeEnabled;
+        this.maxRange = maxRange;
+    }
+    @Builder(toBuilder = true)
+    public Availability(UUID availabilityUUID, Location startLocation, TimePeriod timePeriod, boolean maxRangeEnabled, long maxRange) {
+        this.availabilityUUID = availabilityUUID;
+        this.startLocation = startLocation;
+        this.endLocationEnabled = false;
+        this.endLocation = null;
+        this.timePeriod = timePeriod;
+        this.maxRangeEnabled = maxRangeEnabled;
+        this.maxRange = maxRange;
+    }
+    
     
     //
     @Override

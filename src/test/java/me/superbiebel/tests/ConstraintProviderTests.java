@@ -1,12 +1,13 @@
 package me.superbiebel.tests;
 
+import io.quarkus.logging.Log;
 import io.quarkus.test.junit.QuarkusTest;
 import me.superbiebel.referee_planner.domain.*;
+import me.superbiebel.referee_planner.domain.comparators.GameAssignmentComparator;
 import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
 import me.superbiebel.referee_planner.score.RefereeConstraintProvider;
 import me.superbiebel.referee_planner.variablelisteners.AvailabilityAssignmentMapVariableListener;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
 import org.optaplanner.test.api.score.stream.ConstraintVerifier;
 
 import javax.inject.Inject;
@@ -45,7 +46,7 @@ class ConstraintProviderTests {
                 .given(referee, gameAssignment)
                 .penalizesBy(100);
     }
-    @Execution(ExecutionMode.CONCURRENT)
+    
     @Test
     void softMaximumExperienceTest() {
         Referee referee = Referee.builder().experience(20).build();
@@ -58,7 +59,7 @@ class ConstraintProviderTests {
                 .given(referee, gameAssignment)
                 .penalizesBy(10);
     }
-    @Execution(ExecutionMode.CONCURRENT)
+    
     @Test
     void distanceSoftConstraintTest() {
         //ConstraintVerifier<RefereeConstraintProvider, RefereeTimeTable> newVerifier
@@ -97,24 +98,40 @@ class ConstraintProviderTests {
         Referee referee = RandomDataGenerator.generateReferee().toBuilder().availabilityList(availabilityList).build();
     
         GameAssignment gameAssignment1 = GameAssignment.builder().game(RandomDataGenerator.generateGame().toBuilder().gameLocation(location1).gamePeriod(TimePeriod.builder().start(RandomDataGenerator.BEGIN_GAME_DATE_TIME.plusHours(1)).end(RandomDataGenerator.BEGIN_GAME_DATE_TIME.plusHours(3)).build()).build()).build();
-        GameAssignment gameAssignment2 = GameAssignment.builder().game(RandomDataGenerator.generateGame().toBuilder().gameLocation(location2).gamePeriod(TimePeriod.builder().start(RandomDataGenerator.BEGIN_GAME_DATE_TIME.plusHours(2)).end(RandomDataGenerator.BEGIN_GAME_DATE_TIME.plusHours(4)).build()).build()).build();
-        GameAssignment gameAssignment3 = GameAssignment.builder().game(RandomDataGenerator.generateGame().toBuilder().gameLocation(location3).gamePeriod(TimePeriod.builder().start(RandomDataGenerator.BEGIN_GAME_DATE_TIME.plusHours(3)).end(RandomDataGenerator.BEGIN_GAME_DATE_TIME.plusHours(5)).build()).build()).build();
-        GameAssignment gameAssignment4 = GameAssignment.builder().game(RandomDataGenerator.generateGame().toBuilder().gameLocation(location4).gamePeriod(TimePeriod.builder().start(RandomDataGenerator.BEGIN_GAME_DATE_TIME.plusHours(4)).end(RandomDataGenerator.BEGIN_GAME_DATE_TIME.plusHours(6)).build()).build()).build();
+        GameAssignment gameAssignment2 = GameAssignment.builder().game(RandomDataGenerator.generateGame().toBuilder().gameLocation(location2).gamePeriod(TimePeriod.builder().start(RandomDataGenerator.BEGIN_GAME_DATE_TIME.plusHours(4)).end(RandomDataGenerator.BEGIN_GAME_DATE_TIME.plusHours(6)).build()).build()).build();
+        GameAssignment gameAssignment3 = GameAssignment.builder().game(RandomDataGenerator.generateGame().toBuilder().gameLocation(location3).gamePeriod(TimePeriod.builder().start(RandomDataGenerator.BEGIN_GAME_DATE_TIME.plusHours(7)).end(RandomDataGenerator.BEGIN_GAME_DATE_TIME.plusHours(9)).build()).build()).build();
+        GameAssignment gameAssignment4 = GameAssignment.builder().game(RandomDataGenerator.generateGame().toBuilder().gameLocation(location4).gamePeriod(TimePeriod.builder().start(RandomDataGenerator.BEGIN_GAME_DATE_TIME.plusHours(10)).end(RandomDataGenerator.BEGIN_GAME_DATE_TIME.plusHours(12)).build()).build()).build();
     
         referee.addAssignment(gameAssignment1);
         referee.addAssignment(gameAssignment2);
         referee.addAssignment(gameAssignment3);
         referee.addAssignment(gameAssignment4);
     
+        referee.getSortedAssignments().addAll(referee.getAssignments());
+        referee.getSortedAssignments().sort(GameAssignmentComparator.COMPARATOR);
+        AvailabilityAssignmentMapVariableListener.Pair<Map<Availability, List<GameAssignment>>, List<GameAssignment>> pair = AvailabilityAssignmentMapVariableListener.generateAvailabilityGameAssignmentMap(referee);
+        referee.setAvailabilityToGameAssignmentsMap(pair.getLeft());
+        referee.setUnassignedAssignments(pair.getRight());
+        long startTo1 = startLocation.getDistanceTo(location1);
+        Log.warn("startTo1: " + startTo1);
+        long loc1To2 = location1.getDistanceTo(location2);
+        Log.warn("loc1To2: " + loc1To2);
+        long loc2To3 = location2.getDistanceTo(location3);
+        Log.warn("loc2To3: " + loc2To3);
+        long loc3To4 = location3.getDistanceTo(location4);
+        Log.warn("loc3To4: " + loc3To4);
+        long loc4ToEnd = location4.getDistanceTo(endLocation);
+        Log.warn("loc4Toend: " + loc4ToEnd);
+    
         constraintVerifier.verifyThat(RefereeConstraintProvider::distanceSoftConstraint)
-                .given(referee).penalizesBy(startLocation.getDistanceTo(location1) + location1.getDistanceTo(location2) + location2.getDistanceTo(location3) + location3.getDistanceTo(location4) + location4.getDistanceTo(endLocation));
+                .given(referee).penalizesBy(startTo1 + loc1To2 + loc2To3 + loc3To4 + loc4ToEnd);
     }
     
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
+    
     void notEnoughRefereesConstraintTest() {
         Game game = RandomDataGenerator.generateGame().toBuilder().amountOfRefereesNeeded(3).priority(10).build();
-        List<GameAssignment> gameAssignmentList = new ArrayList<>(RandomDataGenerator.generateGameAssignments(game));
+        List<GameAssignment> gameAssignmentList = new ArrayList<>(Game.generateGameAssignments(game));
         GameAssignment gameAssignment0 = gameAssignmentList.get(0).toBuilder()
                                                  .indexInGame(0)
                                                  .game(game)
@@ -138,7 +155,7 @@ class ConstraintProviderTests {
     }
     
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
+    
     void tooManyRefereesConstraintTest() {
         Game game = RandomDataGenerator.generateGame().toBuilder().amountOfRefereesNeeded(1).build();
         GameAssignment gameAssignment0 = GameAssignment.builder()
@@ -168,7 +185,7 @@ class ConstraintProviderTests {
     }
     
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
+    
     void firstRefereeIsNotNonExistingConstraintTest() {
         Game game = RandomDataGenerator.generateGame().toBuilder().amountOfRefereesNeeded(3).build();
         GameAssignment gameAssignment0 = GameAssignment.builder()
@@ -198,7 +215,7 @@ class ConstraintProviderTests {
     }
     
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
+    
     void sameRefereeMultipleGameIndexConstraintTest() {
         Game game = RandomDataGenerator.generateGame().toBuilder().amountOfRefereesNeeded(3).build();
         Referee referee = Referee.builder().isNonExist(false).build();
@@ -229,16 +246,15 @@ class ConstraintProviderTests {
     }
     
     @Test
-    @Execution(ExecutionMode.CONCURRENT)
-    void isInAvailabilityConstraint() {
+    void isPhysicallyPossibleConstraintTest() {
         List<Availability> availabilityList = new ArrayList<>();
-        
+    
         Location homeLocation = Location.builder()
-                                        .latitude(50.92729190520198)
-                                        .longitude(4.761309967148309).build();
-        
+                                        .latitude(51)
+                                        .longitude(4.8).build();
+    
         LocalDateTime baseTime = LocalDateTime.now();
-        
+    
         TimePeriod timePeriod1 = TimePeriod.builder()
                                          .start(baseTime)
                                          .end(baseTime.plusHours(10))
@@ -247,19 +263,13 @@ class ConstraintProviderTests {
                                          .start(baseTime.plusHours(12))
                                          .end(baseTime.plusHours(22))
                                          .build();
-        TimePeriod timePeriod3 = TimePeriod.builder()
-                                         .start(baseTime.plusHours(26))
-                                         .end(baseTime.plusHours(34))
-                                         .build();
-        
-        Availability availability1 = Availability.builder().timePeriod(timePeriod1).startLocation(homeLocation).endLocationEnabled(false).build();
-        Availability availability2 = Availability.builder().timePeriod(timePeriod2).startLocation(homeLocation).endLocationEnabled(false).build();
-        Availability availability3 = Availability.builder().timePeriod(timePeriod3).startLocation(homeLocation).endLocationEnabled(false).build();
-        
+    
+        Availability availability1 = Availability.builder().timePeriod(timePeriod1).startLocation(homeLocation).build();
+        Availability availability2 = Availability.builder().timePeriod(timePeriod2).startLocation(homeLocation).build();
+    
         availabilityList.add(availability1);
         availabilityList.add(availability2);
-        availabilityList.add(availability3);
-        
+    
         TimePeriod gameTimePeriod1 = TimePeriod.builder()
                                              .start(baseTime.plusHours(2))
                                              .end(baseTime.plusHours(4))
@@ -272,55 +282,57 @@ class ConstraintProviderTests {
                                              .start(baseTime.plusHours(9))
                                              .end(baseTime.plusHours(11))
                                              .build();
-        
-        
+    
+    
         Location gameLocation1 = Location.builder()
                                          .latitude(50.7)
                                          .longitude(4.7).build();
-        
+    
         Location gameLocation2 = Location.builder()
                                          .latitude(50.6)
                                          .longitude(4.6).build();
         Location gameLocation3 = Location.builder()
-                                         .latitude(55.92729190520198)
-                                         .longitude(6.761309967148309).build();
-        
-        
+                                         .latitude(56)
+                                         .longitude(7).build();
+    
+    
         Referee referee = RandomDataGenerator.generateReferee().toBuilder()
                                   .availabilityList(availabilityList)
                                   .build();
-        
-        
+    
+    
         Game game1 = Game.builder().gameLocation(gameLocation1)
                              .gamePeriod(gameTimePeriod1)
                              .amountOfRefereesNeeded(1)
                              .build();
-        GameAssignment gameAssignment1 = RandomDataGenerator.generateGameAssignments(game1).get(0);
-        
+        GameAssignment gameAssignment1 = Game.generateGameAssignments(game1).get(0);
+    
         gameAssignment1.setReferee(referee);
         referee.addAssignment(gameAssignment1);
-        game1.setAssignments(RandomDataGenerator.generateGameAssignments(game1));
-        
+        game1.setAssignments(Game.generateGameAssignments(game1));
+    
         Game game2 = Game.builder().gameLocation(gameLocation2)
                              .gamePeriod(gameTimePeriod2)
                              .amountOfRefereesNeeded(1)
                              .build();
-        GameAssignment gameAssignment2 = RandomDataGenerator.generateGameAssignments(game2).get(0);
-        
+        GameAssignment gameAssignment2 = Game.generateGameAssignments(game2).get(0);
+    
         gameAssignment2.setReferee(referee);
         referee.addAssignment(gameAssignment2);
-        game2.setAssignments(RandomDataGenerator.generateGameAssignments(game2));
+        game2.setAssignments(Game.generateGameAssignments(game2));
     
         Game game3 = Game.builder().gameLocation(gameLocation3)
                              .gamePeriod(gameTimePeriod3)
                              .amountOfRefereesNeeded(1)
                              .build();
-        GameAssignment gameAssignment3 = RandomDataGenerator.generateGameAssignments(game3).get(0);
+        GameAssignment gameAssignment3 = Game.generateGameAssignments(game3).get(0);
     
         gameAssignment3.setReferee(referee);
         referee.addAssignment(gameAssignment3);
-        game3.setAssignments(RandomDataGenerator.generateGameAssignments(game3));
-    
+        game3.setAssignments(Game.generateGameAssignments(game3));
+        
+        referee.getSortedAssignments().addAll(referee.getAssignments());
+        referee.getSortedAssignments().sort(GameAssignmentComparator.COMPARATOR);
         AvailabilityAssignmentMapVariableListener.Pair<Map<Availability, List<GameAssignment>>, List<GameAssignment>> pair = AvailabilityAssignmentMapVariableListener.generateAvailabilityGameAssignmentMap(referee);
         referee.setAvailabilityToGameAssignmentsMap(pair.getLeft());
         referee.setUnassignedAssignments(pair.getRight());
@@ -328,4 +340,30 @@ class ConstraintProviderTests {
                 .given(referee)
                 .penalizesBy(1);
     }
+    /*
+    LocalDateTime baseTime = LocalDateTime.now();
+        Availability availability1 = Availability.builder().startLocation(Location.builder().latitude(51).longitude(4).build())
+                                             .maxRange(100000000)
+                                             .availabilityUUID(UUID.randomUUID())
+                                             .timePeriod(TimePeriod.builder().start(baseTime).end(baseTime.plusHours(10)).build())
+                                             .endLocationEnabled(false)
+                                             .build();
+        Referee.RefereeBuilder referee = Referee.builder().refereeUUID(UUID.randomUUID())
+                                   .isNonExist(false)
+                                   .experience(99)
+                                                 .availabilityList(Collections)
+        Game gameArrivable = Game.builder().gameUUID(UUID.randomUUID())
+                                     .gameLocation(Location.builder().latitude(51.1).longitude(4).build())
+                                     .gamePeriod(TimePeriod.builder().start(baseTime).end(baseTime.plusHours(1)).build())
+                                     .hardMinimumExperience(0)
+                                     .priority(1)
+                                     .softMaximumExperience(100)
+                                     .softMinimumExperience(0)
+                                     .build();
+        List<GameAssignment> gameArrivableAssignments = Game.generateGameAssignments(gameArrivable);
+        referee.assignments(Collections.singletonList(gameArrivableAssignments.get(0)));
+        constraintVerifier.verifyThat(RefereeConstraintProvider::isPhysicallyPossibleConstraint)
+                .given(referee)
+                .penalizesBy(1);
+     */
 }

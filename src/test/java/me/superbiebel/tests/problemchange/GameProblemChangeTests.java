@@ -40,7 +40,7 @@ class GameProblemChangeTests {
         List<Game> games = new ArrayList<>(intermediateTimeTable.getGames());
         games.add(game);
         List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
-        gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
+        gameAssignments.addAll(Game.generateGameAssignments(game));
     
         RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/hardMinimumExperienceChangeTest",
                 GameExperienceChange.builder().gameUUID(gameUUID).newExperience(adaptedExperience).experienceType(GameExperienceChange.EXPERIENCE_TYPE.HARD_MINIMUM).build(),
@@ -68,7 +68,7 @@ class GameProblemChangeTests {
         List<Game> games = new ArrayList<>(intermediateTimeTable.getGames());
         games.add(game);
         List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
-        gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
+        gameAssignments.addAll(Game.generateGameAssignments(game));
         
         RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/softMinimumExperienceChangeTest",
                 GameExperienceChange.builder().gameUUID(gameUUID).newExperience(adaptedExperience).experienceType(GameExperienceChange.EXPERIENCE_TYPE.SOFT_MINIMUM).build(),
@@ -96,7 +96,7 @@ class GameProblemChangeTests {
         List<Game> games = new ArrayList<>(intermediateTimeTable.getGames());
         games.add(game);
         List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
-        gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
+        gameAssignments.addAll(Game.generateGameAssignments(game));
         
         RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/SoftMaximumExperienceChangeTest",
                 GameExperienceChange.builder().gameUUID(gameUUID).newExperience(adaptedExperience).experienceType(GameExperienceChange.EXPERIENCE_TYPE.SOFT_MAXIMUM).build(),
@@ -121,7 +121,7 @@ class GameProblemChangeTests {
         List<Game> games = new ArrayList<>(intermediateTimeTable.getGames());
         games.add(game);
         List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
-        gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
+        gameAssignments.addAll(Game.generateGameAssignments(game));
         
         RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/SoftMaximumExperienceChangeTest",
                 GameLocationChange.builder().newLocation(adaptedLocation).gameUUID(gameUUID).build(),
@@ -146,7 +146,7 @@ class GameProblemChangeTests {
         List<Game> games = new ArrayList<>(intermediateTimeTable.getGames());
         games.add(game);
         List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
-        gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
+        gameAssignments.addAll(Game.generateGameAssignments(game));
         
         RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/SoftMaximumExperienceChangeTest",
                 GamePeriodChange.builder().newPeriod(adaptedTimePeriod).gameUUID(gameUUID).build(),
@@ -171,7 +171,7 @@ class GameProblemChangeTests {
         List<Game> games = new ArrayList<>(intermediateTimeTable.getGames());
         games.add(game);
         List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
-        gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
+        gameAssignments.addAll(Game.generateGameAssignments(game));
         
         RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/SoftMaximumExperienceChangeTest",
                 GamePriorityChange.builder().gameUUID(gameUUID).newPriority(adaptedPriority).build(),
@@ -197,7 +197,7 @@ class GameProblemChangeTests {
         List<Game> games = new ArrayList<>(intermediateTimeTable.getGames());
         games.add(game);
         List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
-        gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
+        gameAssignments.addAll(Game.generateGameAssignments(game));
         
         RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/SoftMaximumExperienceChangeTest",
                 GameAmountOfRefereesNeededChange.builder().gameUUID(gameUUID).newAmount(adaptedRefereesNeeded).build(),
@@ -224,7 +224,7 @@ class GameProblemChangeTests {
         List<Game> games = new ArrayList<>(intermediateTimeTable.getGames());
         games.add(game);
         List<GameAssignment> gameAssignments = new ArrayList<>(intermediateTimeTable.getGameAssignments());
-        gameAssignments.addAll(RandomDataGenerator.generateGameAssignments(game));
+        gameAssignments.addAll(Game.generateGameAssignments(game));
         
         RefereeTimeTable refereeTimeTable = new ProblemChangeSolver().refereeTimeTableProblemChangeSolver(solverManager, scoreManager, "local/solverOutput/SoftMaximumExperienceChangeTest",
                 GameAmountOfRefereesNeededChange.builder().gameUUID(gameUUID).newAmount(adaptedRefereesNeeded).build(),

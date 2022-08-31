@@ -2,7 +2,6 @@ package me.superbiebel.referee_planner.domain.data.io.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import me.superbiebel.referee_planner.domain.*;
-import me.superbiebel.referee_planner.domain.data.RandomDataGenerator;
 import me.superbiebel.referee_planner.domain.data.TimeTableGenerator;
 
 import java.time.LocalDateTime;
@@ -119,7 +118,7 @@ public class JsonDatasetConverter {
     }
     
     public static List<GameAssignment> generateRandomGameAssignmentsFromGame(Game game) {
-        return RandomDataGenerator.generateGameAssignments(game);
+        return Game.generateGameAssignments(game);
     }
     
     private JsonDatasetConverter() {

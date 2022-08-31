@@ -8,11 +8,9 @@ import org.optaplanner.benchmark.api.PlannerBenchmarkFactory;
 
 @SuppressWarnings("NewClassNamingConvention")
 @QuarkusTest
-@Disabled //broken by the drools compiler
 class Benchmarks {
     
     @Test
-    @Disabled
     void benchmark_weakest_fit_hill_climbing() {
         Assertions.assertDoesNotThrow(() -> {
             PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource("benchmarkConfigs/benchmark-weakest_fit-hill_climbing.xml");
@@ -21,7 +19,6 @@ class Benchmarks {
         });
     }
     @Test
-    @Disabled
     void benchmark_weakest_fit_hill_climbing_SINGLE_VS_MULTI() {
         Assertions.assertDoesNotThrow(() -> {
             PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource("benchmarkConfigs/benchmark-weakest_fit-hill_climbing-single_vs_multi.xml");
@@ -31,7 +28,6 @@ class Benchmarks {
     }
     
     @Test
-    @Disabled
     void benchmark_weakest_fit_tabu_search() {
         Assertions.assertDoesNotThrow(() -> {
             PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource("benchmarkConfigs/benchmark-WEAKEST_FIT-TABU_SEARCH-HILL_CLIMBING.xml");
@@ -51,7 +47,6 @@ class Benchmarks {
     }
     
     @Test
-    @Disabled
     void benchmarkALL() {
         Assertions.assertDoesNotThrow(() -> {
             PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource("benchmarkConfigs/benchmark_ALL.xml");

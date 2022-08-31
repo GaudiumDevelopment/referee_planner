@@ -7,11 +7,7 @@
     <scoreDirectorFactory>
         <constraintProviderClass>me.superbiebel.referee_planner.score.RefereeConstraintProvider
         </constraintProviderClass>
-        <constraintStreamImplType>BAVET</constraintStreamImplType>
     </scoreDirectorFactory>
-    <termination>
-        <minutesSpentLimit>1</minutesSpentLimit>
-    </termination>
     <constructionHeuristic>
         <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>
     </constructionHeuristic>

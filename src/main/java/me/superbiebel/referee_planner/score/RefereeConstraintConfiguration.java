@@ -15,7 +15,7 @@ public class RefereeConstraintConfiguration {
     public static final String NONEXIST_REF_NOT_ON_LOWER_INDEX_EXIST_REFEREE = "FIRST REFEREE IS NON EXIST";
     public static final String FIRST_REFEREE_MORE_EXP_THEN_OTHER = "FIRST REFEREE MORE EXP THEN OTHER";
     public static final String SAME_REFEREE_MULTIPLE_GAME_INDEX = "SAME REFEREE MULTIPLE GAME INDEX";
-    public static final String IS_IN_AVAILABILITY_CONSTRAINT = "IS IN AVAILABILITY CONSTRAINT";
+    public static final String IS_PHYSICALLY_POSSIBLE = "IS PHYSICALLY POSSIBLE";
     public static final String GAMEASSIGNMENT_DOES_NOT_OVERLAP_PER_REFEREE = "GAMEASSIGNMENT DOES NOT OVERLAP";
     public static final String MAX_RANGE = "MAX RANGE NOT VIOLATED";
     
@@ -46,7 +46,7 @@ public class RefereeConstraintConfiguration {
     @ConstraintWeight(SAME_REFEREE_MULTIPLE_GAME_INDEX)
     HardMediumSoftLongScore sameRefereeMultipleGameIndex = HardMediumSoftLongScore.ofHard(1);
     
-    @ConstraintWeight(IS_IN_AVAILABILITY_CONSTRAINT)
+    @ConstraintWeight(IS_PHYSICALLY_POSSIBLE)
     HardMediumSoftLongScore isInAvailabilityConstraint = HardMediumSoftLongScore.ofHard(1);
     
     @ConstraintWeight(GAMEASSIGNMENT_DOES_NOT_OVERLAP_PER_REFEREE)

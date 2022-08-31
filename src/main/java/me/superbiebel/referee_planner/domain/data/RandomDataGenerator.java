@@ -104,18 +104,6 @@ public class RandomDataGenerator {
         return LocalDateTime.of(generateRandomLocalDateTime.toLocalDate(), LocalTime.of(generateRandomLocalDateTime.getHour(), generateRandomLocalDateTime.getMinute()));
     }
     
-    public static List<GameAssignment> generateGameAssignments(Game game) {
-        List<GameAssignment> assignmentList = new ArrayList<>();
-        for (int i = 0; i < game.getAmountOfRefereesNeeded(); i++) {
-            assignmentList.add(GameAssignment.builder()
-                                       .game(game)
-                                       .indexInGame(i)
-                                       .assignmentUUID(UUID.randomUUID())
-                                       .build());
-        }
-        game.setAssignments(assignmentList);
-        return assignmentList;
-    }
     public static Referee generateReferee() {
         return Referee.builder()
                        .refereeUUID(UUID.randomUUID())

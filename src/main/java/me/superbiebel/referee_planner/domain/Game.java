@@ -6,6 +6,7 @@ import me.superbiebel.referee_planner.exceptions.LookupObjectNotFound;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.solver.change.ProblemChangeDirector;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,7 +72,20 @@ public class Game {
     public static Game lookupGameByUUID(UUID gameUUID, ProblemChangeDirector problemChangeDirector) {
         return problemChangeDirector.lookUpWorkingObject(new Game(gameUUID)).orElseThrow(LookupObjectNotFound::new);
     }
-
+    
+    public static List<GameAssignment> generateGameAssignments(Game game) {
+        List<GameAssignment> assignmentList = new ArrayList<>();
+        for (int i = 0; i < game.getAmountOfRefereesNeeded(); i++) {
+            assignmentList.add(GameAssignment.builder()
+                                       .game(game)
+                                       .indexInGame(i)
+                                       .assignmentUUID(UUID.randomUUID())
+                                       .build());
+        }
+        game.setAssignments(assignmentList);
+        return assignmentList;
+    }
+    
     public void removeRefereesFromGameAssignments(ProblemChangeDirector problemChangeDirector) {
         assignments.forEach(gameAssignment -> removeRefereeFromGameAssignment(gameAssignment, problemChangeDirector));
     }

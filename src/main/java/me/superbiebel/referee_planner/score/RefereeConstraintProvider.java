@@ -211,7 +211,7 @@ public class RefereeConstraintProvider implements ConstraintProvider {
     public Constraint isPhysicallyPossibleConstraint(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Referee.class)
                        .filter(referee -> !referee.isNonExist())
-                       .penalizeConfigurable(RefereeConstraintConfiguration.IS_IN_AVAILABILITY_CONSTRAINT, referee -> {
+                       .penalizeConfigurable(RefereeConstraintConfiguration.IS_PHYSICALLY_POSSIBLE, referee -> {
                            /*
                            What this block of code actually tries to accomplish
                            1. Assign every gameAssignment to the availability it belongs.

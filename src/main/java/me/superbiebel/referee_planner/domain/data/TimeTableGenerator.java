@@ -38,7 +38,7 @@ public class TimeTableGenerator {
         }
         timeTableBuilder.games(games);
         List<GameAssignment> assignments = new ArrayList<>();
-        games.forEach(game -> assignments.addAll(RandomDataGenerator.generateGameAssignments(game)));
+        games.forEach(game -> assignments.addAll(Game.generateGameAssignments(game)));
         timeTableBuilder.gameAssignments(assignments);
         return this;
     }
