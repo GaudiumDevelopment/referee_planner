@@ -10,8 +10,8 @@
         <maven.compiler.release>11</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <version.io.quarkus>2.11.3.FINAL</version.io.quarkus>
-        <version.org.optaplanner>8.26.0.Final</version.org.optaplanner>
+        <version.io.quarkus>2.15.0.Final</version.io.quarkus>
+        <version.org.optaplanner>8.32.0.Final</version.org.optaplanner>
 
         <version.compiler.plugin>3.8.1</version.compiler.plugin>
         <version.surefire.plugin>3.0.0-M5</version.surefire.plugin>
@@ -19,16 +19,16 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>io.quarkus.platform</groupId>
+                <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-bom</artifactId>
                 <version>${version.io.quarkus}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>io.quarkus.platform</groupId>
-                <artifactId>quarkus-optaplanner-bom</artifactId>
-                <version>2.11.3.Final</version>
+                <groupId>org.optaplanner</groupId>
+                <artifactId>optaplanner-bom</artifactId>
+                <version>${version.org.optaplanner}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -99,6 +99,12 @@
             <artifactId>annotations</artifactId>
             <version>23.0.0</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <version>2.15.0.Final</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>

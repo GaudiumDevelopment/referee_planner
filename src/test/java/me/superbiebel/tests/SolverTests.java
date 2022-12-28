@@ -30,12 +30,15 @@ class SolverTests {
     ScoreManager<RefereeTimeTable, HardSoftScore> scoreManager;
     
     @Test
-    @Disabled
+    @Disabled("This test will go on endlessly, this is purely to test algorithms and stuff")
     void solverTest() {
         Assertions.assertDoesNotThrow(() -> {
             TimeTableGenerator timeTableGenerator = new TimeTableGenerator().amountOfGames(300).amountOfReferees(900);
     
-            String outputPath = "local/solverOutput/solverTests/" + LocalDateTime.now() + "/";
+            String outputPath = "local" + System.getProperty("file.separator") + "solverOutput" + System.getProperty("file.separator") + "solverTests"+ System.getProperty("file.separator") + LocalDateTime.now().toString()
+                                                                                                                                                                                                       .replace("-", "_")
+                                                                                                                                                                                                       .replace(":", "_")
+                                                                                                                                                                                                       .replace(".", "_");// + System.getProperty("file.separator");
             File outputDir = new File(outputPath);
             outputDir.mkdirs();
     
@@ -43,7 +46,7 @@ class SolverTests {
             SolverJob<RefereeTimeTable, Long> job = solverManager.solveAndListen(0L, t -> timeTableGenerator.build(), timeTable1 -> {
                 try {
                     String jsonString = JsonOutputConverter.refereeTimeTableToJson(timeTable1).toPrettyString();
-                    String pathName = outputPath + "solution-" + solutionCount.get() + ".json";
+                    String pathName = outputPath + System.getProperty("file.separator") + "solution_" + solutionCount.get() + ".json";
                     File outputFile = new File(pathName);
                     outputFile.createNewFile();
             
@@ -71,11 +74,12 @@ class SolverTests {
             ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
             //Converting the Object to JSONString
             String jsonString = JsonOutputConverter.refereeTimeTableToJson(solution).toPrettyString();
-    
-            BufferedWriter writer = new BufferedWriter(new FileWriter("/Users/omegabiebel/Desktop/test/optaplanner_test_referee.json"));
+            /*
+            BufferedWriter writer = new BufferedWriter(new FileWriter(System.getProperty("file.separator") + "Users" + System.getProperty("file.separator") + "omegabiebel" + System.getProperty("file.separator") + "Desktop" + System.getProperty("file.separator") + "test" + System.getProperty("file.separator") + "optaplanner_test_referee.json"));
             writer.write(jsonString);
     
             writer.close();
+            */
     
     
             System.out.println(scoreManager.explainScore(solution));
