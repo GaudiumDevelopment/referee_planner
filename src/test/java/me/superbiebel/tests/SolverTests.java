@@ -70,20 +70,7 @@ class SolverTests {
                 }
             });
             RefereeTimeTable solution = job.getFinalBestSolution();
-    
-            ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-            //Converting the Object to JSONString
-            String jsonString = JsonOutputConverter.refereeTimeTableToJson(solution).toPrettyString();
-            /*
-            BufferedWriter writer = new BufferedWriter(new FileWriter(System.getProperty("file.separator") + "Users" + System.getProperty("file.separator") + "omegabiebel" + System.getProperty("file.separator") + "Desktop" + System.getProperty("file.separator") + "test" + System.getProperty("file.separator") + "optaplanner_test_referee.json"));
-            writer.write(jsonString);
-    
-            writer.close();
-            */
-    
-    
             System.out.println(scoreManager.explainScore(solution));
-    
             Log.info("done solving");
         });
     }
